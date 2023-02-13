@@ -1,0 +1,517 @@
+{
+    "serialNumber": "V764JN0014",
+    "locationType": null,
+    "latitude": 90.0,
+    "longitude": -92.883065,
+    "make": "GTT",
+    "model": "V764",
+    "lastCommunicated": "2022-10-11T14:52:43.729853",
+    "timezone": "PST",
+    "operationMode": "Online/Normal",
+    "status": "Normal",
+    "firmwareVersion": "10.05.003",
+    "deviceType": null,
+    "address": null,
+    "addressType": null,
+    "macAddress": "cc69b011001e",
+    "deviceName": "Intersection Name",
+    "timeLocalizationDetails": {
+        "timezone": "Pacific Standard Time                                                                                                   ",
+        "utcOffset": "-480",
+        "forward": {
+            "month": "3",
+            "date": "13",
+            "year": "2022",
+            "hours": "2",
+            "minutes": "0",
+            "rule": "0"
+        },
+        "reverse": {
+            "month": "11",
+            "date": "6",
+            "year": "2022",
+            "hours": "2",
+            "minutes": "0",
+            "rule": "0"
+        }
+    },
+    "lastConfigured": "1900-01-01T00:00:00",
+    "approachOffset": 0,
+    "approachMap": [],
+    "configurationProfile": {
+        "formatVersion": 164,
+        "profileType": 0,
+        "profileIndex": 1,
+        "profileName": "Default Profile",
+        "numberOfHighCodes": 0,
+        "numberOfLowCodes": 0,
+        "highPriorityRelativePrioritiesEnabled": 0,
+        "highPriorityRelativePriorities": [
+            15,
+            15,
+            15,
+            15,
+            15,
+            15,
+            15,
+            15,
+            15,
+            15,
+            15,
+            15,
+            15,
+            15,
+            15,
+            15
+        ],
+        "lowPriorityRelativePrioritiesEnabled": 15,
+        "lowPriorityRelativePriorities": [
+            15,
+            15,
+            15,
+            15,
+            15,
+            15,
+            15,
+            15,
+            15,
+            15,
+            15,
+            15,
+            15,
+            15,
+            15,
+            15
+        ],
+        "relativePriorityLockoutEta": 15,
+        "conditionalPriorityEnabled": 15,
+        "numberOfChannels": 15,
+        "lowCodes": null,
+        "highCodes": "",
+        "channels": [
+            {
+                "format_version": null,
+                "priority": null,
+                "channelName": "15",
+                "channel": "15",
+                "callBridgingEnabled": 15,
+                "callBridgingTime": 15,
+                "proximityThreshold": 59403,
+                "highPriority": {
+                    "lostSignalHold": 15,
+                    "etaThresholds": [
+                        1,
+                        44,
+                        1,
+                        44,
+                        1,
+                        44,
+                        4,
+                        176,
+                        4,
+                        176,
+                        4,
+                        176,
+                        4,
+                        176,
+                        4,
+                        176
+                    ],
+                    "distanceThresholds": [
+                        45060,
+                        45060,
+                        45060,
+                        7680,
+                        7710,
+                        7710,
+                        7710,
+                        7710,
+                        7710,
+                        7710,
+                        7710,
+                        7680,
+                        7710,
+                        7710,
+                        7710,
+                        7710
+                    ],
+                    "maxCallTime": 3855,
+                    "preemptEnabled": 15,
+                    "directionalPriority": 15,
+                    "callDelayTime": 15,
+                    "offApproachHoldTime": 15,
+                    "primaryIntensityThresholds": [
+                        3855,
+                        3855,
+                        3855,
+                        3855,
+                        3855,
+                        3855,
+                        3855,
+                        12,
+                        4,
+                        1,
+                        771,
+                        1536,
+                        256,
+                        26625,
+                        26625,
+                        1536
+                    ],
+                    "auxiliaryIntensityThresholds": [
+                        11265,
+                        11265,
+                        11265,
+                        45060,
+                        45060,
+                        45060,
+                        45060,
+                        45060,
+                        45060,
+                        45060,
+                        45060,
+                        45060,
+                        45060,
+                        45060,
+                        45060,
+                        45060
+                    ]
+                },
+                "lowPriority": {
+                    "lostSignalHold": 15,
+                    "etaThresholds": [
+                        4,
+                        176,
+                        4,
+                        176,
+                        4,
+                        176,
+                        4,
+                        176,
+                        4,
+                        176,
+                        4,
+                        176,
+                        4,
+                        176,
+                        4,
+                        176
+                    ],
+                    "distanceThresholds": [
+                        7710,
+                        7710,
+                        7710,
+                        0,
+                        59403,
+                        59403,
+                        59403,
+                        59403,
+                        59403,
+                        59403,
+                        59403,
+                        59403,
+                        59403,
+                        59403,
+                        59403,
+                        59403
+                    ],
+                    "maxCallTime": 3855,
+                    "preemptEnabled": 15,
+                    "directionalPriority": 15,
+                    "callDelayTime": 0,
+                    "offApproachHoldTime": 15,
+                    "primaryIntensityThresholds": [
+                        1536,
+                        0,
+                        1542,
+                        11265,
+                        11265,
+                        11265,
+                        11265,
+                        11265,
+                        11265,
+                        11265,
+                        11265,
+                        11265,
+                        11265,
+                        11265,
+                        11265,
+                        11265
+                    ],
+                    "auxiliaryIntensityThresholds": [
+                        45060,
+                        45060,
+                        45060,
+                        11265,
+                        11265,
+                        11265,
+                        11265,
+                        11265,
+                        11265,
+                        11265,
+                        11265,
+                        11265,
+                        11265,
+                        11265,
+                        11265,
+                        11265
+                    ],
+                    "reserviceEnabled": 15,
+                    "reserviceTime": 15
+                }
+            }
+        ]
+    },
+    "thresholds": {
+        "lowPriority": [
+            {
+                "channelName": "15",
+                "channel": "15",
+                "lostSignalHold": 15,
+                "maxCallTime": 3855,
+                "classes": [
+                    {
+                        "class": "1",
+                        "name": "Regular Transit",
+                        "active": true,
+                        "eta": 4,
+                        "distance": 7710
+                    },
+                    {
+                        "class": "2",
+                        "name": "Express Transit",
+                        "active": true,
+                        "eta": 176,
+                        "distance": 7710
+                    },
+                    {
+                        "class": "3",
+                        "name": "Paratransit",
+                        "active": true,
+                        "eta": 4,
+                        "distance": 7710
+                    },
+                    {
+                        "class": "4",
+                        "name": "Light Rail",
+                        "active": true,
+                        "eta": 176,
+                        "distance": 0
+                    },
+                    {
+                        "class": "5",
+                        "name": "Trolley",
+                        "active": true,
+                        "eta": 4,
+                        "distance": 59403
+                    },
+                    {
+                        "class": "6",
+                        "name": "Snow Plows",
+                        "active": true,
+                        "eta": 176,
+                        "distance": 59403
+                    },
+                    {
+                        "class": "7",
+                        "name": "Supervisor",
+                        "active": true,
+                        "eta": 4,
+                        "distance": 59403
+                    },
+                    {
+                        "class": "8",
+                        "name": "Pavement Marking",
+                        "active": true,
+                        "eta": 176,
+                        "distance": 59403
+                    },
+                    {
+                        "class": "9",
+                        "name": "Installer/Set-up",
+                        "active": true,
+                        "eta": 4,
+                        "distance": 59403
+                    },
+                    {
+                        "class": "10",
+                        "name": "Bus Rapid Transit",
+                        "active": false,
+                        "eta": 176,
+                        "distance": 59403
+                    },
+                    {
+                        "class": "10",
+                        "name": "Not used",
+                        "active": false,
+                        "eta": 4,
+                        "distance": 59403
+                    },
+                    {
+                        "class": "11",
+                        "name": "Not used",
+                        "active": false,
+                        "eta": 176,
+                        "distance": 59403
+                    },
+                    {
+                        "class": "12",
+                        "name": "Not used",
+                        "active": false,
+                        "eta": 4,
+                        "distance": 59403
+                    },
+                    {
+                        "class": "13",
+                        "name": "Not used",
+                        "active": false,
+                        "eta": 176,
+                        "distance": 59403
+                    },
+                    {
+                        "class": "14",
+                        "name": "Not used",
+                        "active": false,
+                        "eta": 4,
+                        "distance": 59403
+                    },
+                    {
+                        "class": "15",
+                        "name": "Not used",
+                        "active": false,
+                        "eta": 176,
+                        "distance": 59403
+                    }
+                ]
+            }
+        ],
+        "highPriority": [
+            {
+                "channelName": "15",
+                "channel": "15",
+                "lostSignalHold": 15,
+                "maxCallTime": 3855,
+                "classes": [
+                    {
+                        "class": "1",
+                        "name": "Regular Transit",
+                        "active": true,
+                        "eta": 1,
+                        "distance": 45060
+                    },
+                    {
+                        "class": "2",
+                        "name": "Express Transit",
+                        "active": true,
+                        "eta": 44,
+                        "distance": 45060
+                    },
+                    {
+                        "class": "3",
+                        "name": "Paratransit",
+                        "active": true,
+                        "eta": 1,
+                        "distance": 45060
+                    },
+                    {
+                        "class": "4",
+                        "name": "Light Rail",
+                        "active": true,
+                        "eta": 44,
+                        "distance": 7680
+                    },
+                    {
+                        "class": "5",
+                        "name": "Trolley",
+                        "active": true,
+                        "eta": 1,
+                        "distance": 7710
+                    },
+                    {
+                        "class": "6",
+                        "name": "Snow Plows",
+                        "active": true,
+                        "eta": 44,
+                        "distance": 7710
+                    },
+                    {
+                        "class": "7",
+                        "name": "Supervisor",
+                        "active": true,
+                        "eta": 4,
+                        "distance": 7710
+                    },
+                    {
+                        "class": "8",
+                        "name": "Pavement Marking",
+                        "active": true,
+                        "eta": 176,
+                        "distance": 7710
+                    },
+                    {
+                        "class": "9",
+                        "name": "Installer/Set-up",
+                        "active": true,
+                        "eta": 4,
+                        "distance": 7710
+                    },
+                    {
+                        "class": "10",
+                        "name": "Bus Rapid Transit",
+                        "active": false,
+                        "eta": 176,
+                        "distance": 7710
+                    },
+                    {
+                        "class": "10",
+                        "name": "Not used",
+                        "active": false,
+                        "eta": 4,
+                        "distance": 7710
+                    },
+                    {
+                        "class": "11",
+                        "name": "Not used",
+                        "active": false,
+                        "eta": 176,
+                        "distance": 7680
+                    },
+                    {
+                        "class": "12",
+                        "name": "Not used",
+                        "active": false,
+                        "eta": 4,
+                        "distance": 7710
+                    },
+                    {
+                        "class": "13",
+                        "name": "Not used",
+                        "active": false,
+                        "eta": 176,
+                        "distance": 7710
+                    },
+                    {
+                        "class": "14",
+                        "name": "Not used",
+                        "active": false,
+                        "eta": 4,
+                        "distance": 7710
+                    },
+                    {
+                        "class": "15",
+                        "name": "Not used",
+                        "active": false,
+                        "eta": 176,
+                        "distance": 7710
+                    }
+                ]
+            }
+        ]
+    },
+    "channels": null,
+    "outputs": null,
+    "intersectionId": null,
+    "intersectionName": "Intersection Name",
+    "ipAddress": "3.86.39.209",
+    "port": 2313
+}

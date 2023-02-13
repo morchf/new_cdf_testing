@@ -1,0 +1,18 @@
+{
+  "groups": {
+    "ownedby": [""]
+  },
+  "attributes": {
+    "description": "",
+    "gttSerial": "",
+    "addressMAC": "",
+    "addressLAN": "",
+    "addressWAN": "",
+    "make": "",
+    "model": ""
+  },
+  "category": "device",
+  "templateId": "phaseselector",
+  "state": "active",
+  "deviceId": ""
+}

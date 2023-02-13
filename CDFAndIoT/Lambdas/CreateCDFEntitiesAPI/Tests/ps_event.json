@@ -1,0 +1,26 @@
+{
+    "body": {
+        "groups": {
+            "ownedby": [
+                "/r1/a1"
+            ]
+        },
+        "attributes": {
+            "gttSerial": "7640xx1234",
+            "addressMAC": "04:04:04:04:04:04",
+            "addressLAN": "10.1.9.0",
+            "addressWAN": "10.1.1.20",
+            "IMEI": "923412358135294",
+            "devCertId": "NULL_CERT",
+            "make": "GTT",
+            "model": "764",
+            "lat": "",
+            "long": ""
+        },
+        "category": "device",
+        "templateId": "phaseselector",
+        "description": "Not the console",
+        "state": "active",
+        "deviceId": "zoe_ps"
+    }
+}

@@ -1,0 +1,10 @@
+{
+    "aws": {
+        "region": "us-west-2",
+        "dynamoDb": {
+            "tables": {
+                "events": "cdf-assetlibraryhistory-development"
+            }
+        }
+    }
+}

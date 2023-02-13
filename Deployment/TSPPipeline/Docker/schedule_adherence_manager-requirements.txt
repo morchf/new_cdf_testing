@@ -1,0 +1,3 @@
+sqlalchemy
+psycopg2-binary
+smart-city-platform/TSP/ScheduleAdherence/Service

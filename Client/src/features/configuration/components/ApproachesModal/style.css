@@ -1,0 +1,49 @@
+.approaches-modal {
+  width: 350px;
+  /* height: 475px; */
+  margin: 50px 0px 0px 40px;
+  background-color: white;
+  box-shadow: var(--card-shadow);
+  border-radius: var(--card-radius);
+}
+
+.approaches-modal-top {
+  padding: 10px 15px 30px 15px;
+}
+
+.approaches-modal-bottom {
+  padding: 5px 15px 10px 15px;
+  background-color: rgb(241, 239, 239);
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+  box-shadow: var(--card-shadow);
+}
+
+.approaches-modal-tools p {
+  color: black;
+  font-weight: bold;
+  display: inline-block;
+  padding: 0px 3px 0px 3px;
+}
+
+.approaches-modal-selection h3, .approaches-modal-selection p {
+  color: lightgrey !important;
+}
+
+.approaches-modal-title {
+  margin: 0px;
+  display: inline-block;
+}
+
+.approaches-modal-collapse {
+  display: inline-block;
+  margin: 0px 0px 0px 82px;
+  font-size: 24px;
+  position: absolute;
+  right:10px;
+}
+
+.collapse-button {
+  cursor: pointer;
+}
+

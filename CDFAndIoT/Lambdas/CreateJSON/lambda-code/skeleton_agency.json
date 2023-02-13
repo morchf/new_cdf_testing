@@ -1,0 +1,20 @@
+{
+    "attributes": {
+        "description": "",
+        "city": "",
+        "state": "",
+        "timezone": "",
+        "agencyCode": 0,
+        "agencyID": "NULL_GUID",
+        "CMSId": "",
+        "displayName": "",
+        "caCertId": "NULL_CA",
+        "vpsCertId": "NULL_CERT",
+        "priority": ""
+    },
+    "category": "group",
+    "templateId": "agency",
+    "parentPath": "",
+    "name": "",
+    "groupPath": ""
+}

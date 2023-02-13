@@ -1,0 +1,421 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: "AWS::Serverless-2016-10-31"
+
+
+Description: This template contains resources that are commonly used across the SCP - like CDF ecosystem, EC cluster, Internal VPC, IBR resources, Feature Persistence resources, etc.
+
+
+Metadata:
+  cfn-lint:
+    config:
+      ignore_checks:
+        - I3042
+        - E3002
+        - E0000
+        - W3010
+        - I3013
+
+Parameters:
+  Env:
+    Type: String
+    AllowedValues:
+      - develop
+      - test
+      - production
+      - pilot
+    Description: "Provide the environment you are deploying this on. Allowed values: develop, test, production, or pilot"
+
+  CoreName:
+    Type: String
+    Default: CDFPipeline
+    Description: Base name for CDFPipeline resources
+
+  InternalVPCCIDR:
+    Type: String
+    Description: IP range (CIDR notation) for Internal VPC
+
+  SharedResourcesPublicSubnetACIDR:
+    Type: String
+    Description: IP range (CIDR notation) for Teletrac public subnet A
+
+  SharedResourcesPrivateSubnetACIDR:
+    Type: String
+    Description: IP range (CIDR notation) for Teletrac private subnet A
+
+  SharedResourcesPublicSubnetBCIDR:
+    Type: String
+    Description: IP range (CIDR notation) for Teletrac public subnet B
+
+  SharedResourcesPrivateSubnetBCIDR:
+    Type: String
+    Description: IP range (CIDR notation) for Teletrac private subnet B
+
+  TeletracPublicSubnetACIDR:
+    Type: String
+    Description: IP range (CIDR notation) for Teletrac public subnet A
+
+  TeletracPrivateSubnetACIDR:
+    Type: String
+    Description: IP range (CIDR notation) for Teletrac private subnet A
+
+  TeletracPublicSubnetBCIDR:
+    Type: String
+    Description: IP range (CIDR notation) for Teletrac public subnet B
+
+  TeletracPrivateSubnetBCIDR:
+    Type: String
+    Description: IP range (CIDR notation) for Teletrac private subnet B
+
+
+Resources:
+  # Internal VPC Networking
+  InternalVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref InternalVPCCIDR
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: !Sub InternalVPC-${Env}
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+
+  VPCGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref InternalVPC
+      InternetGatewayId: !Ref InternetGateway
+
+  # SharedResources A Subnets
+  SharedResourcesPublicSubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref InternalVPC
+      AvailabilityZone: us-east-1a
+      CidrBlock: !Ref SharedResourcesPublicSubnetACIDR
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub SharedResources-PublicSubnetA-${Env}
+
+  SharedResourcesPublicRouteTableA:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref InternalVPC
+
+  SharedResourcesPublicRouteA:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref SharedResourcesPublicRouteTableA
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  SharedResourcesPublicRouteAAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref SharedResourcesPublicRouteTableA
+      SubnetId: !Ref SharedResourcesPublicSubnetA
+
+  SharedResourcesPrivateSubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref InternalVPC
+      AvailabilityZone: us-east-1a
+      CidrBlock: !Ref SharedResourcesPrivateSubnetACIDR
+      Tags:
+        - Key: Name
+          Value: !Sub SharedResources-PrivateSubnetA-${Env}
+
+  SharedResourcesPrivateRouteTableA:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref InternalVPC
+
+  SharedResourcesPrivateRouteA:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref SharedResourcesPrivateRouteTableA
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref SharedResourcesNatGatewayA
+
+  SharedResourcesPrivateRouteAAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref SharedResourcesPrivateRouteTableA
+      SubnetId: !Ref SharedResourcesPrivateSubnetA
+
+  SharedResourcesNatGatewayA:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt SharedResourcesNatGatewayAEIP.AllocationId
+      SubnetId: !Ref SharedResourcesPublicSubnetA
+
+  SharedResourcesNatGatewayAEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+
+  # SharedResources B Subnets
+  SharedResourcesPublicSubnetB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref InternalVPC
+      AvailabilityZone: us-east-1b
+      CidrBlock: !Ref SharedResourcesPublicSubnetBCIDR
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub SharedResources-PublicSubnetB-${Env}
+
+  SharedResourcesPublicRouteTableB:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref InternalVPC
+
+  SharedResourcesPublicRouteB:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref SharedResourcesPublicRouteTableB
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  SharedResourcesPublicRouteBAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref SharedResourcesPublicRouteTableB
+      SubnetId: !Ref SharedResourcesPublicSubnetB
+
+  SharedResourcesPrivateSubnetB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref InternalVPC
+      AvailabilityZone: us-east-1b
+      CidrBlock: !Ref SharedResourcesPrivateSubnetBCIDR
+      Tags:
+        - Key: Name
+          Value: !Sub SharedResources-PrivateSubnetB-${Env}
+
+  SharedResourcesPrivateRouteTableB:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref InternalVPC
+
+  SharedResourcesPrivateRouteB:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref SharedResourcesPrivateRouteTableB
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref SharedResourcesNatGatewayB
+
+  SharedResourcesPrivateRouteBAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref SharedResourcesPrivateRouteTableB
+      SubnetId: !Ref SharedResourcesPrivateSubnetB
+
+  SharedResourcesNatGatewayB:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt SharedResourcesNatGatewayBEIP.AllocationId
+      SubnetId: !Ref SharedResourcesPublicSubnetB
+
+  SharedResourcesNatGatewayBEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+
+  # Teletrac A Subnets
+  TeletracPublicSubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref InternalVPC
+      AvailabilityZone: us-east-1a
+      CidrBlock: !Ref TeletracPublicSubnetACIDR
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub Teletrac-PublicSubnetA-${Env}
+
+  TeletracPublicRouteTableA:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref InternalVPC
+
+  TeletracPublicRouteA:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref TeletracPublicRouteTableA
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  TeletracPublicRouteAAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref TeletracPublicRouteTableA
+      SubnetId: !Ref TeletracPublicSubnetA
+
+  TeletracPrivateSubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref InternalVPC
+      AvailabilityZone: us-east-1a
+      CidrBlock: !Ref TeletracPrivateSubnetACIDR
+      Tags:
+        - Key: Name
+          Value: !Sub Teletrac-PrivateSubnetA-${Env}
+
+  TeletracPrivateRouteTableA:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref InternalVPC
+
+  TeletracPrivateRouteA:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref TeletracPrivateRouteTableA
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref TeletracNatGatewayA
+
+  TeletracPrivateRouteAAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref TeletracPrivateRouteTableA
+      SubnetId: !Ref TeletracPrivateSubnetA
+
+  TeletracNatGatewayA:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt TeletracNatGatewayAEIP.AllocationId
+      SubnetId: !Ref TeletracPublicSubnetA
+
+  TeletracNatGatewayAEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+
+  # Teletrac B Subnets
+  TeletracPublicSubnetB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref InternalVPC
+      AvailabilityZone: us-east-1b
+      CidrBlock: !Ref TeletracPublicSubnetBCIDR
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub Teletrac-PublicSubnetB-${Env}
+
+  TeletracPublicRouteTableB:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref InternalVPC
+
+  TeletracPublicRouteB:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref TeletracPublicRouteTableB
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  TeletracPublicRouteBAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref TeletracPublicRouteTableB
+      SubnetId: !Ref TeletracPublicSubnetB
+
+  TeletracPrivateSubnetB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref InternalVPC
+      AvailabilityZone: us-east-1b
+      CidrBlock: !Ref TeletracPrivateSubnetBCIDR
+      Tags:
+        - Key: Name
+          Value: !Sub Teletrac-PrivateSubnetB-${Env}
+
+  TeletracPrivateRouteTableB:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref InternalVPC
+
+  TeletracPrivateRouteB:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref TeletracPrivateRouteTableB
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref TeletracNatGatewayB
+
+  TeletracPrivateRouteBAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref TeletracPrivateRouteTableB
+      SubnetId: !Ref TeletracPrivateSubnetB
+
+  TeletracNatGatewayB:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt TeletracNatGatewayBEIP.AllocationId
+      SubnetId: !Ref TeletracPublicSubnetB
+
+  TeletracNatGatewayBEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+
+
+Outputs:
+  InternalVPC:
+    Description: ID of Internal VPC
+    Value: !Ref InternalVPC
+    Export:
+      Name: InternalVPC
+
+  SharedResourcesPublicSubnetA:
+    Description: Subnet ID of SharedResourcesPublicSubnetA
+    Value: !Ref SharedResourcesPublicSubnetA
+    Export:
+      Name: SharedResourcesPublicSubnetA
+
+  SharedResourcesPrivateSubnetA:
+    Description: Subnet ID of SharedResourcesPrivateSubnetA
+    Value: !Ref SharedResourcesPrivateSubnetA
+    Export:
+      Name: SharedResourcesPrivateSubnetA
+
+  SharedResourcesPublicSubnetB:
+    Description: Subnet ID of SharedResourcesPublicSubnetB
+    Value: !Ref SharedResourcesPublicSubnetB
+    Export:
+      Name: SharedResourcesPublicSubnetB
+  
+  SharedResourcesPrivateSubnetB:
+    Description: Subnet ID of SharedResourcesPrivateSubnetB
+    Value: !Ref SharedResourcesPrivateSubnetB
+    Export:
+      Name: SharedResourcesPrivateSubnetB
+
+  TeletracPublicSubnetA:
+    Description: Subnet ID of TeletracPublicSubnetA
+    Value: !Ref TeletracPublicSubnetA
+    Export:
+      Name: TeletracPublicSubnetA
+
+  TeletracPrivateSubnetA:
+    Description: Subnet ID of TeletracPrivateSubnetA
+    Value: !Ref TeletracPrivateSubnetA
+    Export:
+      Name: TeletracPrivateSubnetA
+
+  TeletracPublicSubnetB:
+    Description: Subnet ID of TeletracPublicSubnetB
+    Value: !Ref TeletracPublicSubnetB
+    Export:
+      Name: TeletracPublicSubnetB
+  
+  TeletracPrivateSubnetB:
+    Description: Subnet ID of TeletracPrivateSubnetB
+    Value: !Ref TeletracPrivateSubnetB
+    Export:
+      Name: TeletracPrivateSubnetB  

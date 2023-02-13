@@ -1,0 +1,15 @@
+{
+  "taskResult-create-json": {
+      "attributes": {
+        "description": "Lookit that mountain",
+        "caCertId": "NULL_CA",
+        "regionGUID": "NULL_GUID",
+        "regionDNS": "10.1.1.23"
+      },
+      "category": "group",
+      "templateId": "region",
+      "parentPath": "/",
+      "name": "r1",
+      "groupPath": "/r1"
+    }
+  }

@@ -1,0 +1,19 @@
+aws:
+  region: 
+  s3:
+    crl:
+      bucket:
+      key:
+
+assetLibrary:
+  mode: lambda
+  apiFunctionName:
+  templateProfiles:
+    edge:
+
+provisioning:
+  mode: lambda
+  apiFunctionName:
+
+logging:
+  level: debug

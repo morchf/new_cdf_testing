@@ -1,0 +1,7 @@
+.info-tooltip {
+  display: inline-flex;
+  padding-left: 0.25em;
+  vertical-align: top;
+  /* Force tooltips to display over top */
+  z-index: 500;
+}

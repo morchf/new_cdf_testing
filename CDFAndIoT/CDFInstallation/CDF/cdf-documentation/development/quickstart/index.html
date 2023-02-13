@@ -1,0 +1,1598 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      
+      
+      
+      
+        <meta name="lang:clipboard.copy" content="Copy to clipboard">
+      
+        <meta name="lang:clipboard.copied" content="Copied to clipboard">
+      
+        <meta name="lang:search.language" content="en">
+      
+        <meta name="lang:search.pipeline.stopwords" content="True">
+      
+        <meta name="lang:search.pipeline.trimmer" content="True">
+      
+        <meta name="lang:search.result.none" content="No matching documents">
+      
+        <meta name="lang:search.result.one" content="1 matching document">
+      
+        <meta name="lang:search.result.other" content="# matching documents">
+      
+        <meta name="lang:search.tokenizer" content="[\s\-]+">
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-0.17.5, mkdocs-material-2.9.4">
+    
+    
+      
+        <title>Development Getting Started - Connected Device Framework (CDF)</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/application.451f80e5.css">
+      
+      
+    
+    
+      <script src="../../assets/javascripts/modernizr.1aa3b519.js"></script>
+    
+    
+      <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+      
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono">
+        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
+      
+    
+    <link rel="stylesheet" href="../../assets/fonts/material-icons.css">
+    
+    
+  </head>
+  
+    <body dir="ltr">
+  
+    <svg class="md-svg">
+      <defs>
+        
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+    
+      <a href="#development-getting-started" tabindex="1" class="md-skip">
+        Skip to content
+      </a>
+    
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href="../.." title="Connected Device Framework (CDF)" class="md-header-nav__button md-logo">
+          
+            <i class="md-icon"></i>
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          
+            
+              <span class="md-header-nav__topic">
+                Connected Device Framework (CDF)
+              </span>
+              <span class="md-header-nav__topic">
+                Development Getting Started
+              </span>
+            
+          
+        </div>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        
+          
+            <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+            
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+          
+        
+      </div>
+      
+    </div>
+  </nav>
+</header>
+    
+    <div class="md-container">
+      
+        
+      
+      
+      <main class="md-main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href="../.." title="Connected Device Framework (CDF)" class="md-nav__button md-logo">
+      
+        <i class="md-icon"></i>
+      
+    </a>
+    Connected Device Framework (CDF)
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../.." title="CONNECTED DEVICE FRAMEWORK (CDF)" class="md-nav__link">
+      CONNECTED DEVICE FRAMEWORK (CDF)
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2">
+    
+    <label class="md-nav__link" for="nav-2">
+      Advanced
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        Advanced
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../advanced/cicd/" title="CI/CD" class="md-nav__link">
+      CI/CD
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../advanced/deployment/" title="Deployment" class="md-nav__link">
+      Deployment
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../advanced/" title="Advanced Track" class="md-nav__link">
+      Advanced Track
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
+    
+    <label class="md-nav__link" for="nav-3">
+      Beginner
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        Beginner
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../beginner/" title="Beginner Track" class="md-nav__link">
+      Beginner Track
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4" checked>
+    
+    <label class="md-nav__link" for="nav-4">
+      Development
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-4">
+        Development
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../async/" title="Asynchronous Operations" class="md-nav__link">
+      Asynchronous Operations
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../config/" title="Configuration" class="md-nav__link">
+      Configuration
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../dependency-injection/" title="Dependency Injection" class="md-nav__link">
+      Dependency Injection
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../prerequisites/" title="Prerequisites" class="md-nav__link">
+      Prerequisites
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Development Getting Started
+      </label>
+    
+    <a href="./" title="Development Getting Started" class="md-nav__link md-nav__link--active">
+      Development Getting Started
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introduction" title="Introduction" class="md-nav__link">
+    Introduction
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuring-the-development-environment" title="Configuring the development environment" class="md-nav__link">
+    Configuring the development environment
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-a-module" title="Building a module" class="md-nav__link">
+    Building a module
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing-a-module" title="Testing a module" class="md-nav__link">
+    Testing a module
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#running-a-module" title="Running a module" class="md-nav__link">
+    Running a module
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#making-changes-to-an-existing-module" title="Making changes to an existing module" class="md-nav__link">
+    Making changes to an existing module
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#understanding-the-directory-structure" title="Understanding the directory structure" class="md-nav__link">
+    Understanding the directory structure
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#faq" title="FAQ" class="md-nav__link">
+    FAQ
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../tech-stack/" title="Tech stack" class="md-nav__link">
+      Tech stack
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../unit-testing/" title="Unit testing" class="md-nav__link">
+      Unit testing
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-5" type="checkbox" id="nav-5">
+    
+    <label class="md-nav__link" for="nav-5">
+      Intermediate
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-5">
+        Intermediate
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../intermediate/" title="Home" class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-6" type="checkbox" id="nav-6">
+    
+    <label class="md-nav__link" for="nav-6">
+      Postman
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-6">
+        Postman
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../postman/" title="Home" class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7" type="checkbox" id="nav-7">
+    
+    <label class="md-nav__link" for="nav-7">
+      Projects
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-7">
+        Projects
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/overview/" title="Overview" class="md-nav__link">
+      Overview
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7-2" type="checkbox" id="nav-7-2">
+    
+    <label class="md-nav__link" for="nav-7-2">
+      Assetlibrary
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
+      <label class="md-nav__title" for="nav-7-2">
+        Assetlibrary
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/assetlibrary/assetlibrary-swagger/" title="Assetlibrary swagger" class="md-nav__link">
+      Assetlibrary swagger
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/assetlibrary/events/" title="Events" class="md-nav__link">
+      Events
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/assetlibrary/fine-grained-access-control/" title="Fine grained access control" class="md-nav__link">
+      Fine grained access control
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/assetlibrary/modes/" title="Modes" class="md-nav__link">
+      Modes
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/assetlibrary/overview/" title="Overview" class="md-nav__link">
+      Overview
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/assetlibrary/profiles/" title="Profiles" class="md-nav__link">
+      Profiles
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/assetlibrary/templates-developer/" title="Templates developer" class="md-nav__link">
+      Templates developer
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/assetlibrary/templates-user/" title="Templates user" class="md-nav__link">
+      Templates user
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7-3" type="checkbox" id="nav-7-3">
+    
+    <label class="md-nav__link" for="nav-7-3">
+      Assetlibrary history
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
+      <label class="md-nav__title" for="nav-7-3">
+        Assetlibrary history
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/assetlibrary-history/assetlibraryhistory-swagger/" title="Assetlibraryhistory swagger" class="md-nav__link">
+      Assetlibraryhistory swagger
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/assetlibrary-history/overview/" title="Overview" class="md-nav__link">
+      Overview
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7-4" type="checkbox" id="nav-7-4">
+    
+    <label class="md-nav__link" for="nav-7-4">
+      Auth devicecert
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
+      <label class="md-nav__title" for="nav-7-4">
+        Auth devicecert
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/auth-devicecert/overview/" title="Overview" class="md-nav__link">
+      Overview
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7-5" type="checkbox" id="nav-7-5">
+    
+    <label class="md-nav__link" for="nav-7-5">
+      Bulkcerts
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
+      <label class="md-nav__title" for="nav-7-5">
+        Bulkcerts
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/bulkcerts/bulkcerts-swagger/" title="Bulkcerts swagger" class="md-nav__link">
+      Bulkcerts swagger
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/bulkcerts/overview/" title="Overview" class="md-nav__link">
+      Overview
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7-6" type="checkbox" id="nav-7-6">
+    
+    <label class="md-nav__link" for="nav-7-6">
+      Certificateactivator
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
+      <label class="md-nav__title" for="nav-7-6">
+        Certificateactivator
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/certificateactivator/overview/" title="Overview" class="md-nav__link">
+      Overview
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7-7" type="checkbox" id="nav-7-7">
+    
+    <label class="md-nav__link" for="nav-7-7">
+      Certificatevendor
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
+      <label class="md-nav__title" for="nav-7-7">
+        Certificatevendor
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/certificatevendor/overview/" title="Overview" class="md-nav__link">
+      Overview
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7-8" type="checkbox" id="nav-7-8">
+    
+    <label class="md-nav__link" for="nav-7-8">
+      Commands
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
+      <label class="md-nav__title" for="nav-7-8">
+        Commands
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/commands/commands-swagger/" title="Commands swagger" class="md-nav__link">
+      Commands swagger
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/commands/ephemeral-groups/" title="Ephemeral groups" class="md-nav__link">
+      Ephemeral groups
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/commands/overview/" title="Overview" class="md-nav__link">
+      Overview
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/commands/presigned-urls-developer/" title="Presigned urls developer" class="md-nav__link">
+      Presigned urls developer
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/commands/presigned-urls-user/" title="Presigned urls user" class="md-nav__link">
+      Presigned urls user
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7-9" type="checkbox" id="nav-7-9">
+    
+    <label class="md-nav__link" for="nav-7-9">
+      Devicemonitoring
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
+      <label class="md-nav__title" for="nav-7-9">
+        Devicemonitoring
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/devicemonitoring/overview/" title="Overview" class="md-nav__link">
+      Overview
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7-10" type="checkbox" id="nav-7-10">
+    
+    <label class="md-nav__link" for="nav-7-10">
+      Libraries
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
+      <label class="md-nav__title" for="nav-7-10">
+        Libraries
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/libraries/README/" title="README" class="md-nav__link">
+      README
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7-11" type="checkbox" id="nav-7-11">
+    
+    <label class="md-nav__link" for="nav-7-11">
+      Notifications
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
+      <label class="md-nav__title" for="nav-7-11">
+        Notifications
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/notifications/design/" title="Design" class="md-nav__link">
+      Design
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/notifications/events-processor-swagger/" title="Events processor swagger" class="md-nav__link">
+      Events processor swagger
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/notifications/overview/" title="Overview" class="md-nav__link">
+      Overview
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/notifications/walkthrough/" title="Walkthrough" class="md-nav__link">
+      Walkthrough
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7-12" type="checkbox" id="nav-7-12">
+    
+    <label class="md-nav__link" for="nav-7-12">
+      Provisioning
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
+      <label class="md-nav__title" for="nav-7-12">
+        Provisioning
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/provisioning/overview/" title="Overview" class="md-nav__link">
+      Overview
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/provisioning/provisioning-swagger/" title="Provisioning swagger" class="md-nav__link">
+      Provisioning swagger
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/provisioning/provisioning-templates/" title="Provisioning templates" class="md-nav__link">
+      Provisioning templates
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7-13" type="checkbox" id="nav-7-13">
+    
+    <label class="md-nav__link" for="nav-7-13">
+      Request queue
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
+      <label class="md-nav__title" for="nav-7-13">
+        Request queue
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/request-queue/overview/" title="Overview" class="md-nav__link">
+      Overview
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introduction" title="Introduction" class="md-nav__link">
+    Introduction
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuring-the-development-environment" title="Configuring the development environment" class="md-nav__link">
+    Configuring the development environment
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-a-module" title="Building a module" class="md-nav__link">
+    Building a module
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing-a-module" title="Testing a module" class="md-nav__link">
+    Testing a module
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#running-a-module" title="Running a module" class="md-nav__link">
+    Running a module
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#making-changes-to-an-existing-module" title="Making changes to an existing module" class="md-nav__link">
+    Making changes to an existing module
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#understanding-the-directory-structure" title="Understanding the directory structure" class="md-nav__link">
+    Understanding the directory structure
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#faq" title="FAQ" class="md-nav__link">
+    FAQ
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="development-getting-started">Development Getting Started<a class="headerlink" href="#development-getting-started" title="Permanent link">&para;</a></h1>
+<h2 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">&para;</a></h2>
+<p>The following describes the steps involved to initialize a CDF development environment from scratch, to build, run and test a project, then finally on how to commit modifications to the source code.</p>
+<p>Due to the scripts used as part of both the build and deployment steps, only linux type environments (including macOS) are supported.</p>
+<h2 id="configuring-the-development-environment">Configuring the development environment<a class="headerlink" href="#configuring-the-development-environment" title="Permanent link">&para;</a></h2>
+<p>The following is a one-time setup to configure the CDF development environment:</p>
+<ul>
+<li>ensure you have a <a href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git">git client</a> installed</li>
+<li>install <a href="https://github.com/creationix/nvm#install--update-script">Node Version Manager</a>:</li>
+</ul>
+<div class="highlight"><pre><span></span>curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh <span class="p">|</span> bash
+</pre></div>
+
+<ul>
+<li>using nvm installed from the previous step, install Node.js v8.10:</li>
+</ul>
+<div class="highlight"><pre><span></span>&gt; nvm use v8.10
+</pre></div>
+
+<ul>
+<li>install <a href="https://pnpm.js.org"><code>pnpm</code></a> package manager:</li>
+</ul>
+<div class="highlight"><pre><span></span>&gt; npm install -g pnpm
+</pre></div>
+
+<ul>
+<li>clone the project:</li>
+</ul>
+<div class="highlight"><pre><span></span>&gt; git clone https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core
+</pre></div>
+
+<ul>
+<li>initialize the project dependencies:</li>
+</ul>
+<div class="highlight"><pre><span></span>&gt; <span class="nb">cd</span> cdf-core
+cdf-core&gt; pnpm install
+</pre></div>
+
+<h2 id="building-a-module">Building a module<a class="headerlink" href="#building-a-module" title="Permanent link">&para;</a></h2>
+<p>To build all the modules:</p>
+<div class="highlight"><pre><span></span>cdf-core&gt; pnpm recursive run build
+</pre></div>
+
+<p>To build a specific module (e.g. the Asset Library):</p>
+<div class="highlight"><pre><span></span>cdf-core&gt; <span class="nb">cd</span> packages/services/assetlibrary
+cdf-core/packages/services/assetlibrary&gt; pnpm run build
+</pre></div>
+
+<h2 id="testing-a-module">Testing a module<a class="headerlink" href="#testing-a-module" title="Permanent link">&para;</a></h2>
+<p>To run unit tests for all the modules:</p>
+<div class="highlight"><pre><span></span>cdf-core&gt; pnpm recursive run <span class="nb">test</span>
+</pre></div>
+
+<p>To run unit tests for a specific module (e.g. the Asset Library):</p>
+<div class="highlight"><pre><span></span>cdf-core&gt; <span class="nb">cd</span> packages/services/assetlibrary
+cdf-core/packages/services/assetlibrary&gt; pnpm run <span class="nb">test</span>
+</pre></div>
+
+<p>Note that integration tests are automatically run by the CI/CD pipeline upon each commit to the <code>master</code> branch.</p>
+<h2 id="running-a-module">Running a module<a class="headerlink" href="#running-a-module" title="Permanent link">&para;</a></h2>
+<p>Each service has its configuration properties stored in an external file.  We follow a convention of storing these property files within the customers <em>cdf-infrastructure-*</em> project (e.g. <em>cdf-infrastructure-demo</em>), where the name of the property file is of the pattern "&lt;environment>-config.json".</p>
+<p>When running locally, the first step is to define which configuration file to use.  As an example, to use the <code>development-config.json</code> configuration files located within each projects folder in the <em>cdf-infrastructure-*</em> project we would set the environment locally (specific for each project) by running the following within the projects folder:</p>
+<div class="highlight"><pre><span></span>npm config <span class="nb">set</span> <span class="o">{</span>package name<span class="o">}</span>:environment development-local
+
+<span class="c1">## e.g. for the asset library:</span>
+npm config <span class="nb">set</span> @cdf/assetlibrary:environment development-local
+</pre></div>
+
+<p>For reference, the above command stores this configuration in <code>~./npmrc</code>.</p>
+<p>Next we need to set the variable <em>CONFIG_LOCATION</em> to the root of the <em>cdf-infrastructure-*</em> project.</p>
+<p>To start all the runnable services:</p>
+<div class="highlight"><pre><span></span>cdf-core&gt; <span class="nv">CONFIG_LOCATION</span><span class="o">=</span>&lt;path to infrastructure project&gt; pnpm recursive run start
+</pre></div>
+
+<p>To start a specific runnable service (e.g. the Asset Library):</p>
+<div class="highlight"><pre><span></span>cdf-core&gt; <span class="nb">cd</span> packages/services/assetlibrary
+cdf-core/packages/services/assetlibrary&gt; <span class="nv">CONFIG_LOCATION</span><span class="o">=</span>&lt;path to infrastructure project&gt; pnpm run start
+</pre></div>
+
+<h2 id="making-changes-to-an-existing-module">Making changes to an existing module<a class="headerlink" href="#making-changes-to-an-existing-module" title="Permanent link">&para;</a></h2>
+<p>We adhere to what is known as a <a href="https://guides.github.com/introduction/flow/">GitHub flow</a> as far as our approach to branching is concerned.  Basically this boils down to:</p>
+<ul>
+<li>The <code>master</code> branch always represents a working version of the code that may be deployed to a production environment</li>
+<li>Under no circumstances ever commit directly to <code>master</code>!</li>
+<li>When starting a new feature or fixing a bug, create a new branch from <code>master</code>:</li>
+</ul>
+<div class="highlight"><pre><span></span>cdf-core&gt; git checkout -b my-branch
+
+Switched to a new branch <span class="s1">&#39;my-branch&#39;</span>
+</pre></div>
+
+<ul>
+<li>At suitable points, commit your work by running the following, and following the prompts to describe your commit:</li>
+</ul>
+<div class="highlight"><pre><span></span>cdf-core&gt; git add -A
+cdf-core&gt; pnpm run commit
+</pre></div>
+
+<ul>
+<li>When you have finished with your implementation, and ensured that all existing unit tests pass as well as creating any new tests, push your branch to the CodeCommit repo:</li>
+</ul>
+<div class="highlight"><pre><span></span>cdf-core&gt; git push my-branch
+</pre></div>
+
+<ul>
+<li>
+<p>Create a <a href="https://docs.aws.amazon.com/codecommit/latest/userguide/how-to-create-pull-request.html">CodeCommit Pull Request</a> to have your work reviewed by peers.  Once created, send out the pull request link to other team members</p>
+</li>
+<li>
+<p>Once your pull request has been reviewed, and any issues addressed, merge your implementation back into the main code branch.  <strong>Note: don't use the CodeCommit console to perform the merge!</strong>.  Instead, merge using the <code>git</code> command as follows:</p>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><span class="c1"># first ensure your have the latest version of `master`</span>
+cdf-core&gt; git checkout master
+cdf-core&gt; git pull
+
+<span class="c1"># next, merge your branch into your local master</span>
+cdf-core&gt; git merge --no-ff my-branch
+
+<span class="c1"># address any conflicts if reported</span>
+
+<span class="c1"># re-run tests to make sure everything is still ok</span>
+cdf-core&gt; pnpm recursive run <span class="nb">test</span>
+
+<span class="c1"># if tests still pass, push the changes</span>
+cdf-core&gt; git push origin master
+
+<span class="c1"># once pushed, delete your local branch</span>
+cdf-core&gt; git branch -d my-branch
+cdf-core&gt; git push origin master
+
+<span class="c1"># finally, delete the branch from codecommit</span>
+</pre></div>
+
+<h2 id="understanding-the-directory-structure">Understanding the directory structure<a class="headerlink" href="#understanding-the-directory-structure" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Directory</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>cdf-core/cicd/</td>
+<td>The CloudFormation template to deploy the cicd pipeline, along with the related CodeBuild scripts</td>
+</tr>
+<tr>
+<td>cdf-core/documentation/</td>
+<td>CDF core related documentation</td>
+</tr>
+<tr>
+<td>cdf-core/infrastructure/</td>
+<td>The main deployment script for deploying the CDF core services, along with CloudFormation templates that are not specific to any service</td>
+</tr>
+<tr>
+<td>cdf-core/packages/integration-tests/</td>
+<td>BDD related automated integration tests</td>
+</tr>
+<tr>
+<td>cdf-core/packages/libraries/</td>
+<td>All internal libraries, as well as CDF client libraries</td>
+</tr>
+<tr>
+<td>cdf-core/packages/services/</td>
+<td>Deployable services, such as the Asset Library</td>
+</tr>
+<tr>
+<td>```</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="faq">FAQ<a class="headerlink" href="#faq" title="Permanent link">&para;</a></h2>
+<details class="question" open="open"><summary>Why do I have to use <code>pnpm run commit</code> to commit my work instead of the usual <code>git commit</code>?</summary><p><code>pnpm run commit</code> is configured to run the <a href="https://github.com/commitizen/cz-cli">commitizen command line utility</a> which forces you to describe commits using a specific format.  This is vitally important, as there are steps in our CI/CD pipeline that analyze all git commits since the last release, use these specially formatted messages to intelligently increment the version numbers (e.g. understand if there's a breaking change), and finally auto generates a change log for the release.</p>
+</details>
+<details class="question" open="open"><summary>Why should I manually merge using <code>git</code> instead of closing a pull request directly in the CodeCommit console?</summary><p>When closing a pull request in the CodeCommit console, it performs a <code>fast-forward</code> merge.  What this means is that when you view the history of commits in CodeCommit or any other similar tool, all the commit messages you made in your branch appear as if they were made directly to master.</p>
+<p>Alternatively, by performing the git merge manually using the <code>--no-ff</code> argument, it creates a commit message for the merge itself.  What this means is that when you view the history, even though you have merged your branch into your master, all your commit messages for your branch will be grouped together making it easy to see what commits were originally made to your branch.</p>
+<p>Performing a <code>no fast forard</code> type merge makes future troubleshooting so much easier.</p>
+</details>
+<details class="question" open="open"><summary>Why are we using node.js v8 when there are more recent versions available?</summary><p>The latest node.js version that AWS Lambda supports is v8.10, and AWS Lambda is one of our supported deployment targets.</p>
+</details>
+<details class="question" open="open"><summary>What is the need for using (<a href="https://pnpm.js.org"><code>pnpm</code></a> package manager)?  What's wrong with <code>npm</code>?</summary><p>The <code>cdf-core</code> git repo is what is known as a monorepo, a large single repository that contains many different projects.</p>
+<p>The decision to migrate CDF to a monorepo was made to:</p>
+<ul>
+<li>simplify the development environment by removing the need for an npm private repo (verdaccio)</li>
+<li>simplify the dependency management across projects (reduced the development environment footprint from &gt;6GB to 300MB)</li>
+<li>allow for atomic commits spanning multiple projects, simplyifing branching, merging and code reviews</li>
+</ul>
+<p><code>pnmp</code> has features that allow us to efficiently work with monorepos, while still being able to bundle individual services in the way required by AWS Lambda.</p>
+</details>
+<details class="question" open="open"><summary>I use the <a href="https://fishshell.com">fish shell</a> on macOS (installed via homebrew) instead of the default shell.  How do I configure <code>nvm</code>?</summary><p>Add the following to <code>cat ~/.config/fish/config.fish</code>, then open a new terminal:</p>
+<p><code>sh
+function nvm
+   bass source (brew --prefix nvm)/nvm.sh --no-use ';' nvm $argv
+end
+set -x NVM_DIR ~/.nvm
+nvm use default --silent</code></p>
+</details>
+                
+                  
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+          <a href="../prerequisites/" title="Prerequisites" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Prerequisites
+              </span>
+            </div>
+          </a>
+        
+        
+          <a href="../tech-stack/" title="Tech stack" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Tech stack
+              </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        powered by
+        <a href="https://www.mkdocs.org">MkDocs</a>
+        and
+        <a href="https://squidfunk.github.io/mkdocs-material/">
+          Material for MkDocs</a>
+      </div>
+      
+        
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/application.30f6b8b1.js"></script>
+      
+      <script>app.initialize({version:"0.17.5",url:{base:"../.."}})</script>
+      
+    
+    
+      
+    
+  </body>
+</html>

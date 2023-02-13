@@ -1,0 +1,23 @@
+{
+  "groups": {
+    "ownedby": [
+      "/CEI_EtE_TestRegion/CEI_EtE_Agency"
+    ]
+  },
+  "attributes": {
+	"serial": "CEI_EtE_Com",
+    "gttSerial": "CEI_EtE_Com",
+    "addressMAC": "CE:1C:E1:CE:1C:E1:CE:1C",
+    "addressLAN": "0.0.0.0",
+    "addressWAN": "0.0.0.0",
+    "IMEI": "None",
+    "devCertId": "None",
+    "make": "Sierra Wireless",
+    "model":"MP-70",
+    "uniqueId": "CEI_EtE_Com"
+    },
+  "category": "device",
+  "templateId": "communicator",
+  "state": "active",
+  "deviceId": "CEI_EtE_Com"  
+}

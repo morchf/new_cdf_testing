@@ -1,0 +1,8 @@
+.search-row {
+  background-color: #FFFFFF;
+  padding: 24px 38px;
+}
+
+.search-row > span {
+  margin-right: 8px;
+}

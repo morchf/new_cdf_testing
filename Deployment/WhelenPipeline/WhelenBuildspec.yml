@@ -1,0 +1,59 @@
+version: 0.2
+
+env:
+  exported-variables:
+    - Env
+    - CDFAPIARN
+    - FeaturePersistenceUrl
+    - MacgenApiUrl
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.8
+
+  pre_build:
+    commands:
+      # Updating packages on container, installing AWSCLI and PyTest, and checking home path and python version for logging purposes.
+      - ls -l
+      - pwd=`pwd`
+      - echo $pwd
+      - yum -y update --skip-broken
+      - python -V
+      - python3 -V
+      - pip -V
+      - pip3 -V
+      - python3 -m pip -V
+      - pip3 install --upgrade pip
+      - npm -v
+      - node -v
+      - yum install -y sudo
+      - pip3 install pyopenssl
+      - pip3 install pytest
+      - pip3 install pytest-cov
+
+  build:
+    commands:
+
+      # Integration MAC Generation Asset Library API endpoint required by the Lambda
+      - MACAPIID=`aws apigateway get-rest-apis --query "items[?name=='IntegrationMACGenerationAPI'].id" --output text`
+      - MacgenApiUrl=https://$MACAPIID.execute-api.us-east-1.amazonaws.com/develop/mac
+
+      # FeaturePersistence Asset Library API endpoint required by the Lambda
+      - FPAPIID=`aws apigateway get-rest-apis --query "items[?name=='FeaturePersistenceAPI'].id" --output text`
+      - FeaturePersistenceUrl=https://$FPAPIID.execute-api.us-east-1.amazonaws.com/$Env
+
+      # CDF Asset Library API endpoint required by the Lambda
+      - CDFAPIID=`aws apigateway get-rest-apis --query "items[?name=='cdf-assetlibrary-stage'].id" --output text`
+      - CDFAPIARN=https://$CDFAPIID.execute-api.us-east-1.amazonaws.com/Prod
+      
+      # S3 bucket for storing pipeline artifacts
+      - PipelineArtifactsS3=pipeline-artifacts-$Env
+
+      # Executing SAM template
+      - aws cloudformation package --template-file Deployment/WhelenPipeline/WhelenDeployment.yml --s3-bucket $PipelineArtifactsS3 --s3-prefix WhelenDeployment --output-template-file Deployment/WhelenPipeline/WhelenDeploymentOutput.yml
+
+
+artifacts:
+  files:
+    - "**/*"

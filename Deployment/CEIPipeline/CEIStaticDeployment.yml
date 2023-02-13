@@ -1,0 +1,124 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: 'This template deploys CEI resources'
+
+
+Parameters:
+  Env:
+    Type: String
+    AllowedValues: 
+      - develop
+      - test
+      - production
+      - pilot
+    Description: "Provide the environment you are deploying this on. Allowed values: develop, test, production, or pilot"
+
+
+Resources:
+  TestBucketCEI:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub test-bucket-cei-${Env}
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: TRUE
+        BlockPublicPolicy: TRUE
+        IgnorePublicAcls: TRUE
+        RestrictPublicBuckets: TRUE
+
+# # Cognito
+#   CEICognitoPool:
+#     Type: AWS::Cognito::UserPool
+#     Properties: 
+#       UserPoolName: !Sub "CEIAccessPool-${Env}"
+  
+#   CEIUserPoolResourceServer:
+#     Type: AWS::Cognito::UserPoolResourceServer
+#     Properties: 
+#         Identifier: ceiAccessServer
+#         Name: CEI Access Server
+#         UserPoolId: !Ref CEICognitoPool
+#         Scopes: 
+#             - ScopeName: "post_incident"
+#               ScopeDescription: "post incident data"
+#             - ScopeName: "post_config"
+#               ScopeDescription: "post config data"
+  
+#   UserPoolDomain: 
+#     Type: AWS::Cognito::UserPoolDomain 
+#     Properties:
+#       UserPoolId: !Ref CEICognitoPool 
+#       Domain: !Sub "cei-access-${Env}"
+  
+#   ceiUserClient:
+#     Type: AWS::Cognito::UserPoolClient
+#     DependsOn: CEIUserPoolResourceServer
+#     Properties:
+#       AllowedOAuthScopes:
+#         - ceiAccessServer/post_incident
+#         - ceiAccessServer/post_config
+#       AllowedOAuthFlows: 
+#         - client_credentials
+#       AllowedOAuthFlowsUserPoolClient: true
+#       ClientName: "ceiDevAccess"
+#       GenerateSecret: True
+#       RefreshTokenValidity: 3650
+#       SupportedIdentityProviders:
+#         - COGNITO
+#       UserPoolId: 
+#         Ref: CEICognitoPool
+    
+#   DNSCloudWatchLogGroup:
+#     Type: AWS::Logs::LogGroup
+#     Properties: 
+#       LogGroupName: /aws/route53/devtestgtt.com
+#       RetentionInDays: 90
+
+#   DNS: 
+#     Type: "AWS::Route53::HostedZone"
+#     Properties: 
+#       HostedZoneConfig: 
+#         Comment: 'Hosted zone for dev APIs'
+#       Name: 'devgtttest.com.'
+#       QueryLoggingConfig:
+#         CloudWatchLogsLogGroupArn: !Sub arn:aws:logs:us-east-1:${AWS::AccountId}:log-group:/aws/route53/devtestgtt.com
+
+#   DNSCert:
+#     Type: AWS::CertificateManager::Certificate
+#     Properties:
+#       DomainName: cei.devgtttest.com
+#       ValidationMethod: DNS
+#       DomainValidationOptions:
+#         - DomainName: devgtttest.com
+#           HostedZoneId: !Ref DNS
+
+#   CustomDomain:
+#     Type: AWS::ApiGateway::DomainName
+#     Properties: 
+#       CertificateArn: String
+#       DomainName: cei.devgtttest.com
+#       EndpointConfiguration: 
+#         EndpointConfiguration
+#       MutualTlsAuthentication: 
+#         MutualTlsAuthentication
+#       RegionalCertificateArn: String
+#       SecurityPolicy: String
+
+#   DNSRecordSet:
+#     Type: AWS::Route53::RecordSet
+#     Properties: 
+#       AliasTarget:
+#         DNSName: String
+#         EvaluateTargetHealth: Boolean
+#         HostedZoneId: String
+#       Comment: String
+#       Failover: String
+#       GeoLocation: 
+#         GeoLocation
+#       HostedZoneId: !Ref DNS
+#       Name: cei.devgtttest.com
+#       ResourceRecords: 
+#         - String
+#       SetIdentifier: String
+#       TTL: String
+#       Type: String
+#       Weight: Integer

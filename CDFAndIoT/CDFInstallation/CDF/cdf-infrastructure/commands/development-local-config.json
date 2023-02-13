@@ -1,0 +1,28 @@
+{
+  "aws": {
+    "accountId": "157731826412",
+    "region": "us-west-2",
+    "s3": {
+      "bucket": "cdf-157731826412-us-west-2",
+      "prefix": "commands/",
+      "roleArn": "arn:aws:iam::157731826412:role/cdf-commands-development-LambdaExecutionRole-1FNZL1CDG4H3S"
+    },
+    "iot": {
+      "endpoint": "aofuby49j6efy-ats.iot.us-west-2.amazonaws.com"
+    }
+  },
+  "tables": {
+    "templates": "cdf-commands-templates-development",
+    "jobs": "cdf-commands-jobs-development"
+  },
+  "tmpdir": "/tmp",
+  "cors": {
+    "origin": "*"
+  },
+  "assetLibrary": {
+    "apiFunctionName": "cdf-assetlibrary-development-LambdaFunction-1H9R4DUEYUBF4"
+  },
+  "provisioning": {
+    "apiFunctionName": "cdf-provisioning-development-LambdaFunction-1J9KZ4G6DF5B4"
+  }
+}

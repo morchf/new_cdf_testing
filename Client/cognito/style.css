@@ -1,0 +1,37 @@
+/**
+ * See: https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-app-ui-customization.html
+ */
+.background-customizable {}
+.errorMessage-customizable {}
+.idpButton-customizable {}
+.idpButton-customizable:hover {}
+.inputField-customizable {}
+.inputField-customizable:focus {}
+.label-customizable {}
+.legalText-customizable {}
+
+/* Remove text */
+.textDescription-customizable {
+    color: white;
+    font-size: 0px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+
+.logo-customizable {
+    max-width: 0.7;
+    max-height: 0.6;
+}
+
+.banner-customizable {
+    background-color: white;
+    padding: 25px 0px 25px 0px;
+}
+
+.submitButton-customizable {
+    background-color: #0f9647;
+}
+
+.submitButton-customizable:hover {
+    background-color: #097a38;
+}

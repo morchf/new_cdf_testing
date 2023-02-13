@@ -1,0 +1,79 @@
+/* Chart */
+.deviation-category {
+  padding: 1rem;
+}
+
+.deviation-category__title {
+  margin: 1rem 0 0 1rem;
+}
+
+.deviation-category__chart {
+  padding: 1rem 3rem 0 2rem;
+}
+
+.deviation-category__chart svg path:hover {
+  cursor: pointer;
+}
+
+/* RadioCard */
+.deviation-category__radio-card {
+  width: calc(100% - 7rem);
+  display: flex;
+  flex-direction: row;
+  grid-gap: 1rem;
+  flex-grow: 1;
+  flex-wrap: wrap;
+  margin: 2rem 3rem 2.5rem 4rem;
+}
+
+.deviation-category__radio-button {
+  height: 3rem;
+  color: var(--text);
+  box-shadow: 2px 2px 5px 0px rgba(0, 0, 0, 0.24);
+  transform: translateY(0);
+  border: 2px solid transparent !important;
+  border-radius: 0.25rem;
+  flex-grow: 1;
+  transition: 0.125s ease-in-out;
+  font-weight: 500 !important;
+  opacity: 0.6;
+
+  --antd-wave-shadow-color: black;
+}
+
+.deviation-category__radio-button:hover {
+  border-color: black !important;
+}
+
+.deviation-category__radio-button.active {
+  opacity: 1 !important;
+}
+
+/**
+  Colors for each category
+  */
+
+/* Late */
+
+.deviation-category__radio-button.late {
+  background-color: var(--error);
+  color: var(--text-contrast);
+}
+
+/* Early */
+
+.deviation-category__radio-button.early {
+  background-color: #ffc914;
+  color: #8c742f;
+}
+
+/* On-time */
+
+.deviation-category__radio-button.on-time {
+  background-color: var(--border);
+  color: var(--text-contrast);
+}
+
+.deviation-category__radio-card span {
+  pointer-events: none;
+}

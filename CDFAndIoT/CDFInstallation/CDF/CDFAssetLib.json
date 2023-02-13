@@ -1,0 +1,3398 @@
+{
+	"info": {
+		"_postman_id": "bef2f0cc-bd41-450d-bd70-b160cc070d98",
+		"name": "CDF-related Asset Lib Endpoints",
+		"description": "Calls Asset Library API to create templates, groups, and devices.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "18190099"
+	},
+	"item": [
+		{
+			"name": "Templates",
+			"item": [
+				{
+					"name": "Group - Region",
+					"item": [
+						{
+							"name": "Get",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"properties\": {\n    \"description\": {\n      \"type\": [\n        \"null\",\n        \"string\"\n      ]\n    },\n    \"caCertId\": {\n      \"type\": \"string\"\n    },\n    \"regionGUID\": {\n      \"type\": [\n        \"null\",\n        \"string\"\n      ]\n    },\n    \"displayName\": {\n      \"type\": [\n        \"null\",\n        \"string\"\n      ]\n    }\n  },\n  \"relations\": {},\n  \"required\": [\n    \"caCertId\",\n    \"regionGUID\"\n  ]\n}"
+								},
+								"url": {
+									"raw": "{{url}}/templates/group/region",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"templates",
+										"group",
+										"region"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create",
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "'Accept: application/vnd.aws-cdf-v2.0+json'"
+									},
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"properties\": {\n        \"description\": {\n            \"type\": [\n                \"null\",\n                \"string\"\n            ]\n        },\n        \"caCertId\": {\n            \"type\": \"string\"\n        },\n        \"regionGUID\": {\n            \"type\": [\n                \"null\",\n                \"string\"\n            ]\n        },\n        \"displayName\": {\n            \"type\": [\n                \"null\",\n                \"string\"\n            ]\n        }\n    },\n    \"relations\": {},\n    \"required\": [\n        \"caCertId\",\n        \"regionGUID\"\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/templates/group/region",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"templates",
+										"group",
+										"region"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update",
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"properties\": {\n        \"description\": {\n            \"type\": [\n                \"null\",\n                \"string\"\n            ]\n        },\n        \"caCertId\": {\n            \"type\": \"string\"\n        },\n        \"regionGUID\": {\n            \"type\": [\n                \"null\",\n                \"string\"\n            ]\n        },\n        \"displayName\": {\n            \"type\": [\n                \"null\",\n                \"string\"\n            ]\n        }\n    },\n    \"relations\": {},\n    \"required\": [\n        \"caCertId\",\n        \"regionGUID\"\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{url}}/templates/group/region",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"templates",
+										"group",
+										"region"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Publish",
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "'Accept: application/vnd.aws-cdf-v2.0+json'"
+									},
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/templates/group/region/publish",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"templates",
+										"group",
+										"region",
+										"publish"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete",
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "'Accept: application/vnd.aws-cdf-v2.0+json'",
+										"type": "text"
+									},
+									{
+										"key": "Content-type",
+										"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/templates/group/region",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"templates",
+										"group",
+										"region"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Group - Agency",
+					"item": [
+						{
+							"name": "Get",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"properties\": {\n\t\"description\": { \"type\": [\"null\", \"string\"] },\n    \"caCertId\": {\"type\": \"string\"},\n    \"regionGUID\": {\"type\": [\"null\", \"string\"]},\n    \"regionDNS\": {\"type\": [\"null\", \"string\"]}\n  },\n  \"relations\": {},\n  \"required\": [\"caCertId\", \"regionGUID\", \"regionDNS\"]\n}"
+								},
+								"url": {
+									"raw": "{{url}}/templates/group/agency",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"templates",
+										"group",
+										"agency"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create",
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "'Accept: application/vnd.aws-cdf-v2.0+json'"
+									},
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"properties\": {\n        \"description\": {\n            \"type\": [\n                \"null\",\n                \"string\"\n            ]\n        },\n        \"city\": {\n            \"type\": \"string\"\n        },\n        \"state\": {\n            \"type\": \"string\"\n        },\n        \"timezone\": {\n            \"type\": \"string\",\n            \"enum\": [\n                \"Central\",\n                \"Mountain\",\n                \"Eastern\",\n                \"Pacific\",\n                \"Arizona\"\n            ]\n        },\n        \"agencyCode\": {\n            \"type\": \"integer\",\n            \"minimum\": 1,\n            \"maximum\": 254\n        },\n        \"agencyID\": {\n            \"type\": [\n                \"null\",\n                \"string\"\n            ]\n        },\n        \"caCertId\": {\n            \"type\": [\n                \"null\",\n                \"string\"\n            ]\n        },\n        \"vpsCertId\": {\n            \"type\": [\n                \"null\",\n                \"string\"\n            ]\n        },\n        \"priority\": {\n            \"type\": \"string\",\n            \"enum\": [\n                \"High\",\n                \"Low\"\n            ]\n        },\n        \"CMSId\": {\n            \"type\": [\n                \"null\",\n                \"string\"\n            ]\n        },\n        \"Cert2100Id\": {\n            \"type\": [\n                \"null\",\n                \"string\"\n            ]\n        },\n        \"displayName\": {\n            \"type\": [\n                \"null\",\n                \"string\"\n            ]\n        }\n    },\n    \"relations\": {\n        \"in\": {\n            \"ownedby\": [\n                \"integrationcom\",\n                \"communicator\"\n            ]\n        }\n    },\n    \"required\": [\n        \"city\",\n        \"state\",\n        \"timezone\",\n        \"agencyCode\",\n        \"agencyID\",\n        \"priority\",\n        \"caCertId\",\n        \"vpsCertId\"\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{url}}/templates/group/agency",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"templates",
+										"group",
+										"agency"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update",
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"properties\": {\n        \"description\": {\n            \"type\": [\n                \"null\",\n                \"string\"\n            ]\n        },\n        \"city\": {\n            \"type\": \"string\"\n        },\n        \"state\": {\n            \"type\": \"string\"\n        },\n        \"timezone\": {\n            \"type\": \"string\",\n            \"enum\": [\n                \"Central\",\n                \"Mountain\",\n                \"Eastern\",\n                \"Pacific\",\n                \"Arizona\"\n            ]\n        },\n        \"agencyCode\": {\n            \"type\": \"integer\",\n            \"minimum\": 1,\n            \"maximum\": 254\n        },\n        \"agencyID\": {\n            \"type\": [\n                \"null\",\n                \"string\"\n            ]\n        },\n        \"caCertId\": {\n            \"type\": [\n                \"null\",\n                \"string\"\n            ]\n        },\n        \"vpsCertId\": {\n            \"type\": [\n                \"null\",\n                \"string\"\n            ]\n        },\n        \"priority\": {\n            \"type\": \"string\",\n            \"enum\": [\n                \"High\",\n                \"Low\"\n            ]\n        },\n        \"CMSId\": {\n            \"type\": [\n                \"null\",\n                \"string\"\n            ]\n        },\n        \"Cert2100Id\": {\n            \"type\": [\n                \"null\",\n                \"string\"\n            ]\n        },\n        \"displayName\": {\n            \"type\": [\n                \"null\",\n                \"string\"\n            ]\n        }\n    },\n    \"relations\": {\n        \"in\": {\n            \"ownedby\": [\n                \"integrationcom\",\n                \"communicator\"\n            ]\n        }\n    },\n    \"required\": [\n        \"city\",\n        \"state\",\n        \"timezone\",\n        \"agencyCode\",\n        \"agencyID\",\n        \"priority\",\n        \"caCertId\",\n        \"vpsCertId\"\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{url}}/templates/group/agency",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"templates",
+										"group",
+										"agency"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Publish",
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "'Accept: application/vnd.aws-cdf-v2.0+json'"
+									},
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/templates/group/agency/publish",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"templates",
+										"group",
+										"agency",
+										"publish"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete",
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "'Accept: application/vnd.aws-cdf-v2.0+json'",
+										"type": "text"
+									},
+									{
+										"key": "Content-type",
+										"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/templates/group/agency",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"templates",
+										"group",
+										"agency"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Device - VehicleV2",
+					"item": [
+						{
+							"name": "Get",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"properties\": {\r\n    \"name\": {\r\n      \"type\": [\"null\", \"string\"]\r\n    },\r\n    \"description\": {\r\n      \"type\": [\"null\", \"string\"]\r\n    },\r\n    \"type\": {\r\n      \"type\": [\"null\", \"string\"]\r\n    },\r\n    \"priority\": {\r\n      \"type\": \"string\",\r\n      \"enum\": [\"High\", \"Low\"]\r\n    },\r\n    \"class\": {\r\n      \"type\": \"integer\",\r\n      \"minimum\": 1,\r\n      \"maximum\": 10\r\n    },\r\n    \"VID\": {\r\n      \"type\": \"integer\",\r\n      \"minimum\": 1,\r\n      \"maximum\": 9999\r\n    },\r\n    \"lastGPIOMsgTimestamp\": {\r\n      \"type\": [\"null\", \"string\"]\r\n    },\r\n    \"lat\": {\r\n      \"type\": \"number\",\r\n      \"minimum\": -90,\r\n      \"maximum\": 90\r\n    },\r\n    \"long\": {\r\n      \"type\": \"number\",\r\n      \"minimum\": -180,\r\n      \"maximum\": 180\r\n    },\r\n    \"heading\": {\r\n      \"type\": \"number\",\r\n      \"minimum\": 0,\r\n      \"maximum\": 359\r\n    },\r\n    \"speed\": {\r\n      \"type\": \"number\",\r\n      \"minimum\": 0,\r\n      \"maximum\": 500\r\n    },\r\n    \"fixStatus\": {\r\n      \"type\": \"integer\",\r\n      \"minimum\": 0,\r\n      \"maximum\": 1\r\n    },\r\n    \"numFixSat\": {\r\n      \"type\": \"integer\",\r\n      \"minimum\": 0,\r\n      \"maximum\": 76\r\n    },\r\n    \"lastGPSMsgTimestamp\": {\r\n      \"type\": [\"null\", \"string\"]\r\n    },\r\n    \"uniqueId\": {\r\n      \"type\": [\"null\", \"string\"]\r\n    },\r\n    \"auxiliaryIo\": {\r\n      \"type\": \"integer\",\r\n      \"minimum\": 0,\r\n      \"maximum\": 31\r\n    }\r\n  },\r\n  \"relations\": {\r\n    \"in\": {\r\n      \"ownedby\": [\"{{d3-temp}}\"]\r\n    }\r\n  },\r\n  \"required\": [\"priority\", \"uniqueId\"]\r\n}\r\n"
+								},
+								"url": {
+									"raw": "{{url}}/templates/device/vehicleV2",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"templates",
+										"device",
+										"vehicleV2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create",
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "'Accept: application/vnd.aws-cdf-v2.0+json'"
+									},
+									{
+										"key": "content-type",
+										"type": "text",
+										"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"properties\": {\r\n        \"name\": {\r\n            \"type\": [\r\n                \"null\",\r\n                \"string\"\r\n            ]\r\n        },\r\n        \"description\": {\r\n            \"type\": [\r\n                \"null\",\r\n                \"string\"\r\n            ]\r\n        },\r\n        \"type\": {\r\n            \"type\": [\r\n                \"null\",\r\n                \"string\"\r\n            ]\r\n        },\r\n        \"priority\": {\r\n            \"type\": \"string\",\r\n            \"enum\": [\r\n                \"High\",\r\n                \"Low\"\r\n            ]\r\n        },\r\n        \"class\": {\r\n            \"type\": \"integer\",\r\n            \"minimum\": 1,\r\n            \"maximum\": 10\r\n        },\r\n        \"VID\": {\r\n            \"type\": \"integer\",\r\n            \"minimum\": 1,\r\n            \"maximum\": 9999\r\n        },\r\n        \"uniqueId\": {\r\n            \"type\": [\r\n                \"null\",\r\n                \"string\"\r\n            ]\r\n        }\r\n    },\r\n    \"relations\": {\r\n        \"in\": {\r\n            \"installedat\": [\r\n                \"integrationcom\",\r\n                \"communicator\"\r\n            ]\r\n        }\r\n    },\r\n    \"required\": [\r\n        \"priority\",\r\n        \"uniqueId\"\r\n    ]\r\n}"
+								},
+								"url": {
+									"raw": "{{url}}/templates/device/vehicleV2",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"templates",
+										"device",
+										"vehicleV2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update",
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"properties\": {\r\n        \"name\": {\r\n            \"type\": [\r\n                \"null\",\r\n                \"string\"\r\n            ]\r\n        },\r\n        \"description\": {\r\n            \"type\": [\r\n                \"null\",\r\n                \"string\"\r\n            ]\r\n        },\r\n        \"type\": {\r\n            \"type\": [\r\n                \"null\",\r\n                \"string\"\r\n            ]\r\n        },\r\n        \"priority\": {\r\n            \"type\": \"string\",\r\n            \"enum\": [\r\n                \"High\",\r\n                \"Low\"\r\n            ]\r\n        },\r\n        \"class\": {\r\n            \"type\": \"integer\",\r\n            \"minimum\": 1,\r\n            \"maximum\": 10\r\n        },\r\n        \"VID\": {\r\n            \"type\": \"integer\",\r\n            \"minimum\": 1,\r\n            \"maximum\": 9999\r\n        },\r\n        \"uniqueId\": {\r\n            \"type\": [\r\n                \"null\",\r\n                \"string\"\r\n            ]\r\n        }\r\n    },\r\n    \"relations\": {\r\n        \"in\": {\r\n            \"installedat\": [\r\n                \"integrationcom\",\r\n                \"communicator\"\r\n            ]\r\n        }\r\n    },\r\n    \"required\": [\r\n        \"priority\",\r\n        \"uniqueId\"\r\n    ]\r\n}"
+								},
+								"url": {
+									"raw": "{{url}}/templates/device/vehicleV2",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"templates",
+										"device",
+										"vehicleV2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Publish",
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "'Accept: application/vnd.aws-cdf-v2.0+json'"
+									},
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/templates/device/vehicleV2/publish",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"templates",
+										"device",
+										"vehicleV2",
+										"publish"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete",
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "'Accept: application/vnd.aws-cdf-v2.0+json'"
+									},
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/templates/device/vehicleV2",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"templates",
+										"device",
+										"vehicleV2"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Device - Communicator",
+					"item": [
+						{
+							"name": "Get",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"properties\": {\r\n    \"name\": {\r\n      \"type\": [\"null\", \"string\"]\r\n    },\r\n    \"description\": {\r\n      \"type\": [\"null\", \"string\"]\r\n    },\r\n    \"type\": {\r\n      \"type\": [\"null\", \"string\"]\r\n    },\r\n    \"priority\": {\r\n      \"type\": \"string\",\r\n      \"enum\": [\"High\", \"Low\"]\r\n    },\r\n    \"class\": {\r\n      \"type\": \"integer\",\r\n      \"minimum\": 1,\r\n      \"maximum\": 10\r\n    },\r\n    \"VID\": {\r\n      \"type\": \"integer\",\r\n      \"minimum\": 1,\r\n      \"maximum\": 9999\r\n    },\r\n    \"lastGPIOMsgTimestamp\": {\r\n      \"type\": [\"null\", \"string\"]\r\n    },\r\n    \"lat\": {\r\n      \"type\": \"number\",\r\n      \"minimum\": -90,\r\n      \"maximum\": 90\r\n    },\r\n    \"long\": {\r\n      \"type\": \"number\",\r\n      \"minimum\": -180,\r\n      \"maximum\": 180\r\n    },\r\n    \"heading\": {\r\n      \"type\": \"number\",\r\n      \"minimum\": 0,\r\n      \"maximum\": 359\r\n    },\r\n    \"speed\": {\r\n      \"type\": \"number\",\r\n      \"minimum\": 0,\r\n      \"maximum\": 500\r\n    },\r\n    \"fixStatus\": {\r\n      \"type\": \"integer\",\r\n      \"minimum\": 0,\r\n      \"maximum\": 1\r\n    },\r\n    \"numFixSat\": {\r\n      \"type\": \"integer\",\r\n      \"minimum\": 0,\r\n      \"maximum\": 76\r\n    },\r\n    \"lastGPSMsgTimestamp\": {\r\n      \"type\": [\"null\", \"string\"]\r\n    },\r\n    \"uniqueId\": {\r\n      \"type\": [\"null\", \"string\"]\r\n    },\r\n    \"auxiliaryIo\": {\r\n      \"type\": \"integer\",\r\n      \"minimum\": 0,\r\n      \"maximum\": 31\r\n    }\r\n  },\r\n  \"relations\": {\r\n    \"in\": {\r\n      \"ownedby\": [\"{{d3-temp}}\"]\r\n    }\r\n  },\r\n  \"required\": [\"priority\", \"uniqueId\"]\r\n}\r\n"
+								},
+								"url": {
+									"raw": "{{url}}/templates/device/communicator",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"templates",
+										"device",
+										"communicator"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create",
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "'Accept: application/vnd.aws-cdf-v2.0+json'"
+									},
+									{
+										"key": "content-type",
+										"type": "text",
+										"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"properties\": {\r\n        \"description\": {\r\n            \"type\": [\r\n                \"null\",\r\n                \"string\"\r\n            ]\r\n        },\r\n        \"serial\": {\r\n            \"type\": \"string\"\r\n        },\r\n        \"addressMAC\": {\r\n            \"type\": [\r\n                \"null\",\r\n                \"string\"\r\n            ]\r\n        },\r\n        \"IMEI\": {\r\n            \"type\": \"string\"\r\n        },\r\n        \"gttSerial\": {\r\n            \"type\": \"string\"\r\n        },\r\n        \"addressLAN\": {\r\n            \"type\": \"string\",\r\n            \"format\": \"ipv4\"\r\n        },\r\n        \"addressWAN\": {\r\n            \"type\": \"string\",\r\n            \"format\": \"ipv4\"\r\n        },\r\n        \"devCertId\": {\r\n            \"type\": [\r\n                \"null\",\r\n                \"string\"\r\n            ]\r\n        },\r\n        \"make\": {\r\n            \"type\": [\r\n                \"null\",\r\n                \"string\"\r\n            ],\r\n            \"enum\": [\r\n                \"GTT\",\r\n                \"Sierra Wireless\",\r\n                \"Cradlepoint\"\r\n            ]\r\n        },\r\n        \"model\": {\r\n            \"type\": [\r\n                \"null\",\r\n                \"string\"\r\n            ],\r\n            \"enum\": [\r\n                \"MP-70\",\r\n                \"2100\",\r\n                \"2101\",\r\n                \"2150\",\r\n                \"2151\",\r\n                \"IBR900\",\r\n                \"IBR1700\",\r\n                \"R1900\"\r\n            ]\r\n        },\r\n        \"uniqueId\": {\r\n            \"type\": [\r\n                \"null\",\r\n                \"string\"\r\n            ]\r\n        }\r\n    },\r\n    \"relations\": {\r\n        \"out\": {\r\n            \"installedat\": [\r\n                \"vehiclev2\"\r\n            ],\r\n            \"ownedby\": [\r\n                \"agency\"\r\n            ]\r\n        }\r\n    },\r\n    \"required\": [\r\n        \"devCertId\",\r\n        \"gttSerial\",\r\n        \"IMEI\",\r\n        \"addressLAN\",\r\n        \"addressWAN\",\r\n        \"addressMAC\",\r\n        \"make\",\r\n        \"model\",\r\n        \"uniqueId\"\r\n    ]\r\n}"
+								},
+								"url": {
+									"raw": "{{url}}/templates/device/communicator",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"templates",
+										"device",
+										"communicator"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update",
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"properties\": {\r\n        \"description\": {\r\n            \"type\": [\r\n                \"null\",\r\n                \"string\"\r\n            ]\r\n        },\r\n        \"serial\": {\r\n            \"type\": \"string\"\r\n        },\r\n        \"addressMAC\": {\r\n            \"type\": [\r\n                \"null\",\r\n                \"string\"\r\n            ]\r\n        },\r\n        \"IMEI\": {\r\n            \"type\": \"string\"\r\n        },\r\n        \"gttSerial\": {\r\n            \"type\": \"string\"\r\n        },\r\n        \"addressLAN\": {\r\n            \"type\": \"string\",\r\n            \"format\": \"ipv4\"\r\n        },\r\n        \"addressWAN\": {\r\n            \"type\": \"string\",\r\n            \"format\": \"ipv4\"\r\n        },\r\n        \"devCertId\": {\r\n            \"type\": [\r\n                \"null\",\r\n                \"string\"\r\n            ]\r\n        },\r\n        \"make\": {\r\n            \"type\": [\r\n                \"null\",\r\n                \"string\"\r\n            ],\r\n            \"enum\": [\r\n                \"GTT\",\r\n                \"Sierra Wireless\",\r\n                \"Cradlepoint\"\r\n            ]\r\n        },\r\n        \"model\": {\r\n            \"type\": [\r\n                \"null\",\r\n                \"string\"\r\n            ],\r\n            \"enum\": [\r\n                \"MP-70\",\r\n                \"2100\",\r\n                \"2101\",\r\n                \"2150\",\r\n                \"2151\",\r\n                \"IBR900\",\r\n                \"IBR1700\",\r\n                \"R1900\"\r\n            ]\r\n        },\r\n        \"uniqueId\": {\r\n            \"type\": [\r\n                \"null\",\r\n                \"string\"\r\n            ]\r\n        }\r\n    },\r\n    \"relations\": {\r\n        \"out\": {\r\n            \"installedat\": [\r\n                \"vehiclev2\"\r\n            ],\r\n            \"ownedby\": [\r\n                \"agency\"\r\n            ]\r\n        }\r\n    },\r\n    \"required\": [\r\n        \"devCertId\",\r\n        \"gttSerial\",\r\n        \"IMEI\",\r\n        \"addressLAN\",\r\n        \"addressWAN\",\r\n        \"addressMAC\",\r\n        \"make\",\r\n        \"model\",\r\n        \"uniqueId\"\r\n    ]\r\n}"
+								},
+								"url": {
+									"raw": "{{url}}/templates/device/communicator",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"templates",
+										"device",
+										"communicator"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Publish",
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "'Accept: application/vnd.aws-cdf-v2.0+json'"
+									},
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/templates/device/communicator/publish",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"templates",
+										"device",
+										"communicator",
+										"publish"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete",
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "'Accept: application/vnd.aws-cdf-v2.0+json'"
+									},
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/templates/device/communicator",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"templates",
+										"device",
+										"communicator"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Device - Phase Selector",
+					"item": [
+						{
+							"name": "Get",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"properties\": {\r\n    \"name\": {\r\n      \"type\": [\"null\", \"string\"]\r\n    },\r\n    \"description\": {\r\n      \"type\": [\"null\", \"string\"]\r\n    },\r\n    \"type\": {\r\n      \"type\": [\"null\", \"string\"]\r\n    },\r\n    \"priority\": {\r\n      \"type\": \"string\",\r\n      \"enum\": [\"High\", \"Low\"]\r\n    },\r\n    \"class\": {\r\n      \"type\": \"integer\",\r\n      \"minimum\": 1,\r\n      \"maximum\": 10\r\n    },\r\n    \"VID\": {\r\n      \"type\": \"integer\",\r\n      \"minimum\": 1,\r\n      \"maximum\": 9999\r\n    },\r\n    \"lastGPIOMsgTimestamp\": {\r\n      \"type\": [\"null\", \"string\"]\r\n    },\r\n    \"lat\": {\r\n      \"type\": \"number\",\r\n      \"minimum\": -90,\r\n      \"maximum\": 90\r\n    },\r\n    \"long\": {\r\n      \"type\": \"number\",\r\n      \"minimum\": -180,\r\n      \"maximum\": 180\r\n    },\r\n    \"heading\": {\r\n      \"type\": \"number\",\r\n      \"minimum\": 0,\r\n      \"maximum\": 359\r\n    },\r\n    \"speed\": {\r\n      \"type\": \"number\",\r\n      \"minimum\": 0,\r\n      \"maximum\": 500\r\n    },\r\n    \"fixStatus\": {\r\n      \"type\": \"integer\",\r\n      \"minimum\": 0,\r\n      \"maximum\": 1\r\n    },\r\n    \"numFixSat\": {\r\n      \"type\": \"integer\",\r\n      \"minimum\": 0,\r\n      \"maximum\": 76\r\n    },\r\n    \"lastGPSMsgTimestamp\": {\r\n      \"type\": [\"null\", \"string\"]\r\n    },\r\n    \"uniqueId\": {\r\n      \"type\": [\"null\", \"string\"]\r\n    },\r\n    \"auxiliaryIo\": {\r\n      \"type\": \"integer\",\r\n      \"minimum\": 0,\r\n      \"maximum\": 31\r\n    }\r\n  },\r\n  \"relations\": {\r\n    \"in\": {\r\n      \"ownedby\": [\"{{d3-temp}}\"]\r\n    }\r\n  },\r\n  \"required\": [\"priority\", \"uniqueId\"]\r\n}\r\n"
+								},
+								"url": {
+									"raw": "{{url}}/templates/device/phaseselector",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"templates",
+										"device",
+										"phaseselector"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create",
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "'Accept: application/vnd.aws-cdf-v2.0+json'"
+									},
+									{
+										"key": "content-type",
+										"type": "text",
+										"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"properties\": {\r\n    \"name\": {\r\n      \"type\": [\"null\", \"string\"]\r\n    },\r\n    \"description\": {\r\n      \"type\": [\"null\", \"string\"]\r\n    },\r\n    \"type\": {\r\n      \"type\": [\"null\", \"string\"]\r\n    },\r\n    \"priority\": {\r\n      \"type\": \"string\",\r\n      \"enum\": [\"High\", \"Low\"]\r\n    },\r\n    \"class\": {\r\n      \"type\": \"integer\",\r\n      \"minimum\": 1,\r\n      \"maximum\": 10\r\n    },\r\n    \"VID\": {\r\n      \"type\": \"integer\",\r\n      \"minimum\": 1,\r\n      \"maximum\": 9999\r\n    },\r\n    \"lastGPIOMsgTimestamp\": {\r\n      \"type\": [\"null\", \"string\"]\r\n    },\r\n    \"lat\": {\r\n      \"type\": \"number\",\r\n      \"minimum\": -90,\r\n      \"maximum\": 90\r\n    },\r\n    \"long\": {\r\n      \"type\": \"number\",\r\n      \"minimum\": -180,\r\n      \"maximum\": 180\r\n    },\r\n    \"heading\": {\r\n      \"type\": \"number\",\r\n      \"minimum\": 0,\r\n      \"maximum\": 359\r\n    },\r\n    \"speed\": {\r\n      \"type\": \"number\",\r\n      \"minimum\": 0,\r\n      \"maximum\": 500\r\n    },\r\n    \"fixStatus\": {\r\n      \"type\": \"integer\",\r\n      \"minimum\": 0,\r\n      \"maximum\": 1\r\n    },\r\n    \"numFixSat\": {\r\n      \"type\": \"integer\",\r\n      \"minimum\": 0,\r\n      \"maximum\": 76\r\n    },\r\n    \"lastGPSMsgTimestamp\": {\r\n      \"type\": [\"null\", \"string\"]\r\n    },\r\n    \"uniqueId\": {\r\n      \"type\": [\"null\", \"string\"]\r\n    }\r\n  },\r\n  \"relations\": {\r\n    \"in\": {\r\n      \"ownedby\": [\"communicator\"]\r\n    }\r\n  },\r\n  \"required\": [\"priority\", \"uniqueId\"]\r\n}\r\n"
+								},
+								"url": {
+									"raw": "{{url}}/templates/device/phaseselector",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"templates",
+										"device",
+										"phaseselector"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update",
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"properties\": {\r\n    \"name\": {\r\n      \"type\": [\"null\", \"string\"]\r\n    },\r\n    \"description\": {\r\n      \"type\": [\"null\", \"string\"]\r\n    },\r\n    \"type\": {\r\n      \"type\": [\"null\", \"string\"]\r\n    },\r\n    \"priority\": {\r\n      \"type\": \"string\",\r\n      \"enum\": [\"High\", \"Low\"]\r\n    },\r\n    \"class\": {\r\n      \"type\": \"integer\",\r\n      \"minimum\": 1,\r\n      \"maximum\": 10\r\n    },\r\n    \"VID\": {\r\n      \"type\": \"integer\",\r\n      \"minimum\": 1,\r\n      \"maximum\": 9999\r\n    },\r\n    \"lastGPIOMsgTimestamp\": {\r\n      \"type\": [\"null\", \"string\"]\r\n    },\r\n    \"lat\": {\r\n      \"type\": \"number\",\r\n      \"minimum\": -90,\r\n      \"maximum\": 90\r\n    },\r\n    \"long\": {\r\n      \"type\": \"number\",\r\n      \"minimum\": -180,\r\n      \"maximum\": 180\r\n    },\r\n    \"heading\": {\r\n      \"type\": \"number\",\r\n      \"minimum\": 0,\r\n      \"maximum\": 359\r\n    },\r\n    \"speed\": {\r\n      \"type\": \"number\",\r\n      \"minimum\": 0,\r\n      \"maximum\": 500\r\n    },\r\n    \"fixStatus\": {\r\n      \"type\": \"integer\",\r\n      \"minimum\": 0,\r\n      \"maximum\": 1\r\n    },\r\n    \"numFixSat\": {\r\n      \"type\": \"integer\",\r\n      \"minimum\": 0,\r\n      \"maximum\": 76\r\n    },\r\n    \"lastGPSMsgTimestamp\": {\r\n      \"type\": [\"null\", \"string\"]\r\n    },\r\n    \"uniqueId\": {\r\n      \"type\": [\"null\", \"string\"]\r\n    },\r\n    \"auxiliaryIo\": {\r\n      \"type\": \"integer\",\r\n      \"minimum\": 0,\r\n      \"maximum\": 31\r\n    }\r\n  },\r\n  \"relations\": {\r\n    \"in\": {\r\n      \"ownedby\": [\"{{d3-temp}}\"]\r\n    }\r\n  },\r\n  \"required\": [\"priority\", \"uniqueId\"]\r\n}\r\n"
+								},
+								"url": {
+									"raw": "{{url}}/templates/device/phaseselector",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"templates",
+										"device",
+										"phaseselector"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Publish",
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "'Accept: application/vnd.aws-cdf-v2.0+json'"
+									},
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/templates/device/phaseselector/publish",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"templates",
+										"device",
+										"phaseselector",
+										"publish"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete",
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "'Accept: application/vnd.aws-cdf-v2.0+json'"
+									},
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/templates/device/phaseselector",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"templates",
+										"device",
+										"phaseselector"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "List all group templates",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "awsv4",
+							"awsv4": [
+								{
+									"key": "secretKey",
+									"value": "{{secret_key}}",
+									"type": "string"
+								},
+								{
+									"key": "accessKey",
+									"value": "{{access_key}}",
+									"type": "string"
+								},
+								{
+									"key": "region",
+									"value": "us-east-1",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "'Accept: application/vnd.aws-cdf-v2.0+json'",
+								"type": "text"
+							},
+							{
+								"key": "Content-Ty",
+								"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/templates/group?status=published",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"templates",
+								"group"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "published"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List all device templates",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "awsv4",
+							"awsv4": [
+								{
+									"key": "secretKey",
+									"value": "{{secret_key}}",
+									"type": "string"
+								},
+								{
+									"key": "accessKey",
+									"value": "{{access_key}}",
+									"type": "string"
+								},
+								{
+									"key": "region",
+									"value": "{{aws-region}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "'Accept: application/vnd.aws-cdf-v2.0+json'",
+								"type": "text"
+							},
+							{
+								"key": "Content-Ty",
+								"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/templates/device?status=published",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"templates",
+								"device"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "published"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Group Instances",
+			"item": [
+				{
+					"name": "Region",
+					"item": [
+						{
+							"name": "Get",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true,
+								"followRedirects": false
+							},
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "'Accept: application/vnd.aws-cdf-v2.0+json'",
+										"disabled": true
+									},
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/groups/%2f{{region-name}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups",
+										"%2f{{region-name}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"followRedirects": false
+							},
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "'Accept: application/vnd.aws-cdf-v2.0+json'",
+										"disabled": true
+									},
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"attributes\": {\n        \"displayName\": \"\",\n        \"caCertId\": \"\",\n        \"regionGUID\": \"\"\n    },\n    \"category\": \"group\",\n    \"templateId\": \"region\",\n    \"name\": \"\",\n    \"groupPath\": \"\",\n    \"description\": \"\",\n    \"parentPath\": \"/\"\n}"
+								},
+								"url": {
+									"raw": "{{url}}/groups/%2f{{region-name}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups",
+										"%2f{{region-name}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create",
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "'Accept: application/vnd.aws-cdf-v2.0+json'"
+									},
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"attributes\": {\n        \"displayName\": \"\",\n        \"caCertId\": \"\",\n        \"regionGUID\": \"\"\n    },\n    \"category\": \"group\",\n    \"templateId\": \"region\",\n    \"name\": \"\",\n    \"groupPath\": \"\",\n    \"description\": \"\",\n    \"parentPath\": \"/\"\n}"
+								},
+								"url": {
+									"raw": "{{url}}/groups/",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete",
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "'Accept: application/vnd.aws-cdf-v2.0+json'"
+									},
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/groups/%2f{{region-name}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups",
+										"%2f{{region-name}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Agency",
+					"item": [
+						{
+							"name": "Get",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true,
+								"followRedirects": false
+							},
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "'Accept: application/vnd.aws-cdf-v2.0+json'",
+										"disabled": true
+									},
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/groups/%2f{{region-name}}%2f{{agency-name}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups",
+										"%2f{{region-name}}%2f{{agency-name}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"followRedirects": false
+							},
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "'Accept: application/vnd.aws-cdf-v2.0+json'",
+										"disabled": true
+									},
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"attributes\": {\n        \"caCertId\": \"\",\n        \"city\": \"\",\n        \"state\": \"\",\n        \"timezone\": \"\",\n        \"agencyCode\": ,\n        \"agencyID\": \"\",\n        \"vpsCertId\": \"\",\n        \"priority\": \"\",\n        \"CMSId\": \"\",\n        \"Cert2100Id\": \"\",\n        \"displayName\": \"\"\n    },\n    \"category\": \"group\",\n    \"templateId\": \"agency\",\n    \"name\": \"\",\n    \"groupPath\": \"\",\n    \"parentPath\": \"\",\n    \"description\": \"\"\n}"
+								},
+								"url": {
+									"raw": "{{url}}/groups/%2f{{region-name}}%2f{{agency-name}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups",
+										"%2f{{region-name}}%2f{{agency-name}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create",
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "'Accept: application/vnd.aws-cdf-v2.0+json'"
+									},
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"attributes\": {\n        \"caCertId\": \"\",\n        \"city\": \"\",\n        \"state\": \"\",\n        \"timezone\": \"\",\n        \"agencyCode\": ,\n        \"agencyID\": \"\",\n        \"vpsCertId\": \"\",\n        \"priority\": \"\",\n        \"CMSId\": \"\",\n        \"Cert2100Id\": \"\",\n        \"displayName\": \"\"\n    },\n    \"category\": \"group\",\n    \"templateId\": \"agency\",\n    \"name\": \"\",\n    \"groupPath\": \"\",\n    \"parentPath\": \"\",\n    \"description\": \"\"\n}"
+								},
+								"url": {
+									"raw": "{{url}}/groups/",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete",
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "'Accept: application/vnd.aws-cdf-v2.0+json'"
+									},
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/groups/%2f{{region-name}}/%2f{{agency-name}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"groups",
+										"%2f{{region-name}}",
+										"%2f{{agency-name}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "List agencies in a region",
+					"request": {
+						"auth": {
+							"type": "awsv4",
+							"awsv4": [
+								{
+									"key": "accessKey",
+									"value": "{{access_key}}",
+									"type": "string"
+								},
+								{
+									"key": "secretKey",
+									"value": "{{secret_key}}",
+									"type": "string"
+								},
+								{
+									"key": "region",
+									"value": "{{aws-region}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/groups/%2f{{region-name}}/members/groups",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"groups",
+								"%2f{{region-name}}",
+								"members",
+								"groups"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List devices in an agency",
+					"request": {
+						"auth": {
+							"type": "awsv4",
+							"awsv4": [
+								{
+									"key": "secretKey",
+									"value": "{{secret_key}}",
+									"type": "string"
+								},
+								{
+									"key": "accessKey",
+									"value": "{{access_key}}",
+									"type": "string"
+								},
+								{
+									"key": "region",
+									"value": "{{aws-region}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/groups/%2f{{region-name}}%2f{{agency-name}}/members/devices",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"groups",
+								"%2f{{region-name}}%2f{{agency-name}}",
+								"members",
+								"devices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Region instances",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "awsv4",
+							"awsv4": [
+								{
+									"key": "secretKey",
+									"value": "{{secret_key}}",
+									"type": "string"
+								},
+								{
+									"key": "accessKey",
+									"value": "{{access_key}}",
+									"type": "string"
+								},
+								{
+									"key": "region",
+									"value": "{{aws-region}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "'Accept: application/vnd.aws-cdf-v2.0+json'"
+							},
+							{
+								"key": "Content-Ty",
+								"type": "text",
+								"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/search?type=region",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"search"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "region"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Agency instances",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "awsv4",
+							"awsv4": [
+								{
+									"key": "accessKey",
+									"value": "{{access_key}}",
+									"type": "string"
+								},
+								{
+									"key": "secretKey",
+									"value": "{{secret_key}}",
+									"type": "string"
+								},
+								{
+									"key": "region",
+									"value": "{{aws-region}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "'Accept: application/vnd.aws-cdf-v2.0+json'"
+							},
+							{
+								"key": "Content-Ty",
+								"type": "text",
+								"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/search?type=agency",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"search"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "agency"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Device Instances",
+			"item": [
+				{
+					"name": "VehicleV2",
+					"item": [
+						{
+							"name": "Get",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "'Accept: application/vnd.aws-cdf-v2.0+json'"
+									},
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/devices/{{vehicle-name}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"devices",
+										"{{vehicle-name}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create",
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "'Accept: application/vnd.aws-cdf-v2.0+json'"
+									},
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"groups\": {\n       \"{{relation}}\": [\"/{{g1-instance}}/{{g2-instance1}}\"]\n  },\n  \"attributes\": {\n    \"name\": \"veh1238\",\n    \"description\": \"Tan\",\n    \"type\": \"Ladder Truck\",\n    \"priority\": \"High\",\n    \"class\": 9,\n    \"VID\": 234,\n    \"lat\":44.9512963,\n    \"long\":-92.9453703,\n    \"heading\": 3,\n    \"speed\": 20,\n    \"fixStatus\": 1,\n    \"numFixSat\": 3,\n    \"auxiliaryIo\": 0,\n    \"lastGPSMsgTimestamp\":\"1576175734002\",\n    \"lastGPIOMsgTimestamp\":\"1576175734002\",\n    \"uniqueId\": \"NULL_GUID\"\n  },\n  \"category\": \"device\",\n  \"templateId\": \"{{d1-tempV2}}\",\n  \"state\": \"active\",\n  \"deviceId\": \"{{d1-instance1}}\"\n}"
+								},
+								"url": {
+									"raw": "{{url}}/devices/",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"devices",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update",
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\"attributes\":{\"heading\":10}}"
+								},
+								"url": {
+									"raw": "{{url}}/devices/{{vehicle-name}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"devices",
+										"{{vehicle-name}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete",
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "'Accept: application/vnd.aws-cdf-v2.0+json'"
+									},
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/devices/{{vehicle-name}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"devices",
+										"{{vehicle-name}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Communicator",
+					"item": [
+						{
+							"name": "Get",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "'Accept: application/vnd.aws-cdf-v2.0+json'"
+									},
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/devices/{{communicator-name}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"devices",
+										"{{communicator-name}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create",
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "'Accept: application/vnd.aws-cdf-v2.0+json'"
+									},
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"groups\": {\n       \"{{relation}}\": [\"/{{g1-instance}}/{{g2-instance1}}\"]\n  },\n  \"attributes\": {\n    \"name\": \"veh1238\",\n    \"description\": \"Tan\",\n    \"type\": \"Ladder Truck\",\n    \"priority\": \"High\",\n    \"class\": 9,\n    \"VID\": 234,\n    \"lat\":44.9512963,\n    \"long\":-92.9453703,\n    \"heading\": 3,\n    \"speed\": 20,\n    \"fixStatus\": 1,\n    \"numFixSat\": 3,\n    \"auxiliaryIo\": 0,\n    \"lastGPSMsgTimestamp\":\"1576175734002\",\n    \"lastGPIOMsgTimestamp\":\"1576175734002\",\n    \"uniqueId\": \"NULL_GUID\"\n  },\n  \"category\": \"device\",\n  \"templateId\": \"{{d1-tempV2}}\",\n  \"state\": \"active\",\n  \"deviceId\": \"{{d1-instance1}}\"\n}"
+								},
+								"url": {
+									"raw": "{{url}}/devices/",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"devices",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update",
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\"attributes\":{\"heading\":10}}"
+								},
+								"url": {
+									"raw": "{{url}}/devices/{{communicator-name}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"devices",
+										"{{communicator-name}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete",
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "'Accept: application/vnd.aws-cdf-v2.0+json'"
+									},
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/devices/{{communicator-name}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"devices",
+										"{{communicator-name}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Phase Selector",
+					"item": [
+						{
+							"name": "Get",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "'Accept: application/vnd.aws-cdf-v2.0+json'"
+									},
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/devices/{{phaseselector-name}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"devices",
+										"{{phaseselector-name}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create",
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "'Accept: application/vnd.aws-cdf-v2.0+json'"
+									},
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"groups\": {\n       \"{{relation}}\": [\"/{{g1-instance}}/{{g2-instance1}}\"]\n  },\n  \"attributes\": {\n    \"name\": \"veh1238\",\n    \"description\": \"Tan\",\n    \"type\": \"Ladder Truck\",\n    \"priority\": \"High\",\n    \"class\": 9,\n    \"VID\": 234,\n    \"lat\":44.9512963,\n    \"long\":-92.9453703,\n    \"heading\": 3,\n    \"speed\": 20,\n    \"fixStatus\": 1,\n    \"numFixSat\": 3,\n    \"auxiliaryIo\": 0,\n    \"lastGPSMsgTimestamp\":\"1576175734002\",\n    \"lastGPIOMsgTimestamp\":\"1576175734002\",\n    \"uniqueId\": \"NULL_GUID\"\n  },\n  \"category\": \"device\",\n  \"templateId\": \"{{d1-tempV2}}\",\n  \"state\": \"active\",\n  \"deviceId\": \"{{d1-instance1}}\"\n}"
+								},
+								"url": {
+									"raw": "{{url}}/devices/",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"devices",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update",
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\"attributes\":{\"heading\":10}}"
+								},
+								"url": {
+									"raw": "{{url}}/devices/{{phaseselector-name}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"devices",
+										"{{phaseselector-name}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete",
+							"request": {
+								"auth": {
+									"type": "awsv4",
+									"awsv4": [
+										{
+											"key": "accessKey",
+											"value": "{{access_key}}",
+											"type": "string"
+										},
+										{
+											"key": "secretKey",
+											"value": "{{secret_key}}",
+											"type": "string"
+										},
+										{
+											"key": "region",
+											"value": "{{aws-region}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "'Accept: application/vnd.aws-cdf-v2.0+json'"
+									},
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/devices/{{phaseselector-name}}",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"devices",
+										"{{phaseselector-name}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "List Vehicle instances",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "awsv4",
+							"awsv4": [
+								{
+									"key": "secretKey",
+									"value": "{{secret_key}}",
+									"type": "string"
+								},
+								{
+									"key": "accessKey",
+									"value": "{{access_key}}",
+									"type": "string"
+								},
+								{
+									"key": "region",
+									"value": "{{aws-region}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "'Accept: application/vnd.aws-cdf-v2.0+json'"
+							},
+							{
+								"key": "Content-Ty",
+								"type": "text",
+								"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/search?type=vehicleV2",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"search"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "vehicleV2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Communicator instances",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "awsv4",
+							"awsv4": [
+								{
+									"key": "accessKey",
+									"value": "{{access_key}}",
+									"type": "string"
+								},
+								{
+									"key": "secretKey",
+									"value": "{{secret_key}}",
+									"type": "string"
+								},
+								{
+									"key": "region",
+									"value": "{{aws-region}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "'Accept: application/vnd.aws-cdf-v2.0+json'"
+							},
+							{
+								"key": "Content-Ty",
+								"type": "text",
+								"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/search?type=communicator",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"search"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "communicator"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Phase Selector instances",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "awsv4",
+							"awsv4": [
+								{
+									"key": "secretKey",
+									"value": "{{secret_key}}",
+									"type": "string"
+								},
+								{
+									"key": "accessKey",
+									"value": "{{access_key}}",
+									"type": "string"
+								},
+								{
+									"key": "region",
+									"value": "{{aws-region}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "'Accept: application/vnd.aws-cdf-v2.0+json'"
+							},
+							{
+								"key": "Content-Ty",
+								"type": "text",
+								"value": "'Content-Type: application/vnd.aws-cdf-v2.0+json'"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/search?type=phaseselector",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"search"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "phaseselector"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List all communicators in a vehicle",
+					"request": {
+						"auth": {
+							"type": "awsv4",
+							"awsv4": [
+								{
+									"key": "secretKey",
+									"value": "{{secret_key}}",
+									"type": "string"
+								},
+								{
+									"key": "accessKey",
+									"value": "{{access_key}}",
+									"type": "string"
+								},
+								{
+									"key": "region",
+									"value": "{{aws-region}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/devices/{{vehicle-name}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"devices",
+								"{{vehicle-name}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Associate a communicator with a vehicle",
+					"request": {
+						"auth": {
+							"type": "awsv4",
+							"awsv4": [
+								{
+									"key": "secretKey",
+									"value": "{{secret_key}}",
+									"type": "string"
+								},
+								{
+									"key": "accessKey",
+									"value": "{{access_key}}",
+									"type": "string"
+								},
+								{
+									"key": "region",
+									"value": "{{aws-region}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/devices/{{vehicle-name}}/{{relation}}/devices/{{communicator-name}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"devices",
+								"{{vehicle-name}}",
+								"{{relation}}",
+								"devices",
+								"{{communicator-name}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Dissociate a communicator with a vehicle",
+					"request": {
+						"auth": {
+							"type": "awsv4",
+							"awsv4": [
+								{
+									"key": "secretKey",
+									"value": "{{secret_key}}",
+									"type": "string"
+								},
+								{
+									"key": "accessKey",
+									"value": "{{access_key}}",
+									"type": "string"
+								},
+								{
+									"key": "region",
+									"value": "{{aws-region}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/devices/{{vehicle-name}}/{{relation}}/devices/{{communicator-name}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"devices",
+								"{{vehicle-name}}",
+								"{{relation}}",
+								"devices",
+								"{{communicator-name}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Search",
+			"request": {
+				"auth": {
+					"type": "awsv4",
+					"awsv4": [
+						{
+							"key": "secretKey",
+							"value": "{{secret_key}}",
+							"type": "string"
+						},
+						{
+							"key": "accessKey",
+							"value": "{{access_key}}",
+							"type": "string"
+						},
+						{
+							"key": "region",
+							"value": "{{aws-region}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/search?type=agency",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"search"
+					],
+					"query": [
+						{
+							"key": "type",
+							"value": "agency"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "awsv4",
+		"awsv4": [
+			{
+				"key": "secretKey",
+				"value": "{{secret_key}}",
+				"type": "string"
+			},
+			{
+				"key": "accessKey",
+				"value": "{{access_key}}",
+				"type": "string"
+			},
+			{
+				"key": "region",
+				"value": "{{aws-region}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "url",
+			"value": "replace"
+		},
+		{
+			"key": "access_key",
+			"value": "replace"
+		},
+		{
+			"key": "secret_key",
+			"value": "replace"
+		},
+		{
+			"key": "aws-region",
+			"value": "us-east-1"
+		},
+		{
+			"key": "relation",
+			"value": "ownedby"
+		}
+	]
+}

@@ -1,0 +1,16 @@
+version: "3"
+
+services:
+  dwh-manager:
+    build:
+      context: .
+      args:
+        BASE_CONTAINER_REPO: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
+    environment:
+      AWS_ACCOUNT_ID: ${AWS_ACCOUNT_ID}
+      AWS_REGION: ${AWS_REGION}
+
+      REDSHIFT_SECRET_ARN: ${REDSHIFT_SECRET_ARN}
+      SQL_SCRIPT_KWARGS: ${SQL_SCRIPT_KWARGS}
+    volumes:
+      - ~/.aws/:/root/.aws:ro

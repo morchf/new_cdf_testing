@@ -1,0 +1,88 @@
+.tab-view {
+  position: relative;
+  z-index: 10;
+}
+
+.tab-view--empty {
+  overflow: hidden;
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+}
+
+.tab-view__header {
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  background-color: var(--fg);
+  border-top-left-radius: var(--card-radius);
+  border-top-right-radius: var(--card-radius);
+  padding: 1rem;
+  transform: translateY(1rem);
+}
+
+.tab-view__title {
+  margin: 0 1rem 1rem 1rem !important;
+  display: flex;
+  grid-gap: 0.5rem;
+  height: 1.5rem;
+}
+
+.tab-view__wrapper {
+  position: relative;
+
+  background-color: var(--fg);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+  /* margin-right: 2rem; */
+}
+
+.tab-view__body {
+  background-color: var(--fg);
+  border-radius: var(--card-radius);
+  border-top-right-radius: 0;
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+  z-index: 20;
+}
+
+.tab-view__body--attached {
+  border-top-left-radius: 0;
+}
+
+.tab-view__space {
+  width: 100%;
+  gap: 0 !important;
+}
+
+.tab-view__radio {
+  position: absolute;
+  width: 2rem;
+  top: 0;
+  right: 0;
+  transform: translateX(100%);
+  background-color: white;
+  box-shadow: var(--card-shadow);
+  border-top-right-radius: var(--card-radius);
+  border-bottom-right-radius: var(--card-radius);
+  overflow: hidden;
+  z-index: 15;
+}
+
+.tab-view__button {
+  border-width: 0 0 0 4px;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: black;
+}
+
+.tab-view__button.ant-radio-button-checked {
+  color: var(--icon-color);
+}
+
+.tab-view__button > * {
+  display: flex;
+}

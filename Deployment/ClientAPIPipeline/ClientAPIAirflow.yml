@@ -1,0 +1,403 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Structure for Airflow DAGs
+Metadata:
+  cfn-lint:
+    config:
+      ignore_checks:
+        - I3042 # Hardcoded Partition in ARN or incorrectly placed Pseudo Parameters
+        - W3005 # Dependency already enforced
+
+Parameters:
+  Environment:
+    Description: An environment name that is suffixed to resource names
+    Type: String
+    Default: develop
+    AllowedValues:
+      - develop
+      - production
+      - test
+      - pilot
+
+  VpcId:
+    Description: Deployed VPC
+    Type: AWS::EC2::VPC::Id
+
+  PrivateSubnet1:
+    Type: AWS::EC2::Subnet::Id
+
+  PrivateSubnet2:
+    Type: AWS::EC2::Subnet::Id
+
+  EnvironmentClass:
+    Description: The environment class type.
+    Type: String
+    AllowedValues:
+      - mw1.small
+      - mw1.medium
+      - mw1.large
+    Default: mw1.small
+
+  MaxWorkerNodes:
+    Description: The maximum number of workers that can run in the environment
+    Type: Number
+    Default: 2
+
+  DagProcessingLogs:
+    Description: Log level for DagProcessing
+    Type: String
+    Default: INFO
+
+  SchedulerLogsLevel:
+    Description: Log level for SchedulerLogs
+    Type: String
+    Default: INFO
+
+  TaskLogsLevel:
+    Description: Log level for TaskLogs
+    Type: String
+    Default: INFO
+
+  WorkerLogsLevel:
+    Description: Log level for WorkerLogs
+    Type: String
+    Default: INFO
+
+  WebserverLogsLevel:
+    Description: Log level for WebserverLogs
+    Type: String
+    Default: INFO
+
+  DagsS3BucketPrefix:
+    Description: DAGs / requirements / plugins bucket prefix
+    Type: String
+    Default: client-api-artifacts
+
+Resources:
+  #####################################################################################################################
+  # CREATE MWAA
+  #####################################################################################################################
+
+  MwaaEnvironment:
+    Type: AWS::MWAA::Environment
+    DependsOn: MwaaExecutionPolicy
+    Properties:
+      Name: !Sub "${AWS::StackName}"
+      AirflowVersion: 2.0.2
+      SourceBucketArn: !Sub "arn:aws:s3:::${DagsS3BucketPrefix}-${Environment}"
+      ExecutionRoleArn: !GetAtt MwaaExecutionRole.Arn
+      DagS3Path: airflow/dags
+      EnvironmentClass: !Ref EnvironmentClass
+      RequirementsS3Path: airflow/requirements.txt
+      NetworkConfiguration:
+        SecurityGroupIds:
+          - !GetAtt SecurityGroup.GroupId
+        SubnetIds:
+          - !Ref PrivateSubnet1
+          - !Ref PrivateSubnet2
+      WebserverAccessMode: PUBLIC_ONLY
+      MaxWorkers: !Ref MaxWorkerNodes
+      LoggingConfiguration:
+        DagProcessingLogs:
+          LogLevel: !Ref DagProcessingLogs
+          Enabled: true
+        SchedulerLogs:
+          LogLevel: !Ref SchedulerLogsLevel
+          Enabled: true
+        TaskLogs:
+          LogLevel: !Ref TaskLogsLevel
+          Enabled: true
+        WorkerLogs:
+          LogLevel: !Ref WorkerLogsLevel
+          Enabled: true
+        WebserverLogs:
+          LogLevel: !Ref WebserverLogsLevel
+          Enabled: true
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref VpcId
+      GroupDescription: !Sub "Security Group for Amazon MWAA Environment ${AWS::StackName}"
+      GroupName: !Sub "airflow-security-group-${AWS::StackName}"
+
+  SecurityGroupIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref SecurityGroup
+      IpProtocol: "-1"
+      SourceSecurityGroupId: !Ref SecurityGroup
+
+  SecurityGroupEgress:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      GroupId: !Ref SecurityGroup
+      IpProtocol: "-1"
+      CidrIp: "0.0.0.0/0"
+
+  MwaaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - airflow-env.amazonaws.com
+                - airflow.amazonaws.com
+            Action:
+              - "sts:AssumeRole"
+      Path: "/service-role/"
+
+  MwaaExecutionPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Roles:
+        - !Ref MwaaExecutionRole
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: iam:PassRole
+            Resource:
+              - !Sub "arn:aws:iam::${AWS::AccountId}:role/EMR_DefaultRole"
+              - !Sub "arn:aws:iam::${AWS::AccountId}:role/EMR_EC2_DefaultRole"
+          - Effect: Allow
+            Action:
+              - "airflow:GetEnvironment"
+            Resource:
+              - !Sub "arn:aws:airflow:${AWS::Region}:${AWS::AccountId}:environment/*"
+          - Effect: Allow
+            Action:
+              - "glue:GetCrawler"
+              - "glue:StartCrawler"
+              - "glue:UpdateCrawler"
+            Resource:
+              - !Sub "arn:aws:glue:${AWS::Region}:${AWS::AccountId}:crawler/*"
+          - Effect: Allow
+            Action:
+              - "glue:GetCrawlerMetrics"
+              - "glue:GetDatabase"
+              - "glue:BatchCreatePartition"
+              - "glue:*"
+            Resource:
+              - "*"
+          - Effect: Allow
+            Action:
+              - "elasticmapreduce:RunJobFlow"
+              - "elasticmapreduce:TerminateJobFlows"
+              - "elasticmapreduce:DescribeCluster"
+              - "elasticmapreduce:AddJobFlowSteps"
+              - "elasticmapreduce:DescribeStep"
+            Resource:
+              - !Sub "arn:aws:elasticmapreduce:${AWS::Region}:${AWS::AccountId}:cluster/*"
+          - Effect: Allow
+            Action: airflow:PublishMetrics
+            Resource:
+              - !Sub "arn:aws:airflow:${AWS::Region}:${AWS::AccountId}:environment/${AWS::StackName}"
+          - Effect: Allow
+            Action:
+              - "s3:*"
+            Resource:
+              - !Sub "arn:aws:s3:::${DagsS3BucketPrefix}-${Environment}"
+              - !Sub "arn:aws:s3:::${DagsS3BucketPrefix}-${Environment}/*"
+              # TODO: Use long-form environment
+              - "arn:aws:s3:::gtt-etl-*"
+              - "arn:aws:s3:::gtt-etl-/*"
+              - "arn:aws:s3:::rt-radio-message-*"
+              - "arn:aws:s3:::rt-radio-message-*/*"
+              - "arn:aws:s3:::scp-analytics-*"
+              - "arn:aws:s3:::scp-analytics-*/*"
+              - "arn:aws:s3:::client-api-etl-*"
+              - "arn:aws:s3:::client-api-etl-*/*"
+              - "arn:aws:s3:::backup-gtt-etl-*"
+              - "arn:aws:s3:::backup-gtt-etl-*/*"
+              - "arn:aws:s3:::client-api-athena-*"
+              - "arn:aws:s3:::client-api-athena-*/*"
+          - Effect: Allow
+            Action:
+              - logs:DescribeLogGroups
+            Resource: "*"
+
+          - Effect: Allow
+            Action:
+              - logs:CreateLogStream
+              - logs:CreateLogGroup
+              - logs:PutLogEvents
+              - logs:GetLogEvents
+              - logs:GetLogRecord
+              - logs:GetLogGroupFields
+              - logs:GetQueryResults
+              - logs:DescribeLogGroups
+            Resource:
+              - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:airflow-${AWS::StackName}*"
+          - Effect: Allow
+            Action: cloudwatch:PutMetricData
+            Resource: "*"
+          - Effect: Allow
+            Action:
+              - sqs:ChangeMessageVisibility
+              - sqs:DeleteMessage
+              - sqs:GetQueueAttributes
+              - sqs:GetQueueUrl
+              - sqs:ReceiveMessage
+              - sqs:SendMessage
+            Resource:
+              - !Sub "arn:aws:sqs:${AWS::Region}:*:airflow-celery-*"
+          - Effect: Allow
+            Action:
+              - athena:GetQueryExecution
+              - athena:GetQueryResults
+              - athena:GetWorkGroup
+              - athena:StartQueryExecution
+              - athena:StopQueryExecution
+            Resource: "*"
+          - Effect: Allow
+            Action:
+              - kms:Decrypt
+              - kms:DescribeKey
+              - "kms:GenerateDataKey*"
+              - kms:Encrypt
+            NotResource: !Sub "arn:aws:kms:*:${AWS::AccountId}:key/*"
+            Condition:
+              StringLike:
+                "kms:ViaService":
+                  - !Sub "sqs.${AWS::Region}.amazonaws.com"
+          - Sid: RunDataPipelineJob
+            Effect: Allow
+            Action:
+              - states:StartExecution
+            Resource: !Sub "arn:aws:states:${AWS::Region}:${AWS::AccountId}:stateMachine:Lambda-Execution-Machine"
+
+  MwaaFullConsoleAccessPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    DependsOn: MwaaExecutionPolicy
+    Properties:
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action: airflow:*
+            Resource: "*"
+          - Effect: Allow
+            Action: iam:ListRoles
+            Resource: "*"
+          - Effect: Allow
+            Action: iam:CreateServiceLinkedRole
+            Resource: arn:aws:iam::*:role/aws-service-role/airflow.amazonaws.com/AWSServiceRoleForAmazonMWAA
+          - Effect: Allow
+            Action:
+              - s3:GetBucketLocation
+              - s3:ListAllMyBuckets
+              - s3:ListBucket
+              - s3:ListBucketVersions
+            Resource: "*"
+          - Effect: Allow
+            Action:
+              - s3:CreateBucket
+              - s3:PutObject
+              - s3:GetEncryptionConfiguration
+            Resource: arn:aws:s3:::*
+          - Effect: Allow
+            Action:
+              - ec2:DescribeSecurityGroups
+              - ec2:DescribeSubnets
+              - ec2:DescribeVpcs
+              - ec2:DescribeRouteTables
+            Resource: "*"
+          - Effect: Allow
+            Action:
+              - ec2:AuthorizeSecurityGroupIngress
+              - ec2:CreateSecurityGroup
+            Resource: !Sub "arn:aws:ec2:*:*:security-group/airflow-security-group-${AWS::StackName}"
+          - Effect: Allow
+            Action: kms:ListAliases
+            Resource: "*"
+          - Effect: Allow
+            Action:
+              - kms:DescribeKey
+              - kms:ListGrants
+              - kms:CreateGrant
+              - kms:RevokeGrant
+              - kms:Decrypt
+              - kms:Encrypt
+              - kms:GenerateDataKey*
+              - kms:ReEncrypt*
+            # Resource: !Sub "arn:aws:kms:*:${AWS::AccountId}:key/aws/airflow"
+            Resource: !Sub "arn:aws:kms:*:${AWS::AccountId}:key/*"
+          - Effect: Allow
+            Action: iam:PassRole
+            Resource: "*"
+            Condition:
+              StringLike:
+                iam:PassedToService: airflow.amazonaws.com
+          - Effect: Allow
+            Action:
+              - iam:AttachRolePolicy
+              - iam:CreateRole
+            Resource: !Ref MwaaExecutionPolicy
+          - Effect: Allow
+            Action: s3:GetEncryptionConfiguration
+            Resource: arn:aws:s3:::*
+          - Effect: Allow
+            Action: ec2:CreateVpcEndpoint
+            Resource:
+              - arn:aws:ec2:*:*:vpc-endpoint/*
+              - arn:aws:ec2:*:*:vpc/*
+              - arn:aws:ec2:*:*:subnet/*
+              - arn:aws:ec2:*:*:security-group/*
+          - Effect: Allow
+            Action: ec2:CreateNetworkInterface
+            Resource:
+              - arn:aws:ec2:*:*:subnet/*
+              - arn:aws:ec2:*:*:network-interface/*
+
+  MwaaWebServerAdminAccessPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action: airflow:CreateWebLoginToken
+            Resource: !Sub "arn:aws:airflow:${AWS::Region}:${AWS::AccountId}:role/${AWS::StackName}/Admin"
+
+  MwaaWebServerViewerAccessPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action: airflow:CreateWebLoginToken
+            Resource: !Sub "arn:aws:airflow:${AWS::Region}:${AWS::AccountId}:role/${AWS::StackName}/Viewer"
+
+  MwaaCliAccessPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action: airflow:CreateCliToken
+            Resource: "*"
+
+  MwaaAdminGroup:
+    Type: AWS::IAM::Group
+    Properties:
+      GroupName: !Sub "MwaaAdminGroup-${AWS::StackName}-${Environment}"
+      ManagedPolicyArns:
+        - !Ref MwaaFullConsoleAccessPolicy
+        - !Ref MwaaWebServerAdminAccessPolicy
+        - !Ref MwaaCliAccessPolicy
+
+  MwaaViewerGroup:
+    Type: AWS::IAM::Group
+    Properties:
+      GroupName: !Sub "MwaaViewerGroup-${AWS::StackName}-${Environment}"
+      ManagedPolicyArns:
+        - !Ref MwaaWebServerViewerAccessPolicy
+
+Outputs:
+  MwaaApacheAirflowUI:
+    Description: MWAA Environment
+    Value: !Sub "https://${MwaaEnvironment.WebserverUrl}"

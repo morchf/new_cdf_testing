@@ -1,0 +1,241 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Redshift cluster for SCP analytics
+Metadata:
+  cfn-lint:
+    config:
+      ignore_checks:
+        - I3042 # Hardcoded Partition in ARN or incorrectly placed Pseudo Parameters
+        - I3013 # Keep default Redshift retention periods
+
+Parameters:
+  Environment:
+    Description: An environment name that is suffixed to resource names
+    Type: String
+    Default: develop
+    AllowedValues:
+      - develop
+      - production
+      - test
+      - pilot
+  Name:
+    Description: Cluster name
+    Type: String
+    Default: client-api-dwh
+  MasterUsername:
+    Description: >-
+      The user name that is associated with the master user account
+    Type: String
+    Default: awsuser
+    AllowedPattern: "([a-z])([a-z]|[0-9])*"
+  VpcId:
+    Type: String
+    Description: ID of the deployed VPC
+  SubnetIds:
+    Description: The array of Subnet IDs for the Redshift Subnet group
+    Type: "List<AWS::EC2::Subnet::Id>"
+  InboundTraffic:
+    Description: Allow inbound traffic to the cluster from this CIDR range
+    Type: String
+    MinLength: "9"
+    MaxLength: "18"
+    Default: 0.0.0.0/0
+    AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
+    ConstraintDescription: must be a valid CIDR range of the form x.x.x.x/x.
+  PortNumber:
+    Description: Port number for incoming connections
+    Type: Number
+    Default: "5439"
+
+Resources:
+  DataWarehouseRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      Description: Pull-in data from Glue and S3
+      RoleName: !Sub "DataWarehouseRole-${Environment}"
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - redshift.amazonaws.com
+            Action:
+              - sts:AssumeRole
+            Condition:
+              StringEquals:
+                sts:ExternalId: !Sub "arn:aws:redshift:${AWS::Region}:${AWS::AccountId}:dbuser:${Name}/${MasterUsername}"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
+        - arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole
+      Policies:
+        - PolicyName: DatasourceAccess
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "s3:GetBucketLocation"
+                  - "s3:GetObject"
+                  - "s3:PutObject"
+                  - "s3:DeleteObject"
+                  - "s3:GetObjectVersion"
+                  - "s3:ListBucket"
+                  - "glue:Get*"
+                Resource: "*"
+        - PolicyName: LogPolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "logs:CreateLogGroup"
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents"
+                Resource: "*"
+
+  RedshiftSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for Redshift with Secrets Manager access
+      SecurityGroupIngress:
+        - IpProtocol: TCP
+          FromPort: !Ref PortNumber
+          ToPort: !Ref PortNumber
+          CidrIp: !Ref InboundTraffic
+        - IpProtocol: TCP
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+      VpcId: !Ref VpcId
+
+  RedshiftClusterSubnetGroup:
+    Type: AWS::Redshift::ClusterSubnetGroup
+    Properties:
+      Description: Subnet group for Redshift
+      SubnetIds: !Ref SubnetIds
+
+  AdminAccountSecret:
+    Type: AWS::SecretsManager::Secret
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Delete
+    Properties:
+      Description: !Sub Admin user Redshift ${Environment}
+      Name: !Sub ${Name}-admin-user-${Environment}
+      GenerateSecretString:
+        SecretStringTemplate: !Sub |
+          {
+            "username": "${MasterUsername}"
+          }
+        GenerateStringKey: password
+        PasswordLength: 30
+        ExcludeCharacters: "\"@/\\'"
+        IncludeSpace: false
+
+  RedshiftCluster:
+    Type: AWS::Redshift::Cluster
+    Properties:
+      ClusterIdentifier: !Ref Name
+      ClusterSubnetGroupName: !Ref RedshiftClusterSubnetGroup
+      ClusterType: multi-node
+      DBName: !Ref Environment
+      Encrypted: true
+      MasterUsername: !Ref MasterUsername
+      MasterUserPassword: !Sub "{{resolve:secretsmanager:${AdminAccountSecret}:SecretString:password}}"
+      NodeType: dc2.large
+      NumberOfNodes: 2
+      PubliclyAccessible: true
+      VpcSecurityGroupIds:
+        - !GetAtt
+          - RedshiftSecurityGroup
+          - GroupId
+      IamRoles:
+        - !GetAtt
+          - DataWarehouseRole
+          - Arn
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+
+  AdminAccountSecretTargetAttachment:
+    Type: AWS::SecretsManager::SecretTargetAttachment
+    Properties:
+      SecretId: !Ref AdminAccountSecret
+      TargetId: !Ref RedshiftCluster
+      TargetType: AWS::Redshift::Cluster
+
+  AdminAccountSecretVpcEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      VpcEndpointType: Interface
+      VpcId: !Ref VpcId
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.secretsmanager
+      PrivateDnsEnabled: false
+      SecurityGroupIds:
+        - !GetAtt
+          - RedshiftSecurityGroup
+          - GroupId
+      SubnetIds: !Ref SubnetIds
+
+  AthenaOutputBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "client-api-athena-${Environment}"
+      AccessControl: Private
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      LifecycleConfiguration:
+        Rules:
+          - Id: CleanRule
+            Prefix: cleanup
+            Status: Enabled
+            ExpirationInDays: 7
+    DeletionPolicy: Delete
+
+  AthenaWorkGroup:
+    Type: AWS::Athena::WorkGroup
+    DependsOn:
+      - AthenaOutputBucket
+    Properties:
+      Description: DWH work group
+      Name: !Sub "ClientAPI-DWH-${Environment}"
+      RecursiveDeleteOption: true
+      State: ENABLED
+      WorkGroupConfiguration:
+        BytesScannedCutoffPerQuery: 2147483647
+        ResultConfiguration:
+          OutputLocation: !Sub "s3://client-api-athena-${Environment}/"
+
+Outputs:
+  ClusterEndpoint:
+    Description: Cluster endpoint
+    Value: !Join
+      - ":"
+      - - !GetAtt
+          - RedshiftCluster
+          - Endpoint.Address
+        - !GetAtt
+          - RedshiftCluster
+          - Endpoint.Port
+  ClusterName:
+    Description: Name of cluster
+    Value: !Ref RedshiftCluster
+  RedshiftClusterSubnetGroupName:
+    Description: Name of cluster subnet group
+    Value: !Ref RedshiftClusterSubnetGroup
+  RedshiftClusterSecurityGroupName:
+    Description: Name of cluster security group
+    Value: !Ref RedshiftSecurityGroup
+  AdminAccountSecret:
+    Description: ARN of the admin account secret
+    Value: !Ref AdminAccountSecret
+  AthenaOutputBucket:
+    Description: DWH Athena work group bucket
+    Value: !Ref AthenaOutputBucket
+  AthenaWorkGroup:
+    Description: DWH Athena work group
+    Value: !Ref AthenaWorkGroup
+  DataWarehouseRole:
+    Description: DWH role
+    Value: !GetAtt DataWarehouseRole.Arn

@@ -1,0 +1,240 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  S3StorageBucket:
+    Type: String
+    Description: The S3 bucket where the lambda will store the output of the testing information.  (Will only create a single folder and add one file to the bucket)
+
+Resources:
+  RetrieveOpticomLogsLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: RetrieveOpticomDeviceLogs/
+      Handler: App.lambda_handler
+      FunctionName: RetrieveOpticomDeviceLogs
+      Runtime: python3.7
+      Timeout: 120
+      Layers:
+        - Ref: PYODBCLAYER
+      Environment:
+        Variables:
+          S3Bucket:
+            Ref: S3StorageBucket
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "secretsmanager:DescribeSecret"
+                - "secretsmanager:GetRandomPassword"
+                - "secretsmanager:GetResourcePolicy"
+                - "secretsmanager:GetSecretValue"
+                - "secretsmanager:ListSecretVersionIds"
+              Resource: "*"
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Action:
+                - "s3:ListBucket"
+                - "s3:GetObject"
+                - "s3:GetObjectVersion"
+                - "s3:PutObject"
+              Resource:
+                - Fn::Sub:
+                    - arn:aws:s3:::${bucket}
+                    - bucket:
+                        Ref: S3StorageBucket
+                - Fn::Sub:
+                    - arn:aws:s3:::${bucket}/*
+                    - bucket:
+                        Ref: S3StorageBucket
+
+  PYODBCLAYER:
+    Properties:
+      CompatibleRuntimes:
+        - python3.7
+      ContentUri: Layer/pyodbc-layer.zip
+      RetentionPolicy: Delete
+    Type: AWS::Serverless::LayerVersion
+
+  OpticomLogsTestDatabase:
+    Type: AWS::Glue::Database
+    Properties:
+      CatalogId:
+        Ref: AWS::AccountId
+      DatabaseInput:
+        Name: retrieveopticomlogsdb
+
+  OpticomLogsTestTable:
+    Type: AWS::Glue::Table
+    Properties:
+      CatalogId:
+        Ref: AWS::AccountId
+      DatabaseName:
+        Ref: OpticomLogsTestDatabase
+      TableInput:
+        Name: opticomlogsdata
+        Parameters: { "classification": "csv", "skip.header.line.count": 1 }
+        StorageDescriptor:
+          Location:
+            Fn::Sub:
+              - s3://${S3Bucket}/OpticomLogsData/
+              - S3Bucket:
+                  Ref: S3StorageBucket
+          InputFormat: "org.apache.hadoop.mapred.TextInputFormat"
+          OutputFormat: "org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat"
+          SerdeInfo:
+            Parameters: { "field.delim": "," }
+            SerializationLibrary: "org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe"
+          StoredAsSubDirectories: false
+          Columns:
+            - Name: opticomdevicelogid
+              Type: string
+            - Name: deviceid
+              Type: string
+            - Name: regionname
+              Type: string
+            - Name: locationname
+              Type: string
+            - Name: vehiclename
+              Type: string
+            - Name: vehicleid
+              Type: string
+            - Name: startdatetime
+              Type: timestamp
+            - Name: enddatetime
+              Type: timestamp
+            - Name: duration
+              Type: int
+            - Name: classandid
+              Type: int
+            - Name: status
+              Type: int
+            - Name: finalgreens
+              Type: int
+            - Name: finalgreenstime
+              Type: int
+            - Name: maxintensity
+              Type: int
+            - Name: createddatetime
+              Type: timestamp
+            - Name: class
+              Type: int
+            - Name: id
+              Type: int
+            - Name: causedpreempt
+              Type: boolean
+            - Name: channel
+              Type: int
+            - Name: prioritylevel
+              Type: int
+            - Name: agencyname
+              Type: string
+            - Name: channelname
+              Type: string
+            - Name: desiredgreenreceived
+              Type: int
+            - Name: agencyregionname
+              Type: string
+            - Name: authorized
+              Type: int
+            - Name: archiveddate
+              Type: timestamp
+            - Name: locationid
+              Type: string
+            - Name: regionid
+              Type: string
+            - Name: turnsignalstatus
+              Type: int
+            - Name: nopreemptcause
+              Type: int
+            - Name: agencyid
+              Type: int
+            - Name: logformattype
+              Type: int
+            - Name: gpsclassid
+              Type: string
+            - Name: gpsclassdescription
+              Type: string
+            - Name: greenadjustment
+              Type: int
+            - Name: greenadjustmenttime
+              Type: int
+            - Name: greenadjustmenttimesaved
+              Type: int
+            - Name: entryspeed
+              Type: int
+            - Name: averagespeed
+              Type: int
+            - Name: exitspeed
+              Type: int
+            - Name: relativepriority
+              Type: int
+            - Name: directionalpriority
+              Type: int
+            - Name: trackid
+              Type: bigint
+            - Name: inrangeduration
+              Type: int
+            - Name: preemptoutputused
+              Type: int
+            - Name: minimumintensity
+              Type: int
+            - Name: logid
+              Type: bigint
+            - Name: intersectionunitidtype
+              Type: int
+            - Name: intersectionunitid
+              Type: string
+            - Name: disabled
+              Type: int
+            - Name: entryheading
+              Type: int
+            - Name: entryheadingdirection
+              Type: int
+            - Name: exitheading
+              Type: int
+            - Name: exitheadingdirection
+              Type: int
+            - Name: entrylatitude
+              Type: int
+            - Name: entrylongitude
+              Type: int
+            - Name: exitlatitude
+              Type: int
+            - Name: exitlongitude
+              Type: int
+            - Name: passengercount
+              Type: int
+            - Name: conditionalpriority
+              Type: int
+            - Name: minuteslate
+              Type: int
+            - Name: transitvehicleid
+              Type: string
+            - Name: transitroute
+              Type: string
+            - Name: routerun
+              Type: int
+            - Name: locationgroupid
+              Type: int
+            - Name: green
+              Type: int
+            - Name: firstphase
+              Type: int
+            - Name: firstphasestate
+              Type: int
+            - Name: firstphasegt
+              Type: int
+            - Name: firstphasenongt
+              Type: int
+            - Name: secondphase
+              Type: int
+            - Name: secondphasestate
+              Type: int
+            - Name: secondphasegt
+              Type: int
+            - Name: secondphasenongt
+              Type: int

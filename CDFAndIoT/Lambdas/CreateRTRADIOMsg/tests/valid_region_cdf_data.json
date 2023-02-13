@@ -1,0 +1,13 @@
+{
+    "attributes": {
+        "description": "test test test",
+        "caCertId": "NULL_CA",
+        "regionGUID": "NULL_GUID",
+        "regionDNS": "10.11.1.2"
+    },
+    "category": "group",
+    "templateId": "region",
+    "parentPath": "/",
+    "name": "regUnitTest",
+    "groupPath": "/regUnitTest"
+}

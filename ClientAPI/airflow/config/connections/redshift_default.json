@@ -1,0 +1,9 @@
+{
+    "conn_type": "postgres",
+    "description": "Connection to Redshift using Postgres",
+    "login": "${user}",
+    "password": "${password}",
+    "host": "${host}",
+    "port": 5437,
+    "schema": "${schema}"
+}

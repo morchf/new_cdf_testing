@@ -1,0 +1,75 @@
+version: 0.2
+
+env:
+  exported-variables:
+    - Env
+    - CDFAPIARN
+    - IOTCoreEndpoint
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.8
+
+  pre_build:
+    commands:
+      # Updating packages on container, installing AWSCLI and PyTest, and checking home path and python version for logging purposes.
+      - ls -l
+      - pwd=`pwd`
+      - echo $pwd
+      - yum -y update --skip-broken
+      - python -V
+      - python3 -V
+      - pip -V
+      - pip3 -V
+      - python3 -m pip -V
+      - pip3 install --upgrade pip
+      - npm -v
+      - node -v
+      - yum install -y sudo
+      - pip3 install pyopenssl
+      - pip3 install pytest
+      - pip3 install pytest-cov
+
+  build:
+    commands:
+      # CDF Asset Library API endpoint required by the lambda functions
+      - CDFAPIID=`aws apigateway get-rest-apis --query "items[?name=='cdf-assetlibrary-stage'].id" --output text`
+      - CDFAPIARN=https://$CDFAPIID.execute-api.us-east-1.amazonaws.com/Prod
+
+      # IOT Core endpint
+      - IOTCoreEndpoint=`aws iot describe-endpoint --endpoint-type iot:Data-ATS --query "endpointAddress" --output text`
+
+      # Installing extra packages and executing Unit Tests
+      - pwd
+      - mkdir TestReports
+      - pip3 install moto
+      - cd $pwd/CDFAndIoT/Lambdas/CreateJSON/Tests
+      - python3 -B -m pytest -v test_CreateJSON.py --cov=. --junitxml=$pwd/TestReports/result_test_CreateJSON.xml
+      - cd $pwd/CDFAndIoT/Lambdas/CreateRTRADIOMsg/tests
+      - python3 -B -m pytest -v test_CreateRTRADIOMsg.py --cov=. --junitxml=$pwd/TestReports/result_test_CreateRTRADIOMsg.xml
+      - cd $pwd/CDFAndIoT/Lambdas/PopulateCDF/Tests
+      - python3 -B -m pytest -v test_PopulateCDF.py --cov=. --junitxml=$pwd/TestReports/result_test_PopulateCDF.xml
+      - cd $pwd/CDFAndIoT/Lambdas/Process2100Data/tests
+      - python3 -B -m pytest -v test_Process2100Data.py --cov=. --junitxml=$pwd/TestReports/result_test_Process2100Data.xml
+      - cd $pwd/CDFAndIoT/Lambdas/CreateCDFEntitiesAPI/Tests
+      - python3 -B -m pytest -v test_CreateCDFEntitiesAPI.py --cov=. --junitxml=$pwd/TestReports/result_test_CreateCDFEntitiesAPI.xml
+      - cd $pwd/CDFAndIoT/CDFBackend
+      - python3 -B -m pytest -v test_IoTCore.py --cov=. --junitxml=./../../TestReports/result_test_IoTCore.xml
+      - python3 -B -m pytest -v test_Certs.py --cov=. --junitxml=$pwd/TestReports/result_test_Certs.xml
+      - python3 -B -m pytest -v test_Thing.py --cov=. --junitxml=$pwd/TestReports/result_test_Thing.xml
+      - python3 -B -m pytest -v test_Policy.py --cov=. --junitxml=$pwd/TestReports/result_test_Policy.xml
+      - cd $pwd
+      - ls -l TestReports
+
+
+reports:
+  PreDeploymentTestsReport:
+    files:
+      - TestReports/*
+
+
+artifacts:
+  files:
+    - '**/*'
+  base-directory: .

@@ -1,0 +1,118 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.9
+
+  pre_build:
+    commands:
+      # Updating packages on container, installing AWSCLI and PyTest, and checking home path and python version for logging purposes.
+      # Updating packages on container, installing AWSCLI and PyTest, and checking home path and python version for logging purposes.
+      - ls -l
+      - pwd=`pwd`
+      - echo $pwd
+      - yum -y update --skip-broken
+      - python -V
+      - python3 -V
+      - pip -V
+      - pip3 -V
+      - python3 -m pip -V
+      - pip3 install --upgrade pip
+      - npm -v
+      - node -v
+      - yum install -y sudo
+      - pip3 install pyopenssl
+      - pip3 install pytest
+      - pip3 install pytest-cov
+      - pip3 install awsiot
+      - pip3 install awsiotsdk
+      - pip3 install paho-mqtt python-etcd
+      - pip3 install requests
+      - pip3 install requests-aws-sign
+
+  build:
+    commands:
+      # CDF Asset Library API endpoint required by the UI
+      - CDFAPIID=`aws apigateway get-rest-apis --query "items[?name=='cdf-assetlibrary-stage'].id" --output text`
+      - CDFAPIARN=https://$CDFAPIID.execute-api.us-east-1.amazonaws.com/Prod
+
+      # VPS Automations API endpoint required by the UI
+      - VPSAPIID=`aws apigateway get-rest-apis --query "items[?name=='VPSAUTOMATIONS'].id" --output text`
+      - VPSAPIARN=https://$VPSAPIID.execute-api.us-east-1.amazonaws.com/Prod
+
+      # Feature Persistence API Endpoint required by the Whelen Import Testing
+      - FEATUREPERSISTENCEAPIID=`aws apigateway get-rest-apis --query "items[?name=='FeaturePersistenceAPI'].id" --output text`
+      - FEATUREPERSISTENCEAPIARN=https://$FEATUREPERSISTENCEAPIID.execute-api.us-east-1.amazonaws.com/$Env
+
+      # Whelen Featureless API Endpoint required by the Whelen Import Testing
+      - WHELENSERVERLESSAPIID=`aws apigateway get-rest-apis --query "items[?name=='WhelenAPIServerless'].id" --output text`
+      - WHELENSERVERLESSAPIARN=https://$WHELENSERVERLESSAPIID.execute-api.us-east-1.amazonaws.com/$Env
+
+      # AWS IOT CORE ENDPOINT URL 
+      - Endpoint=`aws iot describe-endpoint --query endpointAddress`
+
+      # S3 bucket for storing IoT and CDF certificates
+      - CDFIoTCertificatesS3=cdf-cert-store-$Env
+
+      # S3 bucket for hosting the CSV file that is used for triggering the step function and creating the CDF entities
+      - CDFCreateEntitiesS3=create-cdf-entities-$Env
+
+      # S3 bucket for hosting the CSV file that is used for triggering the step function and deleting the CDF entities
+      - CDFDeleteEntitiesS3=delete-cdf-entities-$Env
+
+      # Assigning local variables
+      - CDF_URL=$CDFAPIARN
+      - VPS_URL=$VPSAPIARN
+      - CERT_BKT=$CDFIoTCertificatesS3
+      - CREATE_CSV_BKT=$CDFCreateEntitiesS3
+      - DELETE_CSV_BKT=$CDFDeleteEntitiesS3
+      - IOT_CORE_ENDPOINT=$Endpoint
+
+      # Confirming local variables
+      - echo $Env $CDFAPIARN $VPSAPIARN $CDFIoTCertificatesS3 $CDFCreateEntitiesS3 $CDFDeleteEntitiesS3
+      - echo $Env $CDF_URL $VPS_URL $CERT_BKT $CREATE_CSV_BKT $DELETE_CSV_BKT $IOT_CORE_ENDPOINT
+
+      # Copying files required by end-to-end tests in their respective directories
+      - cd $pwd/CDFAndIoT/CDFBackend
+      - cp rootCA.pem ROOTCA_openssl.conf SUBCA_openssl.conf $pwd/CDFAndIoT/Lambdas/Tests
+
+      - cd $pwd/CEI/CEIBackend
+      - cp CEI_Dynamo_Cache.py $pwd/CEI/Lambdas/Tests
+
+      # Installing Paho Package required by the tests in their respective directories
+      - pip3 install paho-mqtt python-etcd --target=./CDFAndIoT/Lambdas/Tests
+      # Installing packages required by the tests in their respective directories
+      - pip3 install requests --target=./CDFAndIoT/Lambdas/Tests
+      - pip3 install pyOpenSSL --target=./CDFAndIoT/Lambdas/Tests
+
+      # Executing the tests
+      - cd $pwd/CDFAndIoT/Lambdas/Tests
+      - python3 -B -m pytest -v test_cdf_end_to_end.py --cov=.
+      - python3 -B -m pytest -v test_iotcore_end_to_end.py --cov=.
+      # - python3 -m pytest -v test_iot_core_topics.py --cov=.
+
+      - cd $pwd/CDFAndIoT/Simulators/MP70Simulator
+      - pip3 install requests
+      - pip3 install requests-aws-sign 
+      - python3 -v run_simulator.py --cov=.
+
+      # CEI End to End Tests
+      - cd $pwd/CEI/Lambdas/Tests
+      - python3 -B -m pytest -v test_CEI_create_vehicle_check_incident.py --cov=.
+      - python3 -B -m pytest -v test_CEI_check_activate_deactivate_isolation.py --cov=.
+      - python3 -B -m pytest -v test_CEI_config_failure.py --cov=.
+      - python3 -B -m pytest -v test_CEI_Config_successful.py --cov=.
+      - python3 -B -m pytest -v test_CEI_assign_two_vehicles_deactivate_one_vehicle.py --cov=.
+      - python3 -B -m pytest -v test_CEI_deactivate_all_vehicles_using_incident.py --cov=.
+      - python3 -B -m pytest -v test_CEI_two_agency_respond_to_same_incident.py --cov=.
+
+      # Whelen End to End Tests
+      - cd $pwd/Whelen/Tests
+      - python3 -B -m pytest -v test_whelen_import_vehicles.py --cov=.
+      # - python3 -B -m pytest -v Whelen_Mq_to_Iot_core_ete_test.py --cov=.
+
+      - cd $pwd/IBRIntegration/LambdasTests
+      - python3 -B -m pytest -v IBR_Mq_to_Iot_core_ete_test.py --cov=.
+
+      - cd $pwd

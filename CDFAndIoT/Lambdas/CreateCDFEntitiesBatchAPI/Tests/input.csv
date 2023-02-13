@@ -1,0 +1,5 @@
+DO NOT DELETE THIS ROW Entities to be created. Headers (rows in blue) must come before all entities of that type. If no entities of a type will be made remove that header. No blank rows,,,,,,,,,
+region,name,description,displayName,,,,,,
+region,TEST,Test County,TEST,,,,,,
+agency,name,region,description,city,state,timezone,agencyCode,priority,displayName
+agency,AGCY,TEST,Location District,Location,MO,Central,2,High,AGCY

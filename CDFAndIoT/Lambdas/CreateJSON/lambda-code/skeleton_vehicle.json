@@ -1,0 +1,32 @@
+{
+  "groups": {
+       "ownedby": [""]
+  },
+  "attributes": {
+    "description": "",
+    "gttSerial": "",
+    "addressMAC": "",
+    "addressLAN": "",
+    "addressWAN": "",
+    "IMEI": "",
+    "auxiliaryIo": 0,
+    "devCertId": "NULL_CERT",
+    "make": "",
+    "model": "",
+    "priority": "",
+    "class": 0,
+    "VID": "",
+    "lat": 0,
+    "long": 0,
+    "speed": 0,
+    "heading": 0,
+    "fixStatus": "",
+    "numFixSat": 0,
+    "lastGPSMsgTimestamp": "",
+    "lastGPIOMsgTimestamp": ""
+  },
+  "category": "device",
+  "templateId": "vehicle",
+  "state": "active",
+  "deviceId": ""
+}

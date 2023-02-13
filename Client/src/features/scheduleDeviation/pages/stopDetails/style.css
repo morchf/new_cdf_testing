@@ -1,0 +1,10 @@
+.schedule-deviation-stop-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1rem;
+}
+
+/* Default to spanning with of grid */
+.schedule-deviation-stop-details > * {
+  grid-column: 1 / -1;
+}

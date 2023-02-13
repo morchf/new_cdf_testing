@@ -1,0 +1,62 @@
+version: 0.2
+
+
+env:
+  exported-variables:
+    - Env
+
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.8
+
+  pre_build:
+    commands:
+      # Updating packages on container, installing AWSCLI and PyTest, and checking home path and python version for logging purposes.
+      - ls -l
+      - pwd=`pwd`
+      - echo $pwd
+      - yum -y update --skip-broken
+      - python -V
+      - python3 -V
+      - pip -V
+      - pip3 -V
+      - python3 -m pip -V
+      - pip3 install --upgrade pip
+      - npm -v
+      - node -v
+      - yum install -y sudo
+      - pip3 install pyopenssl
+      - pip3 install pytest
+      - pip3 install pytest-cov
+
+  build:
+    commands:
+      # S3 bucket for storing pipeline artifacts
+      - PipelineArtifactsS3=pipeline-artifacts-$Env
+
+      # CEIConfiguration commands
+      - for file in CEI_Dynamo_Cache.py CEI_Logging.py; do cp CEI/CEIBackend/$file CEI/Lambdas/CEIConfiguration/LambdaCode/; done
+    
+      # CEIEVPDequeue commands
+      - for file in CEI_Dynamo_Cache.py CEI_EVP_Activation.py CEI_Logging.py; do cp CEI/CEIBackend/$file CEI/Lambdas//CEIEVPDequeue/LambdaCode/; done
+    
+      # CEIEVPQueue commands
+      - for file in CEI_Dynamo_Cache.py CEI_Logging.py; do cp CEI/CEIBackend/$file CEI/Lambdas/CEIEVPQueue/LambdaCode/; done
+    
+      # CEIRTRadioMsg commands
+      - for file in CEI_Dynamo_Cache.py CEI_Logging.py; do cp CEI/CEIBackend/$file CEI/Lambdas/CEIRTRadioMsg/LambdaCode/; done
+
+      # Executing SAM template
+      - aws cloudformation package --template-file Deployment/CEIPipeline/CEIDeploymentSAM.yml --s3-bucket $PipelineArtifactsS3 --s3-prefix CEIDeployment --output-template-file Deployment/CEIPipeline/CEIDeploymentSAMOutput.yml
+      - aws cloudformation package --template-file Deployment/CEIPipeline/CEIStaticDeployment.yml --s3-bucket $PipelineArtifactsS3 --s3-prefix CEIDeployment --output-template-file Deployment/CEIPipeline/CEIStaticDeploymentSAMOutput.yml
+
+      # Confirming deployable artifacts files
+      - ls -l Deployment CEI/Lambdas/CEIConfiguration/LambdaCode CEI/Lambdas/CEIEVPQueue/LambdaCode CEI/Lambdas/CEIEVPDequeue/LambdaCode CEI/Lambdas/CEITimeoutFunction/LambdaCode CEI/Lambdas/CEIRTRadioMsg/LambdaCode
+
+
+artifacts:
+  files:
+    - '**/*'
+  base-directory: .

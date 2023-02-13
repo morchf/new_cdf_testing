@@ -1,0 +1,85 @@
+version: 0.2
+
+env:
+  exported-variables:
+    - Env
+    - CDFAPIARN
+    - ECRRepo
+    - InternalVPCID
+    - PrivateSubnetAID
+    - PrivateSubnetBID
+    
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.8
+
+  pre_build:
+    commands:
+      # Updating packages on container, installing AWSCLI and PyTest, and checking home path and python version for logging purposes.
+      - ls -l
+      - pwd=`pwd`
+      - echo $pwd
+      - yum -y update --skip-broken
+      - python -V
+      - python3 -V
+      - pip -V
+      - pip3 -V
+      - python3 -m pip -V
+      - pip3 install --upgrade pip
+      - npm -v
+      - node -v
+      - yum install -y sudo
+      - pip3 install pyopenssl
+      - pip3 install pytest
+      - pip3 install pytest-cov
+
+  build:
+    commands:
+      # Getting Internal VPC and Teletrac Private Subnets details 
+      - InternalVPCID=`aws ec2 describe-vpcs --filters Name=tag:Name,Values=InternalVPC-$Env --query "Vpcs[].VpcId"  --output text`
+      - PrivateSubnetAID=`aws ec2 describe-subnets --filters Name=tag:Name,Values=Teletrac-PrivateSubnetA-$Env --query "Subnets[].SubnetId" --output text`
+      - PrivateSubnetBID=`aws ec2 describe-subnets --filters Name=tag:Name,Values=Teletrac-PrivateSubnetB-$Env --query "Subnets[].SubnetId" --output text`
+
+      # S3 bucket for storing pipeline artifacts
+      - PipelineArtifactsS3=pipeline-artifacts-$Env
+
+      # Executing SAM template
+      - aws cloudformation package --template-file Deployment/TeletracPipeline/TeletracDeployment.yml --s3-bucket $PipelineArtifactsS3 --s3-prefix TeletracDeployment --output-template-file Deployment/TeletracPipeline/TeletracDeploymentOutput.yml
+ 
+      # CDF Asset Library API endpoint
+      - CDFAPIID=`aws apigateway get-rest-apis --query "items[?name=='cdf-assetlibrary-stage'].id" --output text`
+      - CDFAPIARN=https://$CDFAPIID.execute-api.us-east-1.amazonaws.com/Prod
+
+      # Setting variables for docker
+      - account_id=$(aws sts get-caller-identity --query Account --output text)
+      - ecr_url=$account_id.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      - ECRRepo="gtt/teletrac_rabbitmqclient"
+      - tag="latest"
+
+      # Logging in to ECR
+      - docker -v
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ecr_url
+
+      # Creating ECR repo if it doesn't exist
+      - aws ecr describe-repositories --repository-names $ECRRepo || aws ecr create-repository --repository-name $ECRRepo
+
+      # Explicitly provide dockerfile location and point the build context at the source folder
+      - cd Deployment/TeletracPipeline
+      - dockerfile="../../TeletracNavman/RabbitMQClientApp/GTT_Teletrac_Integration/GTT_Teletrac_Integration/Dockerfile"
+      - docker_context="../../TeletracNavman/RabbitMQClientApp/GTT_Teletrac_Integration/GTT_Teletrac_Integration"
+
+      # Building docker image
+      - docker build -f $dockerfile -t ${ecr_url}/${ECRRepo}:${tag} $docker_context
+
+      # Push image to ECR
+      - docker push ${ecr_url}/${ECRRepo}:${tag}
+
+      # Come out to main level
+      - cd $pwd
+
+artifacts:
+  files:
+    - '**/*'
+  base-directory: .

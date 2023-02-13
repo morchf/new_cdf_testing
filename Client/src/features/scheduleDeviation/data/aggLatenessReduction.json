@@ -1,0 +1,758 @@
+[
+  {
+    "route": "1",
+    "direction": "inbound",
+    "avgScheduleDeviation": "-0.403",
+    "onTimePercentage": "0.4",
+    "vehiclePassThrough": "7425",
+    "numIntersections": "365",
+    "numRequests": "2969"
+  },
+  {
+    "route": "1",
+    "direction": "outbound",
+    "avgScheduleDeviation": "-0.463",
+    "onTimePercentage": "0.431",
+    "vehiclePassThrough": "7929",
+    "numIntersections": "263",
+    "numRequests": "3506"
+  },
+  {
+    "route": "12",
+    "direction": "inbound",
+    "avgScheduleDeviation": "1.363",
+    "onTimePercentage": "0.437",
+    "vehiclePassThrough": "9314",
+    "numIntersections": "46",
+    "numRequests": "40"
+  },
+  {
+    "route": "12",
+    "direction": "outbound",
+    "avgScheduleDeviation": "-0.463",
+    "onTimePercentage": "0.404",
+    "vehiclePassThrough": "11356",
+    "numIntersections": "140",
+    "numRequests": "1560"
+  },
+  {
+    "route": "14",
+    "direction": "inbound",
+    "avgScheduleDeviation": "-1.11",
+    "onTimePercentage": "0.416",
+    "vehiclePassThrough": "8299",
+    "numIntersections": "300",
+    "numRequests": "6780"
+  },
+  {
+    "route": "14",
+    "direction": "outbound",
+    "avgScheduleDeviation": "-1.826",
+    "onTimePercentage": "0.349",
+    "vehiclePassThrough": "9376",
+    "numIntersections": "520",
+    "numRequests": "7267"
+  },
+  {
+    "route": "14R",
+    "direction": "inbound",
+    "avgScheduleDeviation": "-0.735",
+    "onTimePercentage": "0.385",
+    "vehiclePassThrough": "25980",
+    "numIntersections": "1167",
+    "numRequests": "27341"
+  },
+  {
+    "route": "14R",
+    "direction": "outbound",
+    "avgScheduleDeviation": "-1.389",
+    "onTimePercentage": "0.341",
+    "vehiclePassThrough": "22568",
+    "numIntersections": "1317",
+    "numRequests": "25364"
+  },
+  {
+    "route": "15",
+    "direction": "inbound",
+    "avgScheduleDeviation": "-3.949",
+    "onTimePercentage": "0.156",
+    "vehiclePassThrough": "11351",
+    "numIntersections": "256",
+    "numRequests": "3052"
+  },
+  {
+    "route": "15",
+    "direction": "outbound",
+    "avgScheduleDeviation": "2.261",
+    "onTimePercentage": "0.408",
+    "vehiclePassThrough": "13507",
+    "numIntersections": "115",
+    "numRequests": "174"
+  },
+  {
+    "route": "19",
+    "direction": "inbound",
+    "avgScheduleDeviation": "-1.098",
+    "onTimePercentage": "0.353",
+    "vehiclePassThrough": "35595",
+    "numIntersections": "630",
+    "numRequests": "1975"
+  },
+  {
+    "route": "19",
+    "direction": "outbound",
+    "avgScheduleDeviation": "-2.227",
+    "onTimePercentage": "0.262",
+    "vehiclePassThrough": "30156",
+    "numIntersections": "230",
+    "numRequests": "1280"
+  },
+  {
+    "route": "22",
+    "direction": "inbound",
+    "avgScheduleDeviation": "-0.176",
+    "onTimePercentage": "0.397",
+    "vehiclePassThrough": "11255",
+    "numIntersections": "182",
+    "numRequests": "3754"
+  },
+  {
+    "route": "22",
+    "direction": "outbound",
+    "avgScheduleDeviation": "-3.219",
+    "onTimePercentage": "0.231",
+    "vehiclePassThrough": "10962",
+    "numIntersections": "285",
+    "numRequests": "4078"
+  },
+  {
+    "route": "24",
+    "direction": "inbound",
+    "avgScheduleDeviation": "-5.432",
+    "onTimePercentage": "0.338",
+    "vehiclePassThrough": "5642",
+    "numIntersections": "41",
+    "numRequests": "263"
+  },
+  {
+    "route": "24",
+    "direction": "outbound",
+    "avgScheduleDeviation": "-2.486",
+    "onTimePercentage": "0.266",
+    "vehiclePassThrough": "6155",
+    "numIntersections": "43",
+    "numRequests": "150"
+  },
+  {
+    "route": "25",
+    "direction": "inbound",
+    "avgScheduleDeviation": "-28.276",
+    "onTimePercentage": "0.492",
+    "vehiclePassThrough": "2366",
+    "numIntersections": "6",
+    "numRequests": "22"
+  },
+  {
+    "route": "25",
+    "direction": "outbound",
+    "avgScheduleDeviation": "-1.819",
+    "onTimePercentage": "0.679",
+    "vehiclePassThrough": "2730",
+    "numIntersections": "2",
+    "numRequests": "80"
+  },
+  {
+    "route": "27",
+    "direction": "inbound",
+    "avgScheduleDeviation": "-0.5",
+    "onTimePercentage": "0.281",
+    "vehiclePassThrough": "20315",
+    "numIntersections": "295",
+    "numRequests": "1520"
+  },
+  {
+    "route": "27",
+    "direction": "outbound",
+    "avgScheduleDeviation": "2.806",
+    "onTimePercentage": "0.366",
+    "vehiclePassThrough": "17201",
+    "numIntersections": "387",
+    "numRequests": "2106"
+  },
+  {
+    "route": "28",
+    "direction": "inbound",
+    "avgScheduleDeviation": "-0.688",
+    "onTimePercentage": "0.408",
+    "vehiclePassThrough": "17020",
+    "numIntersections": "191",
+    "numRequests": "5785"
+  },
+  {
+    "route": "28",
+    "direction": "outbound",
+    "avgScheduleDeviation": "-2.126",
+    "onTimePercentage": "0.24",
+    "vehiclePassThrough": "15666",
+    "numIntersections": "419",
+    "numRequests": "7427"
+  },
+  {
+    "route": "29",
+    "direction": "inbound",
+    "avgScheduleDeviation": "-3.153",
+    "onTimePercentage": "0.174",
+    "vehiclePassThrough": "61674",
+    "numIntersections": "34",
+    "numRequests": "84"
+  },
+  {
+    "route": "29",
+    "direction": "outbound",
+    "avgScheduleDeviation": "-1.56",
+    "onTimePercentage": "0.29",
+    "vehiclePassThrough": "60865",
+    "numIntersections": "227",
+    "numRequests": "89"
+  },
+  {
+    "route": "30",
+    "direction": "inbound",
+    "avgScheduleDeviation": "-0.652",
+    "onTimePercentage": "0.404",
+    "vehiclePassThrough": "9921",
+    "numIntersections": "217",
+    "numRequests": "2563"
+  },
+  {
+    "route": "30",
+    "direction": "outbound",
+    "avgScheduleDeviation": "-3.812",
+    "onTimePercentage": "0.117",
+    "vehiclePassThrough": "10128",
+    "numIntersections": "384",
+    "numRequests": "3871"
+  },
+  {
+    "route": "33",
+    "direction": "inbound",
+    "avgScheduleDeviation": "-0.61",
+    "onTimePercentage": "0.404",
+    "vehiclePassThrough": "3571",
+    "numIntersections": "49",
+    "numRequests": "794"
+  },
+  {
+    "route": "33",
+    "direction": "outbound",
+    "avgScheduleDeviation": "-1.484",
+    "onTimePercentage": "0.279",
+    "vehiclePassThrough": "3317",
+    "numIntersections": "88",
+    "numRequests": "1469"
+  },
+  {
+    "route": "3652",
+    "direction": "inbound",
+    "avgScheduleDeviation": "-1.272",
+    "onTimePercentage": "0.362",
+    "vehiclePassThrough": "6086",
+    "numIntersections": "0",
+    "numRequests": "0"
+  },
+  {
+    "route": "3652",
+    "direction": "outbound",
+    "avgScheduleDeviation": "-1.555",
+    "onTimePercentage": "0.262",
+    "vehiclePassThrough": "3594",
+    "numIntersections": "0",
+    "numRequests": "0"
+  },
+  {
+    "route": "37",
+    "direction": "inbound",
+    "avgScheduleDeviation": "0.344",
+    "onTimePercentage": "0.485",
+    "vehiclePassThrough": "11876",
+    "numIntersections": "1",
+    "numRequests": "338"
+  },
+  {
+    "route": "37",
+    "direction": "outbound",
+    "avgScheduleDeviation": "-0.191",
+    "onTimePercentage": "0.5",
+    "vehiclePassThrough": "12679",
+    "numIntersections": "0",
+    "numRequests": "261"
+  },
+  {
+    "route": "38",
+    "direction": "inbound",
+    "avgScheduleDeviation": "-2.128",
+    "onTimePercentage": "0.405",
+    "vehiclePassThrough": "33038",
+    "numIntersections": "1584",
+    "numRequests": "24339"
+  },
+  {
+    "route": "38",
+    "direction": "outbound",
+    "avgScheduleDeviation": "-5.413",
+    "onTimePercentage": "0.094",
+    "vehiclePassThrough": "38974",
+    "numIntersections": "1625",
+    "numRequests": "30594"
+  },
+  {
+    "route": "38R",
+    "direction": "inbound",
+    "avgScheduleDeviation": "-0.619",
+    "onTimePercentage": "0.452",
+    "vehiclePassThrough": "19895",
+    "numIntersections": "935",
+    "numRequests": "21439"
+  },
+  {
+    "route": "38R",
+    "direction": "outbound",
+    "avgScheduleDeviation": "-3.333",
+    "onTimePercentage": "0.122",
+    "vehiclePassThrough": "14756",
+    "numIntersections": "633",
+    "numRequests": "13863"
+  },
+  {
+    "route": "43",
+    "direction": "inbound",
+    "avgScheduleDeviation": "-2.22",
+    "onTimePercentage": "0.266",
+    "vehiclePassThrough": "47047",
+    "numIntersections": "186",
+    "numRequests": "3744"
+  },
+  {
+    "route": "43",
+    "direction": "outbound",
+    "avgScheduleDeviation": "0.333",
+    "onTimePercentage": "0.447",
+    "vehiclePassThrough": "38919",
+    "numIntersections": "263",
+    "numRequests": "3265"
+  },
+  {
+    "route": "44",
+    "direction": "inbound",
+    "avgScheduleDeviation": "-3.52",
+    "onTimePercentage": "0.272",
+    "vehiclePassThrough": "38518",
+    "numIntersections": "57",
+    "numRequests": "6"
+  },
+  {
+    "route": "44",
+    "direction": "outbound",
+    "avgScheduleDeviation": "-5.789",
+    "onTimePercentage": "0.195",
+    "vehiclePassThrough": "20744",
+    "numIntersections": "93",
+    "numRequests": "418"
+  },
+  {
+    "route": "45",
+    "direction": "inbound",
+    "avgScheduleDeviation": "0.938",
+    "onTimePercentage": "0.523",
+    "vehiclePassThrough": "4447",
+    "numIntersections": "87",
+    "numRequests": "735"
+  },
+  {
+    "route": "45",
+    "direction": "outbound",
+    "avgScheduleDeviation": "-2.385",
+    "onTimePercentage": "0.158",
+    "vehiclePassThrough": "3730",
+    "numIntersections": "145",
+    "numRequests": "1005"
+  },
+  {
+    "route": "48",
+    "direction": "inbound",
+    "avgScheduleDeviation": "-1.609",
+    "onTimePercentage": "0.317",
+    "vehiclePassThrough": "21211",
+    "numIntersections": "89",
+    "numRequests": "577"
+  },
+  {
+    "route": "48",
+    "direction": "outbound",
+    "avgScheduleDeviation": "-0.111",
+    "onTimePercentage": "0.519",
+    "vehiclePassThrough": "19008",
+    "numIntersections": "73",
+    "numRequests": "1"
+  },
+  {
+    "route": "49",
+    "direction": "inbound",
+    "avgScheduleDeviation": "-3.193",
+    "onTimePercentage": "0.175",
+    "vehiclePassThrough": "40984",
+    "numIntersections": "1144",
+    "numRequests": "15183"
+  },
+  {
+    "route": "49",
+    "direction": "outbound",
+    "avgScheduleDeviation": "-0.303",
+    "onTimePercentage": "0.391",
+    "vehiclePassThrough": "35243",
+    "numIntersections": "1097",
+    "numRequests": "15080"
+  },
+  {
+    "route": "5",
+    "direction": "inbound",
+    "avgScheduleDeviation": "-0.396",
+    "onTimePercentage": "0.467",
+    "vehiclePassThrough": "8555",
+    "numIntersections": "117",
+    "numRequests": "2539"
+  },
+  {
+    "route": "5",
+    "direction": "outbound",
+    "avgScheduleDeviation": "-1.998",
+    "onTimePercentage": "0.268",
+    "vehiclePassThrough": "8840",
+    "numIntersections": "148",
+    "numRequests": "2947"
+  },
+  {
+    "route": "54",
+    "direction": "inbound",
+    "avgScheduleDeviation": "-1.746",
+    "onTimePercentage": "0.31",
+    "vehiclePassThrough": "36255",
+    "numIntersections": "275",
+    "numRequests": "1586"
+  },
+  {
+    "route": "54",
+    "direction": "outbound",
+    "avgScheduleDeviation": "-0.769",
+    "onTimePercentage": "0.417",
+    "vehiclePassThrough": "26250",
+    "numIntersections": "317",
+    "numRequests": "1561"
+  },
+  {
+    "route": "55",
+    "direction": "inbound",
+    "avgScheduleDeviation": "0.157",
+    "onTimePercentage": "0.616",
+    "vehiclePassThrough": "7654",
+    "numIntersections": "206",
+    "numRequests": "1750"
+  },
+  {
+    "route": "55",
+    "direction": "outbound",
+    "avgScheduleDeviation": "-0.336",
+    "onTimePercentage": "0.379",
+    "vehiclePassThrough": "8961",
+    "numIntersections": "321",
+    "numRequests": "2062"
+  },
+  {
+    "route": "67",
+    "direction": "inbound",
+    "avgScheduleDeviation": "-0.806",
+    "onTimePercentage": "0.303",
+    "vehiclePassThrough": "6101",
+    "numIntersections": "0",
+    "numRequests": "3"
+  },
+  {
+    "route": "67",
+    "direction": "outbound",
+    "avgScheduleDeviation": "0.087",
+    "onTimePercentage": "0.519",
+    "vehiclePassThrough": "10304",
+    "numIntersections": "8",
+    "numRequests": "285"
+  },
+  {
+    "route": "7",
+    "direction": "inbound",
+    "avgScheduleDeviation": "-0.77",
+    "onTimePercentage": "0.418",
+    "vehiclePassThrough": "25139",
+    "numIntersections": "149",
+    "numRequests": "4583"
+  },
+  {
+    "route": "7",
+    "direction": "outbound",
+    "avgScheduleDeviation": "-2.766",
+    "onTimePercentage": "0.189",
+    "vehiclePassThrough": "26869",
+    "numIntersections": "190",
+    "numRequests": "4727"
+  },
+  {
+    "route": "714",
+    "direction": "inbound",
+    "avgScheduleDeviation": "-3.523",
+    "onTimePercentage": "0.068",
+    "vehiclePassThrough": "44",
+    "numIntersections": "1",
+    "numRequests": "68"
+  },
+  {
+    "route": "714",
+    "direction": "outbound",
+    "avgScheduleDeviation": "1.588",
+    "onTimePercentage": "0.765",
+    "vehiclePassThrough": "17",
+    "numIntersections": "3",
+    "numRequests": "31"
+  },
+  {
+    "route": "8",
+    "direction": "inbound",
+    "avgScheduleDeviation": "-1.888",
+    "onTimePercentage": "0.302",
+    "vehiclePassThrough": "56710",
+    "numIntersections": "2795",
+    "numRequests": "25292"
+  },
+  {
+    "route": "8",
+    "direction": "outbound",
+    "avgScheduleDeviation": "-5.612",
+    "onTimePercentage": "0.184",
+    "vehiclePassThrough": "56279",
+    "numIntersections": "1827",
+    "numRequests": "21457"
+  },
+  {
+    "route": "8AX",
+    "direction": "inbound",
+    "avgScheduleDeviation": "-6.216",
+    "onTimePercentage": "0.154",
+    "vehiclePassThrough": "1628",
+    "numIntersections": "85",
+    "numRequests": "878"
+  },
+  {
+    "route": "8AX",
+    "direction": "outbound",
+    "avgScheduleDeviation": "-5.993",
+    "onTimePercentage": "0.151",
+    "vehiclePassThrough": "1931",
+    "numIntersections": "56",
+    "numRequests": "648"
+  },
+  {
+    "route": "9",
+    "direction": "inbound",
+    "avgScheduleDeviation": "-1.89",
+    "onTimePercentage": "0.319",
+    "vehiclePassThrough": "22137",
+    "numIntersections": "596",
+    "numRequests": "8021"
+  },
+  {
+    "route": "9",
+    "direction": "outbound",
+    "avgScheduleDeviation": "-3.167",
+    "onTimePercentage": "0.19",
+    "vehiclePassThrough": "35244",
+    "numIntersections": "1019",
+    "numRequests": "11506"
+  },
+  {
+    "route": "90",
+    "direction": "inbound",
+    "avgScheduleDeviation": "-14.538",
+    "onTimePercentage": "0.474",
+    "vehiclePassThrough": "2022",
+    "numIntersections": "142",
+    "numRequests": "723"
+  },
+  {
+    "route": "90",
+    "direction": "outbound",
+    "avgScheduleDeviation": "-21.936",
+    "onTimePercentage": "0.573",
+    "vehiclePassThrough": "2006",
+    "numIntersections": "105",
+    "numRequests": "625"
+  },
+  {
+    "route": "91",
+    "direction": "inbound",
+    "avgScheduleDeviation": "-9.093",
+    "onTimePercentage": "0.303",
+    "vehiclePassThrough": "2718",
+    "numIntersections": "165",
+    "numRequests": "731"
+  },
+  {
+    "route": "91",
+    "direction": "outbound",
+    "avgScheduleDeviation": "-2.466",
+    "onTimePercentage": "0.313",
+    "vehiclePassThrough": "4647",
+    "numIntersections": "137",
+    "numRequests": "952"
+  },
+  {
+    "route": "9R",
+    "direction": "inbound",
+    "avgScheduleDeviation": "-1.684",
+    "onTimePercentage": "0.376",
+    "vehiclePassThrough": "15631",
+    "numIntersections": "361",
+    "numRequests": "6543"
+  },
+  {
+    "route": "9R",
+    "direction": "outbound",
+    "avgScheduleDeviation": "-1.466",
+    "onTimePercentage": "0.273",
+    "vehiclePassThrough": "14971",
+    "numIntersections": "223",
+    "numRequests": "4894"
+  },
+  {
+    "route": "KBUS",
+    "direction": "inbound",
+    "avgScheduleDeviation": "-0.4",
+    "onTimePercentage": "0.394",
+    "vehiclePassThrough": "3699",
+    "numIntersections": "38",
+    "numRequests": "5"
+  },
+  {
+    "route": "KBUS",
+    "direction": "outbound",
+    "avgScheduleDeviation": "-1.139",
+    "onTimePercentage": "0.348",
+    "vehiclePassThrough": "2825",
+    "numIntersections": "9",
+    "numRequests": "22"
+  },
+  {
+    "route": "L-OWL",
+    "direction": "inbound",
+    "avgScheduleDeviation": "-13.075",
+    "onTimePercentage": "0.539",
+    "vehiclePassThrough": "2337",
+    "numIntersections": "31",
+    "numRequests": "4"
+  },
+  {
+    "route": "L-OWL",
+    "direction": "outbound",
+    "avgScheduleDeviation": "-23.4",
+    "onTimePercentage": "0.411",
+    "vehiclePassThrough": "1951",
+    "numIntersections": "19",
+    "numRequests": "56"
+  },
+  {
+    "route": "LBUS",
+    "direction": "inbound",
+    "avgScheduleDeviation": "-2.04",
+    "onTimePercentage": "0.259",
+    "vehiclePassThrough": "21446",
+    "numIntersections": "142",
+    "numRequests": "30"
+  },
+  {
+    "route": "LBUS",
+    "direction": "outbound",
+    "avgScheduleDeviation": "-1.828",
+    "onTimePercentage": "0.307",
+    "vehiclePassThrough": "15425",
+    "numIntersections": "55",
+    "numRequests": "97"
+  },
+  {
+    "route": "MBUS",
+    "direction": "inbound",
+    "avgScheduleDeviation": "-0.508",
+    "onTimePercentage": "0.44",
+    "vehiclePassThrough": "8273",
+    "numIntersections": "2",
+    "numRequests": "5"
+  },
+  {
+    "route": "MBUS",
+    "direction": "outbound",
+    "avgScheduleDeviation": "0.18",
+    "onTimePercentage": "0.481",
+    "vehiclePassThrough": "5666",
+    "numIntersections": "45",
+    "numRequests": "0"
+  },
+  {
+    "route": "N-OWL",
+    "direction": "inbound",
+    "avgScheduleDeviation": "-16.42",
+    "onTimePercentage": "0.483",
+    "vehiclePassThrough": "2693",
+    "numIntersections": "30",
+    "numRequests": "331"
+  },
+  {
+    "route": "N-OWL",
+    "direction": "outbound",
+    "avgScheduleDeviation": "-10.0",
+    "onTimePercentage": "0.625",
+    "vehiclePassThrough": "2394",
+    "numIntersections": "25",
+    "numRequests": "229"
+  },
+  {
+    "route": "NBUS",
+    "direction": "inbound",
+    "avgScheduleDeviation": "-0.849",
+    "onTimePercentage": "0.312",
+    "vehiclePassThrough": "7348",
+    "numIntersections": "16",
+    "numRequests": "262"
+  },
+  {
+    "route": "NBUS",
+    "direction": "outbound",
+    "avgScheduleDeviation": "0.296",
+    "onTimePercentage": "0.395",
+    "vehiclePassThrough": "5448",
+    "numIntersections": "29",
+    "numRequests": "137"
+  },
+  {
+    "route": "TBUS",
+    "direction": "inbound",
+    "avgScheduleDeviation": "1.257",
+    "onTimePercentage": "0.551",
+    "vehiclePassThrough": "908",
+    "numIntersections": "5",
+    "numRequests": "0"
+  },
+  {
+    "route": "TBUS",
+    "direction": "outbound",
+    "avgScheduleDeviation": "-0.784",
+    "onTimePercentage": "0.38",
+    "vehiclePassThrough": "606",
+    "numIntersections": "2",
+    "numRequests": "0"
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "deviceId": "2101x0101",
+    "description": "text",
+    "gttSerial": "text",
+    "serial": "text",
+    "make": "Whelen",
+    "model": "",
+    "addressMAC": "22:22:22:00:00:04",
+    "addressLAN": "",
+    "addressWAN": "",
+    "IMEI": ""
+  },
+  {
+    "deviceId": "2101x0202",
+    "description": "text",
+    "gttSerial": "text",
+    "serial": "text",
+    "make": "GTT",
+    "model": "",
+    "addressMAC": "22:22:22:00:00:04",
+    "addressLAN": "",
+    "addressWAN": "",
+    "IMEI": ""
+  }
+]

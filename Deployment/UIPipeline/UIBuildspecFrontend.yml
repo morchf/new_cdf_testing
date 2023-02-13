@@ -1,0 +1,168 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.8
+    commands:
+      - n 16.6.2
+      - npm update
+
+  pre_build:
+    commands:
+      # Updating packages on container, installing AWSCLI and PyTest, and checking home path and python version for logging purposes.
+      - ls -l
+      - pwd=`pwd`
+      - echo $pwd
+      - yum -y update --skip-broken
+      - python -V
+      - python3 -V
+      - pip -V
+      - pip3 -V
+      - python3 -m pip -V
+      - pip3 install --upgrade pip
+      - npm -v
+      - node -v
+      - yum install -y sudo
+      - pip3 install pyopenssl
+      - pip3 install pytest
+      - pip3 install pytest-cov
+
+  build:
+    commands:
+      #
+      # Setup environment
+      #
+      # Extracting variables exported by UI CF template. These variables are required by the frontend.
+      - Env=`aws cloudformation describe-stacks --stack-name UIDeploymentPipelineStack-SAM --query "Stacks[*].Outputs[?OutputKey=='Env'].OutputValue" --output text`
+      - UIDomain=`aws cloudformation describe-stacks --stack-name UIDeploymentPipelineStack-SAM --query "Stacks[*].Outputs[?OutputKey=='UIDomain'].OutputValue" --output text`
+      - AWSRegion=`aws cloudformation describe-stacks --stack-name UIDeploymentPipelineStack-SAM --query "Stacks[*].Outputs[?OutputKey=='AWSRegion'].OutputValue" --output text`
+
+      - UIAPIARN=`aws cloudformation describe-stacks --stack-name UIDeploymentPipelineStack-SAM --query "Stacks[*].Outputs[?OutputKey=='UIAPIARN'].OutputValue" --output text`
+      - CDFAPIARN=`aws cloudformation describe-stacks --stack-name UIDeploymentPipelineStack-SAM --query "Stacks[*].Outputs[?OutputKey=='CDFAPIARN'].OutputValue" --output text`
+
+      - CognitoUserPoolID=`aws cloudformation describe-stacks --stack-name UIDeploymentPipelineStack-SAM --query "Stacks[*].Outputs[?OutputKey=='CognitoUserPoolID'].OutputValue" --output text`
+      - CognitoUserPoolClientID=`aws cloudformation describe-stacks --stack-name UIDeploymentPipelineStack-SAM --query "Stacks[*].Outputs[?OutputKey=='CognitoUserPoolClientID'].OutputValue" --output text`
+      - CognitoUserPoolDomain=`aws cloudformation describe-stacks --stack-name UIDeploymentPipelineStack-SAM --query "Stacks[*].Outputs[?OutputKey=='CognitoUserPoolDomain'].OutputValue" --output text`
+
+      - CognitoLogoutURL=`aws cloudformation describe-stacks --stack-name UIDeploymentPipelineStack-SAM --query "Stacks[*].Outputs[?OutputKey=='LogoutURL'].OutputValue" --output text`
+      - CognitoCallBackURL=`aws cloudformation describe-stacks --stack-name UIDeploymentPipelineStack-SAM --query "Stacks[*].Outputs[?OutputKey=='CallbackURL'].OutputValue" --output text`
+
+      # VPS Automations API endpoint required by the UI
+      - VPSAPIID=`aws apigateway get-rest-apis --query "items[?name=='VPSAUTOMATIONS'].id" --output text`
+      - VPSAPIARN=https://$VPSAPIID.execute-api.$AWSRegion.amazonaws.com/Prod
+
+      - echo $Env
+
+      - Lateness=`aws apigateway get-rest-apis --query "items[?name=='ClientAPI-Analytics'].id" --output text`
+      - LatenessAPI=https://$Lateness.execute-api.$AWSRegion.amazonaws.com/prod
+
+      - Intersections=`aws apigateway get-rest-apis --query "items[?name=='ClientAPI-Config-IntersectionsApi-Api'].id" --output text`
+      - IntersectionsAPI=https://$Intersections.execute-api.$AWSRegion.amazonaws.com/prod
+
+      - FeaturePersistence=`aws apigateway get-rest-apis --query "items[?name=='FeaturePersistenceAPI'].id" --output text`
+      - FeaturePersistenceAPI=https://$FeaturePersistence.execute-api.us-east-1.amazonaws.com/${Env}
+
+      - Whelen=`aws apigateway get-rest-apis --query "items[?name=='ClientAPI-Whelen-WhelenWrapperApi-Api'].id" --output text`
+      - WhelenAPI=https://$Whelen.execute-api.$AWSRegion.amazonaws.com/test
+
+      - VehicleHealthMonitoring=`aws apigateway get-rest-apis --query "items[?name=='ClientAPI-VehicleHM-VehicleHMApi-Api'].id" --output text`
+      - VehicleHealthMonitoringAPI=https://$VehicleHealthMonitoring.execute-api.us-east-1.amazonaws.com/${env}
+
+      # Follow 'cdfmanager.<env>gtt.com' format for non-prod environments
+      - |
+        if [ "$Env" != "production" ]; then
+          UIDomain=https://cdfmanager.${Env}gtt.com
+        fi
+
+      ####
+      # Resetting the Cognito CallBackURL & LogoutURL since we added localhost URL in UIBuildspecBackend file for the develop stage.
+      # Without resetting the URLs for develop stages, Cognito won't be able redirect the user to app URL upon login in develop environment
+      - |
+        if [ "$Env" = "develop" ]; then
+          CognitoCallBackURL=https://cdfmanager.${Env}gtt.com/callback
+          CognitoLogoutURL=https://cdfmanager.${Env}gtt.com/login
+        fi
+
+      ####
+      # Extracting Google API Key from Secrets Manager
+      - CDFUIGoogleAPIKey=`aws secretsmanager get-secret-value --secret-id CDFUIGoogleAPIKey --query SecretString --output text | cut -f2 -d:| tr -d \}\"`
+
+      # Only enable this command for debugging
+      - echo $Env $AWSRegion $UIAPIARN $CDFAPIARN $CognitoUserPoolID $CognitoUserPoolClientID $CognitoCallBackURL $VPSAPIARN $CognitoLogoutURL $CDFUIGoogleAPIKey $LatenessAPI $IntersectionsAPI $WhelenAPI $VehicleHealthMonitoringAPI
+
+      #
+      # Deploy Cognito UI and templates
+      #
+      - COGNITO_CONFIG_DIR=Client/cognito
+
+      # Logo and stylesheet for login
+      - STYLESHEET=$(cat $COGNITO_CONFIG_DIR/style.css)
+      - |
+        aws cognito-idp set-ui-customization \
+          --user-pool-id $CognitoUserPoolID \
+          --css "$STYLESHEET" \
+          --image-file "fileb://$COGNITO_CONFIG_DIR/gtt_logo.jpg"
+
+      # Content for email/SMS invitation and verification messages
+      # WARNING: any parameters not explicity defined by update-user-pool command may be restored to default value
+      - SMS_INVITATION_MESSAGE="Your username is {username} and temporary password is {####}."
+      - SMS_MFA_MESSAGE="Opticom Cloud authentication code {####}"
+      - EMAIL_INVITATION_SUBJECT="Your Opticom Cloud Access"
+      - EMAIL_VERIFICATION_SUBJECT="Your Opticom Cloud Verification Code"
+      - |
+        EMAIL_INVITATION_MESSAGE=$( \
+          cat "$COGNITO_CONFIG_DIR/email-invitation-message.html" \
+          | envsubst \
+          | sed -e 's/'\"'/\\"/g' \
+          | tr -d "\r\n"
+        )
+      - |
+        EMAIL_VERIFICATION_MESSAGE=$( \
+          cat "$COGNITO_CONFIG_DIR/email-verification-message.html" \
+          | sed -e 's/'\"'/\\"/g' \
+          | tr -d "\r\n" \
+        )
+      - |
+        aws cognito-idp update-user-pool \
+          --user-pool-id "$CognitoUserPoolID" \
+          --verification-message-template "{ \"EmailMessage\": \"$EMAIL_VERIFICATION_MESSAGE\", \"EmailSubject\": \"$EMAIL_VERIFICATION_SUBJECT\" }" \
+          --admin-create-user-config "{ \"AllowAdminCreateUserOnly\": true, \"InviteMessageTemplate\": { \"SMSMessage\": \"$SMS_INVITATION_MESSAGE\", \"EmailSubject\": \"$EMAIL_INVITATION_SUBJECT\", \"EmailMessage\": \"$EMAIL_INVITATION_MESSAGE\" } }" \
+          --email-verification-subject "$EMAIL_VERIFICATION_SUBJECT" \
+          --email-verification-message "$EMAIL_VERIFICATION_MESSAGE" \
+          --sms-authentication-message "$SMS_MFA_MESSAGE"
+
+      #
+      # Build and deploy UI
+      #
+      - touch .env.$Env
+      - ls -la
+      - echo REACT_APP_AWS_REGION="'$AWSRegion'" >> .env.$Env
+      - echo REACT_APP_CDF_URL="'$CDFAPIARN'" >> .env.$Env
+      - echo REACT_APP_API_URL="'$VPSAPIARN'" >> .env.$Env
+      - echo REACT_APP_UI_URL="'$UIAPIARN'" >> .env.$Env
+      - echo REACT_APP_SC_DOMAIN_NAME="'$CognitoUserPoolDomain'" >> .env.$Env #This domain is specific to Cognito
+      - echo REACT_APP_CALLBACK_URL="'$CognitoCallBackURL'" >> .env.$Env
+      - echo REACT_APP_LOGOUT_URL="'$CognitoLogoutURL'" >> .env.$Env
+      - echo REACT_APP_USER_POOL_ID="'$CognitoUserPoolID'" >> .env.$Env
+      - echo REACT_APP_SC_CLIENT_ID="'$CognitoUserPoolClientID'" >> .env.$Env
+      - echo DISABLE_ESLINT_PLUGIN=true >> .env.$Env
+      - echo REACT_APP_GMAPS_KEY=$CDFUIGoogleAPIKey >> .env.$Env
+      - echo REACT_APP_LATENESS_URL=$LatenessAPI >> .env.$Env
+      - echo REACT_APP_FEATURE_PERSISTENCE_URL= $FeaturePersistenceAPI >> .env.$Env
+      - echo REACT_APP_INTERSECTIONS_URL=$IntersectionsAPI >> .env.$Env
+      - echo REACT_APP_WHELEN_URL=$WhelenAPI >> .env.$Env
+      - echo REACT_APP_VEHICLE_HEALTH_MONITORING_URL=$VehicleHealthMonitoringAPI >> .env.$Env
+      - cat .env.$Env # Only enable this command for debugging
+      - mv .env.$Env ./Client
+      - cd Client
+      - ls -la
+      - npm install
+      - echo npm run deploy:$Env
+      - npm run deploy:$Env
+      - cd $pwd
+
+artifacts:
+  files:
+    - "**/*"
+  base-directory: .

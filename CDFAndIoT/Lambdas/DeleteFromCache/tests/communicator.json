@@ -1,0 +1,21 @@
+{
+    "attributes": {
+        "IMEI": "524305788181097",
+        "addressLAN": "1.2.0.0",
+        "gttSerial": "GTTMP70121",
+        "serial": "12",
+        "addressMAC": "0B:57:31:DB:8A:68",
+        "model": "MP-70",
+        "make": "Sierra Wireless",
+        "addressWAN": "1.2.9.0",
+        "devCertId": "NULL_CERT",
+        "uniqueId": "8C1A5556-7FA4-11EC-A0FB-4E640F6C5A82"
+    },
+    "groups": {"out": {"ownedby": ["/oregon/mp70testagencydallas"]}},
+    "devices": {"in": {"installedat": ["mp70testvehicledallas"]}},
+    "category": "device",
+    "templateId": "communicator",
+    "description": "MP70 Dallas Test device",
+    "deviceId": "mp70testdevicedallas",
+    "state": "active"
+}

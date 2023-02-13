@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  static-gtfs-poller:
+    build:
+      context: Deployment/TSPPipeline/Docker
+      dockerfile: ../Tasks/StaticGtfsPoller/Dockerfile
+      args:
+        BASE_CONTAINER_REPO: ${AWS_ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com
+        SERVICE_NAME: static_gtfs_poller
+        USERNAME: root
+    volumes:
+      - ~/.aws/:/root/.aws:ro

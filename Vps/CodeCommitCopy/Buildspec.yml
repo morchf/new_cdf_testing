@@ -1,0 +1,21 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      python: 3.8
+  pre_build:
+    commands:
+      - pip3 install -qq
+        aws-sam-cli
+        awscli
+        jinja2
+      - sam --version
+  build:
+    commands:
+      - python3 YmlConvert.py --customerName "${customerName}"
+      - cat template.yml
+      - sam package --region "${awsRegion}" --template-file template.yml --s3-bucket "${S3Location}" --output-template-file deploy.yml    > /dev/null 2>&1
+      - sam deploy --region "${awsRegion}" --template-file deploy.yml --stack-name "${customerName}"  --capabilities CAPABILITY_IAM  --tags AGENCY="${customerName}" REGION="${regionName}" --no-fail-on-empty-changeset
+artifacts:
+  files:
+    - "**/*"

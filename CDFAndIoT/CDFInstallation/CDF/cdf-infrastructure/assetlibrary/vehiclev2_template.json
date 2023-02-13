@@ -1,0 +1,58 @@
+{
+  "properties": {
+      "name": {
+          "type": [
+              "null",
+              "string"
+          ]
+      },
+      "description": {
+          "type": [
+              "null",
+              "string"
+          ]
+      },
+      "type": {
+          "type": [
+              "null",
+              "string"
+          ]
+      },
+      "priority": {
+          "type": "string",
+          "enum": [
+              "High",
+              "Low"
+          ]
+      },
+      "class": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+      },
+      "VID": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9999
+      },
+      "uniqueId": {
+          "type": [
+              "null",
+              "string"
+          ]
+      }
+  },
+  "relations": {
+      "in": {
+          "installedat": [
+              "communicator"
+          ]
+      }
+  },
+  "required": [
+      "priority",
+      "uniqueId",
+      "class",
+      "VID"
+  ]
+}

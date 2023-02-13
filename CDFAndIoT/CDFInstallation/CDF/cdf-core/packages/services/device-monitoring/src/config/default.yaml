@@ -1,0 +1,10 @@
+aws:
+  accountId: 
+  region: 
+
+assetLibrary:
+  mode: lambda
+  apiFunctionName:
+
+logging:
+  level: debug

@@ -1,0 +1,155 @@
+version: 0.2
+
+env:
+  exported-variables:
+    - ENVIRONMENT
+    - AWS_ACCOUNT_ID
+    - AWS_REGION
+    - REDSHIFT_STACK_NAME
+    - AIRFLOW_STACK_NAME
+    - GLUE_STACK_NAME
+
+phases:
+  install:
+    commands:
+      - chmod -R +x Deployment/Constructs/Scripts
+      - Deployment/Constructs/Scripts/setup-environment.sh
+      - PATH=$PATH:$PWD/Deployment/Constructs/Scripts
+
+      # Required to properly handle relative packages
+      - pip install --upgrade pip
+
+      # Install core CDK
+      - pip install -r ClientAPI/requirements.txt
+
+  pre_build:
+    commands:
+      - echo "Cleanup S3 Bucket"
+      - aws s3 rm s3://$ARTIFACTS_BUCKET_NAME --recursive
+
+      # Provide CodeBuild credentials to Docker
+      - code-build-credentials.sh
+
+  build:
+    commands:
+      - cd ClientAPI
+
+      - echo "Prepare stack arguments"
+
+      # Glue outputs
+      - DATA_LAKE_BUCKET_ARN=$(cfn-output.sh $GLUE_STACK_NAME EtlBucketArn)
+      - GLUE_ANALYTICS_DB=$(cfn-output.sh $GLUE_STACK_NAME GlueAnalyticsDb)
+      - GLUE_EVP_DB=$(cfn-output.sh $GLUE_STACK_NAME GlueEvpDb)
+      - GLUE_TSP_DB=$(cfn-output.sh $GLUE_STACK_NAME GlueTspDb)
+      - GLUE_GTFS_DB=$(cfn-output.sh $GLUE_STACK_NAME GlueGtfsDb)
+
+      # Redshift outputs
+      - SECURITY_GROUP=$(cfn-output.sh $REDSHIFT_STACK_NAME RedshiftClusterSecurityGroupName)
+      - REDSHIFT_CLUSTER_ENDPOINT=$(cfn-output.sh $REDSHIFT_STACK_NAME ClusterEndpoint)
+      - REDSHIFT_SECRET_ARN=$(cfn-output.sh $REDSHIFT_STACK_NAME AdminAccountSecret)
+      - DWH_ROLE_ARN=$(cfn-output.sh $REDSHIFT_STACK_NAME DataWarehouseRole)
+      - ATHENA_WORK_GROUP=$(cfn-output.sh $REDSHIFT_STACK_NAME AthenaWorkGroup)
+      - ATHENA_QUERY_RESULTS_BUCKET_ARN=$(cfn-output.sh $REDSHIFT_STACK_NAME AthenaOutputBucket)
+
+      # UI
+      - |
+        COGNITO_USER_POOL_ID=$( \
+          aws cognito-idp list-user-pools \
+            --max-results 60 \
+          | jq ".UserPools" \
+          | jq ".[] | select(.Name | startswith(\"UIUserPool\"))" \
+          | jq -r ".Id"
+        )
+      - |
+        COGNITO_USER_POOL_ARN="arn:aws:cognito-idp:$AWS_REGION:$AWS_ACCOUNT_ID:userpool/$COGNITO_USER_POOL_ID"
+
+      - echo "Deploy 'analytics' app"
+      - cdk-deploy.sh -a analytics_app.py -o outputs.json
+
+      - echo "Update and test DWH"
+
+      # Convert the output environment string to environment variables
+      - export DWH_ENV=$(cdk-output.sh outputs.json dwhEnvironment)
+      - export REDSHIFT_SECRET_ARN=$(echo $DWH_ENV | jq -r '.REDSHIFT_SECRET_ARN')
+      - export SQL_SCRIPT_KWARGS=$(echo $DWH_ENV | jq -r '.SQL_SCRIPT_KWARGS')
+
+      # Run the Docker image to execute database migration
+      - |
+        aws ecr get-login-password \
+        | docker login \
+          --username AWS \
+          --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
+      - |
+        docker-compose \
+        -f dwh/docker-compose.yml \
+        up --build
+
+      - cd ..
+
+      - |
+        export COGNITO_USER_POOL_ID=$( \
+          aws cognito-idp list-user-pools \
+            --max-results 60 \
+          | jq ".UserPools" \
+          | jq ".[] | select(.Name | startswith(\"UIUserPool\"))" \
+          | jq -r ".Id"
+        )
+
+      # Config app
+      - DEPLOY_CONFIG_APP=TRUE
+      - |
+        if [ "$ENVIRONMENT" = "develop" ]; then
+          export VPC_ID=vpc-0be96144baf013e3f
+          export SG_ID=sg-048c46039354d6be0
+          export SUBNET_IDS=subnet-04b3d632f36cf57aa
+          export VPS_TABLE_NAME=globalMacVps
+          export INSTANCE_IDS=i-03df9aa039ef30ebc
+        elif [ "$ENVIRONMENT" = "test" ]; then
+          export VPC_ID=vpc-05aebead04e4609bc
+          export SG_ID=sg-0ca939cd43847ef5b
+          export SUBNET_IDS=subnet-0ed28d824717173ec
+          export VPS_TABLE_NAME=globalMacVps
+          export INSTANCE_IDS=i-0588bd99bcc0920f0
+        elif [ "$ENVIRONMENT" = "production" ]; then
+          export VPC_ID=vpc-05d196d4592e3d628
+          export SG_ID=sg-0eb742653c2848c19
+          export SUBNET_IDS=subnet-0a015c3c1b11a3d1f
+          export VPS_TABLE_NAME=globalMacVps
+          export INSTANCE_IDS=i-002c17c904337404f
+        elif [ "$ENVIRONMENT" = "pilot" ]; then
+          export VPC_ID=vpc-078cd1c7595a1dbcb
+          export SG_ID=sg-00530206588277c4e
+          export SUBNET_IDS=subnet-0935eb8e80d6a0b5a
+          export VPS_TABLE_NAME=globalMacVps
+          export INSTANCE_IDS=i-075697e8ef81e9e2a
+        else
+          echo "Skipping config deployment"
+          unset DEPLOY_CONFIG_APP
+        fi
+
+      - |
+        if [ -n "$DEPLOY_CONFIG_APP" ]; then
+          echo "Deploy 'config' app"
+          cdk-deploy.sh -a ClientAPI/config_app.py
+        fi
+
+      # Whelen API Wrapper API
+      - export WHELEN_BATCH_PROCESSING_LAMBDA_ARN="arn:aws:lambda:$AWS_REGION:$AWS_ACCOUNT_ID:function:BatchProcessing-WhelenPipeline"
+      - echo "Deploy 'Whelen Wrapper' app"
+      - cdk-deploy.sh -a ClientAPI/whelen_app.py
+
+      # Intersection health monitoring resources
+      # - cdk-deploy.sh -a ClientAPI/int_monitoring_app.py
+      
+      # Vehicle Health Monitoring API
+      - |
+        echo "Deploy 'Vehicle Health Monitoring' app"
+      - cdk-deploy.sh -a ClientAPI/vehicle_health_monitoring_app.py
+
+artifacts:
+  files:
+    - airflow/**/*
+    - spark/**/*
+    - CF/**/*
+    - dwh/**/*
+  base-directory: ClientAPI

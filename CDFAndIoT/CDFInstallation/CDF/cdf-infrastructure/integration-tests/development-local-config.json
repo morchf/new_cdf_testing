@@ -1,0 +1,27 @@
+{
+  "aws": {
+    "region": "us-west-2"
+  },
+  "assetLibrary": {
+    "baseUrl": "http://localhost:3000"
+  },
+  "assetLibraryHistory": {
+    "baseUrl": "http://localhost:3003"
+  },
+  "commands": {
+      "baseUrl": "http://localhost:3002"
+  },
+  "provisioning": {
+    "baseUrl": "http://localhost:3004",
+    "templates": {
+      "bucket": "cdf-157731826412-us-west-2",
+      "prefix": "provisioning/templates/",
+      "suffix": ".json"
+    }
+  },
+  "thing": {
+    "name": "cdf_integration_test",
+    "arn": "arn:aws:iot:us-west-2:157731826412:thing/cdf_integration_test"
+  }
+}
+

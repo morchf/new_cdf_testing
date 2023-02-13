@@ -1,0 +1,10 @@
+.edit-vehicle-modal .ant-modal-body {
+  padding-bottom: 0px;
+}
+
+.edit-vehicle-modal .ant-modal-footer {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  margin-bottom: 5px;
+}

@@ -1,0 +1,17 @@
+{
+  "env": "${env}",
+  "agency_id": "${agency_id}",
+  "region": "${region}",
+  "agency": "${agency}",
+  "local_timezone": "${timezone}",
+  "gtfs-dataset": {},
+  "tsp-dataset": {},
+  "rt-gtfs": {},
+  "mp70": {},
+  "dags": [
+    "tsp-dataset",
+    "gtfs-dataset",
+    "static-intersections",
+    "mp70"
+  ]
+}

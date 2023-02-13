@@ -1,0 +1,38 @@
+[
+  {
+    "name": "Vehicle 131",
+    "lastHeard": "10:25:01 PM MM/DD/YY",
+    "daysSinceLastHeard": "Today",
+    "intersection": "St & Ave",
+    "firmware": 7.13,
+    "device": "MP-70",
+    "serial": "MP70x010301105",
+    "telematics": ["GTFSRT", "MP-70"],
+    "class": 1,
+    "registered": "07/02/21"
+  },
+  {
+    "name": "Vehicle 103",
+    "lastHeard": "8:31:15 PM MM/DD/YY",
+    "daysSinceLastHeard": "20 days",
+    "intersection": "St & Ave",
+    "firmware": 7.11,
+    "device": "2101",
+    "serial": "2101x123456789",
+    "telematics": ["GTFS RT", "MP-70"],
+    "class": 4,
+    "registered": "05/22/21"
+  },
+  {
+    "name": "Vehicle 122",
+    "lastHeard": "11:14:03 AM MM/DD/YY",
+    "daysSinceLastHeard": "15 days",
+    "intersection": "St & Ave",
+    "firmware": 7.11,
+    "device": "MP-70",
+    "serial": "MP70x987654321",
+    "telematics": ["GTFS RT", "MP-70"],
+    "class": 3,
+    "registered": "08/16/22"
+  }
+]

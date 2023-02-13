@@ -1,0 +1,19 @@
+.extra-info-vehicles {
+  margin: 0;
+  margin-left: 10px;
+  margin-right: 10px;
+  display: inline-block;
+}
+
+.extra-info-vehicles-title {
+  color: darkgrey;
+}
+
+.dot {
+  display: 'inline-block';
+  height: 8px;
+  width: 8px;
+  margin-right: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}

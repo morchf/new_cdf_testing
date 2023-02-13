@@ -1,0 +1,22 @@
+{
+    "taskResult-create-json": {
+      "entity_json": {
+        "attributes": {
+          "description": "Next to Woodbury",
+          "city": "Oakdale",
+          "state": "Mn",
+          "timezone": "Central",
+          "agencyCode": 100,
+          "agencyID": "100",
+          "caCertId": "NULL_CA",
+          "vpsCertId": "NULL_CERT",
+          "priority": "High"
+        },
+        "category": "group",
+        "templateId": "agency",
+        "parentPath": "/r1",
+        "name": "a1",
+        "groupPath": "/r1/a1"
+      }
+    }
+  }

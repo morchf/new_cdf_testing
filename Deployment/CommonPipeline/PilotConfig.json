@@ -1,0 +1,13 @@
+{
+  "Parameters" : {
+    "InternalVPCCIDR": "10.16.0.0/16",
+    "SharedResourcesPublicSubnetACIDR": "10.16.1.128/25",
+    "SharedResourcesPrivateSubnetACIDR": "10.16.1.0/25",
+    "SharedResourcesPublicSubnetBCIDR": "10.16.2.128/25",
+    "SharedResourcesPrivateSubnetBCIDR": "10.16.2.0/25",
+    "TeletracPublicSubnetACIDR": "10.16.3.128/25",
+    "TeletracPrivateSubnetACIDR": "10.16.3.0/25",
+    "TeletracPublicSubnetBCIDR": "10.16.4.128/25",
+    "TeletracPrivateSubnetBCIDR": "10.16.4.0/25"
+  }
+}

@@ -1,0 +1,37 @@
+aws:
+  region: 
+  accountId: 
+  s3:
+    roleArn: 
+    templates:
+      bucket: 
+      prefix: templates/
+      suffix: .json
+    certificates:
+      bucket: ${aws.s3.templates.bucket}
+      prefix: certificates/
+    bulkrequests:
+      bucket: ${aws.s3.templates.bucket}
+      prefix: bullkrequests/
+    
+events:
+  certificatesBatch:
+    topic: 
+
+features:
+  delete:
+    deleteCertificates:
+    deletePolicies:
+
+cors:
+  origin:
+
+deviceCertificateExpiryDays: 365
+
+supportedApiVersions:
+  - json:
+      - '1.0'
+
+logging:
+  level: debug
+

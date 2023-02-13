@@ -1,0 +1,29 @@
+{
+  "aws": {
+    "accountId": "",
+    "region": "",
+    "ssm": {
+      "managedInstanceRole": ""
+    },
+    "sqs": {
+      "agentlessDeploymentQueue": "",
+      "agentbasedDeploymentQueue": ""
+    },
+    "dynamoDB":{
+      "ggProvisioningTable": ""
+    },
+    "s3": {
+      "deploymentLogs": {
+        "bucket": "cdf-157731826412-us-west-2",
+        "prefix": "greengrass-deployments/logs/"
+      },
+      "deploymentResources": {
+        "bucket": "cdf-157731826412-us-west-2",
+        "prefix": "greengrass-deployments/resources/"
+      }
+    }
+  },
+  "cors": {
+    "origin": "*"
+  }
+}

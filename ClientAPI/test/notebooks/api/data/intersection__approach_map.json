@@ -1,0 +1,56 @@
+{
+    "serialNumber": "V764NY0976",
+    "latitude": 30.789,
+    "longitude": 56.122998,
+    "make": "GTT",
+    "model": "V764",
+    "lastCommunicated": "2022-10-14 13:55:05.151584",
+    "timezone": "PST",
+    "operationMode": "Online/Normal",
+    "status": "Normal",
+    "firmwareVersion": "10.05.003",
+    "approachMap": [
+        {
+            "numberOfCoordinates": 3,
+            "approachName": "Southbound",
+            "coordinates": [
+                {
+                    "latitude": "30.792521",
+                    "longitude": "56.127590",
+                    "width": 30
+                },
+                {
+                    "latitude": "30.791857",
+                    "longitude": "56.124543",
+                    "width": 30
+                },
+                {
+                    "latitude": "30.789203",
+                    "longitude": "56.122998",
+                    "width": 30
+                }
+            ]
+        },
+        {
+            "numberOfCoordinates": 3,
+            "approachName": "Northbound",
+            "coordinates": [
+                {
+                    "latitude": "30.784410",
+                    "longitude": "56.124200",
+                    "width": 30
+                },
+                {
+                    "latitude": "30.785774",
+                    "longitude": "56.123384",
+                    "width": 30
+                },
+                {
+                    "latitude": "30.788945",
+                    "longitude": "56.123041",
+                    "width": 30
+                }
+            ]
+        }
+    ]
+}

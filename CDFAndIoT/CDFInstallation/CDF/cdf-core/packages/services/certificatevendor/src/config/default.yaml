@@ -1,0 +1,51 @@
+aws:
+  region: 
+  s3:
+    certificates:
+      bucket:
+      prefix:
+      suffix:
+      presignedUrlExpiresInSeconds: 300
+
+  iot:
+    endpoint:
+    thingGroup:
+      rotateCertificates:
+
+mqtt:
+  topics:
+    get:
+      success: cdf/certificates/{thingName}/get/accepted
+      failure: cdf/certificates/{thingName}/get/rejected
+    ack:
+      success: cdf/certificates/{thingName}/ack/accepted
+      failure: cdf/certificates/{thingName}/ack/rejected
+
+certificates:
+  caCertificateId:
+
+policies:
+  rotatedCertificatePolicy:
+
+features:
+  deletePreviousCertificate:
+
+defaults:
+  device:
+    status:
+      success: 
+        key: status
+        value: active
+  certificates:
+    certificateExpiryDays: 1095
+
+assetLibrary:
+  mode: lambda
+  apiFunctionName:
+
+registry:
+  # AssetLibrary | DeviceRegistry
+  mode:
+
+logging:
+  level: debug

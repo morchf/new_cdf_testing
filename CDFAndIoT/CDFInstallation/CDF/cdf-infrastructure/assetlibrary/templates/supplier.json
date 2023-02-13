@@ -1,0 +1,18 @@
+{
+  "properties": {
+    "displayName": {
+      "type": "string"
+    },
+    "externalSupplierId": {
+      "type": "string"
+    }
+  },
+  "relations": {
+    "out": {
+      "located_at": [
+        "location"
+      ]
+    }
+  },
+  "required": []
+}

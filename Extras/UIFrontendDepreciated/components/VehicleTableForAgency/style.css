@@ -1,0 +1,12 @@
+.DissociateVehicleToAgency {
+    padding: 60px 0;
+}
+
+.DissociateVehicleToAgency h5 {
+    font-size: medium;
+}
+
+.DissociateVehicleToAgency .VehicleTable {
+    width: 100%;
+    margin-bottom: 15px;
+}

@@ -1,0 +1,33 @@
+.marker {
+  transition: 0.15s ease-in-out;
+  transform: translateY(0px);
+}
+
+.marker:hover {
+  filter: brightness(0.98);
+  cursor: pointer;
+  transform: translateY(1.5px);
+}
+
+.marker__text tspan {
+  font-family: var(--font-family);
+  user-select: none;
+  white-space: pre-line;
+  font-size: 8px;
+  line-height: 20px;
+}
+
+.marker__text tspan:nth-of-type(2) {
+  fill: #626161;
+}
+
+.marker__text tspan:nth-of-type(1) {
+  fill: currentColor;
+  /* fill: black; */
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 10px;
+  letter-spacing: 0em;
+  text-align: center;
+}

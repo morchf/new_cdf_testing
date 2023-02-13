@@ -1,0 +1,25 @@
+{
+  "groups": {
+    "ownedby": [
+      ""
+    ]
+  },
+  "vehicle": "",
+  "attributes": {
+    "description": "",
+    "serial": "",
+    "gttSerial": "",
+    "addressMAC": "",
+    "addressLAN": "",
+    "addressWAN": "",
+    "IMEI": "",
+    "devCertId": "NULL_CERT",
+    "make": "",
+    "model": "",
+    "uniqueId": "NULL_GUID"
+  },
+  "category": "device",
+  "templateId": "communicator",
+  "state": "active",
+  "deviceId": ""
+}

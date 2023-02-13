@@ -1,0 +1,17 @@
+aws:
+  region: 
+
+  dynamoDb:
+    tables: 
+      events: cdf-assetlibraryhistory 
+
+cors:
+  origin:
+
+supportedApiVersions:
+  - json:
+      - '1.0'
+
+
+logging:
+  level: debug

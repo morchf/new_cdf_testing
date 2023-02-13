@@ -1,0 +1,368 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+
+###########################################################################
+# GTT SCP Vehicle Message Pipeline
+Parameters:
+  DeploymentEnvironment:
+    Type: String
+    AllowedValues:
+      - contractor
+      - act
+      - dev
+      - test
+      - production
+      - pilot
+    Description: "Provide the name of the deployment environment (Choose one of: contractor, act, or production)"
+  S3DataPipelineBucket:
+    Type: String
+    Description: "S3 bucket with output of data pipeline data"
+  GlueJobName:
+    Type: String
+    Description: "The Name of the Glue job which decodes the data in S3"
+  QuicksightDashboardName:
+    Type: String
+    Description: "The name of the quicksight dashboard that this architecture will use"
+  QuicksightDatasetName:
+    Type: String
+    Description: "The name of the quicksight dataset that this architecture will use"
+  DeploymentBucket:
+    Type: String
+    Description: "The name of the deployment bucket (specifically where the egg file is stored)"
+  CDFEndpoint:
+    Type: String
+    Description: "The CDF Endpoint to be used to obtain vehicle details"
+
+###########################################################################
+
+Resources:
+  StatesExecutionRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - Fn::Sub: states.${AWS::Region}.amazonaws.com
+            Action: "sts:AssumeRole"
+      Path: "/"
+      Policies:
+        - PolicyName: StatesExecutionPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: glue:*
+                Resource: "*"
+              - Effect: Allow
+                Action: lambda:InvokeFunction
+                Resource:
+                  Fn::GetAtt:
+                    - LambdaCreateIngestion
+                    - Arn
+
+  AnalyzeDataStateMachine:
+    DependsOn: AnalyzeShellJob
+    Type: "AWS::StepFunctions::StateMachine"
+    Properties:
+      DefinitionString:
+        Fn::Sub:
+          - |-
+            {
+              "StartAt": "DecodeData",
+              "States": {
+                "DecodeData": {
+                  "Type": "Task",
+                  "Resource": "arn:aws:states:::glue:startJobRun.sync",
+                  "Parameters": {
+                    "JobName": "${glueName}"
+                  },
+                  "Next": "AnalyzeData"
+                },
+                "AnalyzeData": {
+                  "Type": "Task",
+                  "Resource": "arn:aws:states:::glue:startJobRun.sync",
+                  "Parameters": {
+                    "JobName": "${analyzeGlueName}"
+                  },
+                  "Next": "CreateIngestion"
+                },
+                "CreateIngestion": {
+                  "Type": "Task",
+                  "Resource": "arn:aws:states:::lambda:invoke",
+                  "Parameters": {
+                    "FunctionName": "${CreateIngestionName}"
+                  },
+                  "End": true
+                }
+              }
+            }
+          - analyzeGlueName:
+              Fn::Sub: AnalyzeDataShell-${DeploymentEnvironment}
+            glueName:
+              Fn::Sub: ${GlueJobName}
+            CreateIngestionName:
+              Ref: LambdaCreateIngestion
+      RoleArn:
+        Fn::GetAtt:
+          - StatesExecutionRole
+          - Arn
+
+  AnalyzeShellJob:
+    Type: AWS::Glue::Job
+    Properties:
+      Name:
+        Fn::Sub: AnalyzeDataShell-${DeploymentEnvironment}
+      Command:
+        Name: pythonshell
+        ScriptLocation: AnalyzeDataFunction/App.py
+        PythonVersion: "3"
+      Role:
+        Ref: AnalyzeShellJobRole
+      DefaultArguments:
+        "--s3DataVizBucket":
+          Fn::Sub: data-visualization-${DeploymentEnvironment}
+        "--S3DataPipelineBucket":
+          Fn::Sub: ${S3DataPipelineBucket}
+        "--DatasetName":
+          Fn::Sub: ${QuicksightDatasetName}
+        "--extra-py-files":
+          Fn::Sub: s3://${DeploymentBucket}/pyarrow-2.0-py3.7.egg
+        "--CDFEndpoint":
+          Fn::Sub: ${CDFEndpoint}
+      ExecutionProperty:
+        MaxConcurrentRuns: 1
+      MaxCapacity: 0.0625
+      MaxRetries: 0
+      Timeout: 10
+
+  AnalyzeShellJobRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: glue.amazonaws.com
+          Action: sts:AssumeRole
+      Policies:
+        - PolicyName:
+            Fn::Sub: ${AWS::StackName}-LambdaPolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: "s3:*"
+                Resource:
+                  - Fn::Sub: arn:aws:s3:::data-visualization-${DeploymentEnvironment}
+                  - Fn::Sub: arn:aws:s3:::data-visualization-${DeploymentEnvironment}/*
+              - Effect: Allow
+                Action:
+                  - s3:ListBucket
+                  - s3:ListAllMyBuckets
+                  - s3:GetObject
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                  - "execute-api:Invoke"
+                  - "execute-api:ManageConnections"
+                Resource: "*"
+              - Effect: Allow
+                Action: "lambda:InvokeFunction"
+                Resource:
+                  Fn::Sub: arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:cdf-assetlibrary-stage-LambdaFunction*
+              - Effect: Allow
+                Action: "quicksight:*"
+                Resource: "*"
+
+  LambdaApiGateway:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name:
+        Fn::Sub: ${AWS::StackName}-API-${DeploymentEnvironment}
+      FailOnWarnings: true
+
+  ApiGatewayLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:invokeFunction
+      FunctionName:
+        Fn::GetAtt:
+          - LambdaApi
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Join:
+          - ""
+          - - "arn:aws:execute-api:"
+            - Ref: AWS::Region
+            - ":"
+            - Ref: AWS::AccountId
+            - ":"
+            - Ref: LambdaApiGateway
+            - "/*"
+
+  DataVizApiStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      DeploymentId:
+        Ref: ApiDeployment
+      MethodSettings:
+        - DataTraceEnabled: true
+          HttpMethod: "*"
+          LoggingLevel: INFO
+          ResourcePath: /*
+      RestApiId:
+        Ref: LambdaApiGateway
+      StageName:
+        Fn::Sub: ${AWS::StackName}-API-${DeploymentEnvironment}
+
+  ApiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn: DataVizRequest
+    Properties:
+      RestApiId:
+        Ref: LambdaApiGateway
+      StageName:
+        Fn::Sub: ${AWS::StackName}-Snapshot-${DeploymentEnvironment}
+
+  DataVizResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId:
+        Ref: LambdaApiGateway
+      ParentId:
+        Fn::GetAtt:
+          - LambdaApiGateway
+          - RootResourceId
+      PathPart: TroubleshootVehicles
+
+  DataVizRequest:
+    DependsOn: ApiGatewayLambdaPermission
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: AWS_IAM
+      HttpMethod: GET
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseModels: { "application/json": "Empty" }
+      Integration:
+        Type: AWS
+        IntegrationHttpMethod: POST
+        IntegrationResponses:
+          - StatusCode: "200"
+        Uri:
+          Fn::Join:
+            - ""
+            - - "arn:aws:apigateway:"
+              - Ref: AWS::Region
+              - ":lambda:path/2015-03-31/functions/"
+              - Fn::GetAtt:
+                  - LambdaApi
+                  - Arn
+              - "/invocations"
+      ResourceId:
+        Ref: DataVizResource
+      RestApiId:
+        Ref: LambdaApiGateway
+
+  # Create Ingestion Lambda
+  LambdaCreateIngestion:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: CreateIngestionCode/
+      Handler: App.lambda_handler
+      Role:
+        Fn::GetAtt:
+          - CreateIngestionRole
+          - Arn
+      Runtime: python3.7
+      Timeout: 25
+      Environment:
+        Variables:
+          QuicksightDatasetName:
+            Fn::Sub: ${QuicksightDatasetName}
+
+  CreateIngestionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+      Policies:
+        - PolicyName:
+            Fn::Sub: ${AWS::StackName}-CreateIngestionPolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: "quicksight:*"
+                Resource: "*"
+
+  LambdaApi:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: LambdaCode/
+      Handler: App.lambda_handler
+      Role:
+        Fn::GetAtt:
+          - LambdaRole
+          - Arn
+      Runtime: python3.7
+      Timeout: 25
+      Environment:
+        Variables:
+          s3Bucket:
+            Fn::Sub: data-visualization-${DeploymentEnvironment}
+          stateMachineArn:
+            Ref: AnalyzeDataStateMachine
+          DashboardName:
+            Fn::Sub: ${QuicksightDashboardName}
+          Region:
+            Ref: AWS::Region
+
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+      Policies:
+        - PolicyName:
+            Fn::Sub: ${AWS::StackName}-LambdaPolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: "s3:*"
+                Resource:
+                  - Fn::Sub: arn:aws:s3:::data-visualization-${DeploymentEnvironment}
+                  - Fn::Sub: arn:aws:s3:::data-visualization-${DeploymentEnvironment}/*
+              - Effect: Allow
+                Action: "states:*"
+                Resource:
+                  Ref: AnalyzeDataStateMachine
+              - Effect: Allow
+                Action: "quicksight:*"
+                Resource: "*"

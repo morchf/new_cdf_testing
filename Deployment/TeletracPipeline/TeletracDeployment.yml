@@ -1,0 +1,719 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: Teletrac Pipeline deployment template
+
+Metadata:
+  cfn-lint:
+    config:
+      ignore_checks:
+      - I3042
+      - E3012
+      - W3005
+      - E2521
+      - E2520
+      - E1010
+      - E2507
+      - E3002
+
+Parameters:
+  Env:
+    Type: String
+    AllowedValues:
+      - develop
+      - test
+      - production
+      - pilot
+    Description: "Provide the environment you are deploying this on. Allowed values: develop, test, production, or pilot"
+
+  CDFAPIARN:
+    Type: String
+    Description: CDF Asset Library API endpoint required by the SAM template
+
+  ECRRepo:
+    Description: "The Teletrac Pipeline ECR repository name"
+    Type: String
+
+  InternalVPCID:
+    Type: String
+    Description: "Internal VPC ID"
+
+  PrivateSubnetAID:
+    Type: String
+    Description: "Teletrac Pipeline Private Subnet ID"
+
+  PrivateSubnetBID:
+    Type: String
+    Description: "Teletrac Pipeline Private Subnet ID"
+
+  CoreName:
+    Type: String
+    Default: TeletracPipeline
+    Description: "Base name for Teletrac Pipeline resources"
+
+Resources:
+#SQS Queues
+  GPSSQS:
+    Type: 'AWS::SQS::Queue'
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties:
+      ContentBasedDeduplication: False
+      DelaySeconds: 0
+      FifoQueue: True
+      MessageRetentionPeriod: 600
+      QueueName: !Sub "${CoreName}-GPSSQS.fifo"
+      VisibilityTimeout: 300
+      SqsManagedSseEnabled: False
+
+  GPIOSQS:
+    Type: 'AWS::SQS::Queue'
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties:
+      ContentBasedDeduplication: False
+      DelaySeconds: 0
+      FifoQueue: True
+      MessageRetentionPeriod: 600
+      QueueName: !Sub "${CoreName}-GPIOSQS.fifo"
+      VisibilityTimeout: 300
+      SqsManagedSseEnabled: False
+
+  GPSSQSTopicPolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties: 
+      Queues:
+        - !Ref GPSSQS
+      PolicyDocument:
+        Id: "GPSSQSTopicPolicy"
+        Statement: 
+          - Sid: "SQS Policy"
+            Effect: Allow
+            Action:
+              - SQS:*
+            Resource: !Sub "arn:aws:sqs:us-east-1:${AWS::AccountId}:${CoreName}-GPSSQS.fifo"
+
+  GPIOSQSTopicPolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties: 
+      Queues:
+        - !Ref GPIOSQS
+      PolicyDocument:
+        Id: "GPIOSQSTopicPolicy"
+        Statement: 
+          - Sid: "SQS Policy"
+            Effect: Allow
+            Action:
+              - SQS:*
+            Resource: !Sub "arn:aws:sqs:us-east-1:${AWS::AccountId}:${CoreName}-GPIOSQS.fifo"
+
+  CDFLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      CompatibleRuntimes:
+        - python3.7
+        - python3.8
+      ContentUri: ./../../CDFAndIoT/Lambdas/LambdaLayers/CDFLambdaLayer/CDFLambdaLayer.zip
+      Description: "Layer containing CDF library and dependencies"
+      LayerName: !Sub ${CoreName}-CDFLayer
+      RetentionPolicy: Delete
+
+  RedisLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      CompatibleRuntimes:
+        - python3.7
+        - python3.8
+      ContentUri: ./../../CDFAndIoT/Lambdas/LambdaLayers/redis/redis.zip
+      Description: "Layer containing redis library and dependencies"
+      LayerName: !Sub ${CoreName}-RedisLayer
+      RetentionPolicy: Delete
+
+# SAM to add trigger to the lambda that resides in s3 bucket.
+#Teletrac Lambda functions
+  RTRadioMsg:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${CoreName}-RTRadioMsg"
+      CodeUri: ./../../TeletracNavman/Lambdas/TeletracRTRadioMsg/LambdaCode/     
+      Timeout: 63
+      MemorySize: 128
+      Handler: Teletrac-RtradioMsg.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt RTRadioMsgRole.Arn
+      Layers:
+          - !Ref RedisLayer
+          - !Ref CDFLayer
+      Environment:
+        Variables:
+          CDF_URL: !Ref CDFAPIARN
+          RedisEndpointAddress: !ImportValue SharedElastiCacheClusterAddress
+          RedisEndpointPort: !ImportValue SharedElastiCacheClusterPort
+      VpcConfig:
+        SecurityGroupIds: 
+          - !Ref GPIOMsgAndRTRadioMsgSecurityGroup
+        SubnetIds: 
+          - !Ref 'PrivateSubnetAID'
+          - !Ref 'PrivateSubnetBID'
+      Events:
+        TeletracGPSSQSdequeue:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt GPSSQS.Arn
+            BatchSize: 10
+      Policies:
+        - Statement:
+          - Effect: Allow
+            Resource: '*'
+            Action:
+            - mq:DescribeBroker
+            - secretsmanager:GetSecretValue
+            - ec2:CreateNetworkInterface
+            - ec2:DescribeNetworkInterfaces
+            - ec2:DescribeVpcs
+            - ec2:DeleteNetworkInterface
+            - ec2:DescribeSubnets
+            - ec2:DescribeSecurityGroups
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+            
+  GPIOMsg:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${CoreName}-GPIOMsg"
+      CodeUri: ./../../TeletracNavman/Lambdas/TeletracGPIOProcessing/LambdaCode/
+      Timeout: 63
+      MemorySize: 128
+      Handler: Teletrac-GPIOProcessing.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt GPIOMsgRole.Arn
+      Layers:
+          - !Ref RedisLayer
+          - !Ref CDFLayer
+      Environment:
+        Variables:
+          CDF_URL: !Ref CDFAPIARN
+          RedisEndpointAddress: !ImportValue SharedElastiCacheClusterAddress
+          RedisEndpointPort: !ImportValue SharedElastiCacheClusterPort         
+      VpcConfig:
+        SecurityGroupIds: 
+          - !Ref GPIOMsgAndRTRadioMsgSecurityGroup
+        SubnetIds: 
+          - !Ref 'PrivateSubnetAID'
+          - !Ref 'PrivateSubnetBID'
+      Events:
+        TeletracGPIOSQSdequeue:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt GPIOSQS.Arn
+            BatchSize: 10
+      Policies:
+        - Statement:
+          - Effect: Allow
+            Resource: '*'
+            Action:
+            - mq:DescribeBroker
+            - secretsmanager:GetSecretValue
+            - ec2:CreateNetworkInterface
+            - ec2:DescribeNetworkInterfaces
+            - ec2:DescribeVpcs
+            - ec2:DeleteNetworkInterface
+            - ec2:DescribeSubnets
+            - ec2:DescribeSecurityGroups
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+
+  AllowIoTPublish:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      ManagedPolicyName: !Sub "${CoreName}-AllowIoTPublish"
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'iot:Connect'
+              - 'iot:Publish'
+            Resource:
+              - !Sub 'arn:${AWS::Partition}:iot:*:${AWS::AccountId}:client/*'
+              - !Sub 'arn:${AWS::Partition}:iot:*:${AWS::AccountId}:topic/*'
+
+  AllowCDFAPIInvoke:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      ManagedPolicyName: !Sub "${CoreName}-AllowCDFAPIInvoke"
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'lambda:InvokeFunction'
+            Resource: !Sub 'arn:${AWS::Partition}:lambda:us-east-1:${AWS::AccountId}:function:cdf-assetlibrary-stage-LambdaFunction*'
+
+  AllowCDFAPIAccess:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      ManagedPolicyName: !Sub "${CoreName}-AllowCDFAPIAccess"
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'execute-api:Invoke'
+              - 'execute-api:ManageConnections'
+            Resource: !Sub 'arn:${AWS::Partition}:execute-api:us-east-1:${AWS::AccountId}:*'
+
+# Permissions for the lambda.
+  RTRadioMsgRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${CoreName}-RTRadioMsgRole"
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::${AWS::Partition}:policy/CloudWatchLogsFullAccess
+        - !Sub arn:${AWS::Partition}:iam::${AWS::Partition}:policy/AmazonElastiCacheFullAccess
+        - !Sub arn:${AWS::Partition}:iam::${AWS::Partition}:policy/AmazonSQSFullAccess
+        - !Sub arn:${AWS::Partition}:iam::${AWS::Partition}:policy/AmazonKinesisFirehoseFullAccess
+        - !Sub arn:${AWS::Partition}:iam::${AWS::Partition}:policy/service-role/AWSLambdaBasicExecutionRole
+        - !Ref 'FullExecutionRole'
+        - !Ref 'FullAccessToDynamoDB'
+        - !Ref 'AllowIoTPublish'
+        - !Ref 'AllowCDFAPIInvoke'
+        - !Ref 'AllowCDFAPIAccess'
+
+  GPIOMsgRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${CoreName}-GPIOMsgRole"
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::${AWS::Partition}:policy/CloudWatchLogsFullAccess
+        - !Sub arn:${AWS::Partition}:iam::${AWS::Partition}:policy/AmazonElastiCacheFullAccess
+        - !Sub arn:${AWS::Partition}:iam::${AWS::Partition}:policy/AmazonSQSFullAccess
+        - !Sub arn:${AWS::Partition}:iam::${AWS::Partition}:policy/AmazonKinesisFirehoseFullAccess
+        - !Sub arn:${AWS::Partition}:iam::${AWS::Partition}:policy/service-role/AWSLambdaBasicExecutionRole
+        - !Ref 'FullExecutionRole'
+        - !Ref 'FullAccessToDynamoDB'
+        - !Ref 'AllowIoTPublish'
+        - !Ref 'AllowCDFAPIInvoke'
+        - !Ref 'AllowCDFAPIAccess'
+
+  FullAccessToDynamoDB:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      ManagedPolicyName: !Sub "${CoreName}-DynamoDBFullAccess"
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'dynamodb:UpdateTimeToLive'
+              - 'dynamodb:PutItem'
+              - 'dynamodb:GetItem'
+              - 'dynamodb:UpdateItem'
+              - 'dynamodb:UpdateTableReplicaAutoScaling'
+              - 'dynamodb:UpdateTable'
+            Resource: '*'
+
+  FullExecutionRole:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      ManagedPolicyName: !Sub "${CoreName}-ExecutionRole"
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'mq:DescribeBroker'
+              - 'secretsmanager:GetSecretValue'
+              - 'ec2:CreateNetworkInterface'
+              - 'ec2:DescribeNetworkInterfaces'
+              - 'ec2:DescribeVpcs'
+              - 'ec2:DeleteNetworkInterface'
+              - 'ec2:DescribeSubnets'
+              - 'ec2:DescribeSecurityGroups'
+              - 'logs:CreateLogGroup'
+              - 'logs:CreateLogStream'
+              - 'logs:PutLogEvents'
+            Resource: '*'
+
+# Event rule to invoke RTRadioMsg lambda every minute
+  RTRadioMsgHeatLampRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: "Keep RTRadioMsg in active memory"
+      ScheduleExpression: "rate(1 minute)"
+      State: ENABLED
+      Targets:
+        -
+          Arn: !GetAtt RTRadioMsg.Arn
+          Id: "TeletracRTRadioMsgHeatLampRuleTarget"
+  
+# Permissions for event rule to invoke RTRadioMsg lambda function
+  HeatlampPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref "RTRadioMsg"
+      Action: "lambda:InvokeFunction"
+      Principal: "events.amazonaws.com"
+      SourceArn: !GetAtt RTRadioMsgHeatLampRule.Arn
+
+#Fargate Components
+  FargateCluster:
+    Type: AWS::ECS::Cluster
+    Properties: 
+      ClusterName: !Sub "${CoreName}-FargateCluster"
+      CapacityProviders:
+        - FARGATE
+        - FARGATE_SPOT
+      DefaultCapacityProviderStrategy:
+        - CapacityProvider: FARGATE
+          Weight: 1
+        - CapacityProvider: FARGATE_SPOT
+          Weight: 1
+
+  GPIOMsgAndRTRadioMsgSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for GPIOMsgAndRTRadioMsgSecurityGroup
+      GroupName: !Sub "${CoreName}-GPIOMsgAndRTRadioMsg-SecurityGroup"
+      VpcId: !Ref InternalVPCID
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          Description: 'Outbound Rules'
+          FromPort: -1
+          ToPort: -1
+          CidrIp: 0.0.0.0/0
+  
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: 'Teletrac Security Group'
+      GroupName: !Sub "${CoreName}-SecurityGroup"
+      VpcId: !Ref InternalVPCID
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          Description: 'Health Check Port'
+          FromPort: 80 
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          Description: 'Outbound Rules'
+          FromPort: -1
+          ToPort: -1
+          CidrIp: 0.0.0.0/0 
+
+  GPSService:
+    Type: AWS::ECS::Service
+    Properties: 
+      ServiceName: !Sub "${CoreName}-GPSService"
+      Cluster: !Ref "FargateCluster"
+      LaunchType: FARGATE
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          # change to DISABLED if you're using private subnets that have access to a NAT gateway
+          AssignPublicIp: DISABLED
+          Subnets:
+            - !Ref PrivateSubnetAID
+            - !Ref PrivateSubnetBID
+          SecurityGroups:
+            - !Ref SecurityGroup
+      DesiredCount: 1
+      TaskDefinition: !Ref "FargateTaskGPS"
+
+  GPIOService:
+    Type: AWS::ECS::Service
+    Properties: 
+      ServiceName: !Sub "${CoreName}-GPIOService"
+      Cluster: !Ref "FargateCluster"
+      LaunchType: FARGATE
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          # change to DISABLED if you're using private subnets that have access to a NAT gateway
+          AssignPublicIp: DISABLED
+          Subnets:
+            - !Ref PrivateSubnetAID
+            - !Ref PrivateSubnetBID
+          SecurityGroups:
+            - !Ref SecurityGroup
+      DesiredCount: 1
+      TaskDefinition: !Ref "FargateTaskGPIO"
+
+  FargateTaskGPS:
+    Type: AWS::ECS::TaskDefinition
+    Properties: 
+      ContainerDefinitions: 
+        - Name: !Sub "${CoreName}-GPSContainer"
+          Image: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.${AWS::URLSuffix}/${ECRRepo}:latest
+          PortMappings:
+            - ContainerPort: 5671
+              HostPort: 5671
+              Protocol: tcp
+          Environment:
+            - Name: 'ProcessingMode'
+              Value: 'heli'
+            - Name: 'conTag'
+              Value: "gtt"
+            - Name: 'ServiceURL'
+              Value: !Sub 'http://sqs.${AWS::Region}.amazonaws.com'
+            - Name: 'QueueURL'
+              Value: !Ref GPSSQS
+          LogConfiguration:
+              LogDriver: awslogs
+              Options:
+                awslogs-group: '/ecs/VT102GPSContainer'
+                awslogs-region: !Sub '${AWS::Region}'
+                awslogs-stream-prefix: ecs
+                awslogs-create-group: True  
+      Cpu: 1024 
+      ExecutionRoleArn: !Sub "arn:aws:iam::${AWS::AccountId}:role/ecsTaskExecutionRole"
+      TaskRoleArn: !Sub "arn:aws:iam::${AWS::AccountId}:role/ecsTaskExecutionRole"
+      Family: FargateTaskGPS
+      Memory: 2048
+      NetworkMode: "awsvpc"
+
+  FargateTaskGPIO:
+    Type: AWS::ECS::TaskDefinition
+    Properties: 
+      ContainerDefinitions: 
+        - Name: !Sub "${CoreName}-GPIOContainer"
+          Image: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.${AWS::URLSuffix}/${ECRRepo}:latest
+          PortMappings:
+            - ContainerPort: 5671
+              HostPort: 5671
+              Protocol: tcp
+          Environment:
+            - Name: 'ProcessingMode'
+              Value: 'GPIO'
+            - Name: 'ServiceURL'
+              Value: !Sub 'http://sqs.${AWS::Region}.amazonaws.com'
+            - Name: 'QueueURL'
+              Value: !Ref GPIOSQS
+            - Name: 'conTag'
+              Value: "gtt"
+          LogConfiguration:
+              LogDriver: awslogs
+              Options:
+                awslogs-group: '/ecs/VT102GPIOContainer'
+                awslogs-region: !Sub '${AWS::Region}'
+                awslogs-stream-prefix: ecs
+                awslogs-create-group: True  
+      Cpu: 1024 
+      ExecutionRoleArn: !Sub "arn:aws:iam::${AWS::AccountId}:role/ecsTaskExecutionRole"
+      TaskRoleArn: !Sub "arn:aws:iam::${AWS::AccountId}:role/ecsTaskExecutionRole"
+      Family: FargateTaskGPIO
+      Memory: 2048
+      NetworkMode: "awsvpc"           
+
+# GPS Autoscaling Components
+  AutoScaleRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ecs-tasks.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Path: '/'
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ecs:DescribeServices
+                  - ecs:UpdateService
+                  - cloudwatch:DeleteAlarms
+                  - cloudwatch:DescribeAlarms
+                  - cloudwatch:PutMetricAlarm
+                Resource: '*'
+
+  AutoscaleTargetGPS:
+    DependsOn: GPSService
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      MinCapacity: 1
+      MaxCapacity: 4
+      ResourceId: !Sub "service/${CoreName}-FargateCluster/${CoreName}-GPSService"
+      ScalableDimension: ecs:service:DesiredCount
+      ServiceNamespace: ecs
+      RoleARN: !GetAtt AutoScaleRole.Arn
+
+  AutoscaleGPSAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmDescription: Containers CPU Utilization High
+      MetricName: !Sub "${CoreName}-CPUUtilization"
+      Namespace: AWS/ECS
+      Statistic: Average
+      Period: '300'
+      EvaluationPeriods: '1'
+      Threshold: '80'
+      AlarmActions: 
+        - !Ref AutoscaleGPSPolicy
+      Dimensions:
+      - Name: ServiceName
+        Value: !Ref GPSService
+      - Name: ClusterName
+        Value: !Ref FargateCluster
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+
+  AutoscaleGPSPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub "${CoreName}-GPSASPolicy"
+      PolicyType: StepScaling
+      ScalingTargetId: !Ref AutoscaleTargetGPS
+      ScalableDimension: ecs:service:DesiredCount
+      ServiceNamespace: ecs
+      StepScalingPolicyConfiguration:
+        AdjustmentType: ChangeInCapacity
+        Cooldown: 60
+        MetricAggregationType: Average
+        StepAdjustments:
+        - MetricIntervalLowerBound: 0
+          ScalingAdjustment: 2
+        - MetricIntervalUpperBound: 0
+          ScalingAdjustment: -1
+
+# GPIO Autoscaling Components
+  AutoscaleTargetGPIO:
+    DependsOn: GPIOService
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      MinCapacity: 1
+      MaxCapacity: 4
+      ResourceId: !Sub "service/${CoreName}-FargateCluster/${CoreName}-GPIOService"
+      ScalableDimension: ecs:service:DesiredCount
+      ServiceNamespace: ecs
+      RoleARN: !GetAtt AutoScaleRole.Arn
+
+  AutoscaleGPIOAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmDescription: Containers CPU Utilization High
+      MetricName: !Sub "${CoreName}-CPUUtilization"
+      Namespace: AWS/ECS
+      Statistic: Average
+      Period: '300'
+      EvaluationPeriods: '1'
+      Threshold: '80'
+      AlarmActions: 
+        - !Ref AutoscaleGPIOPolicy
+      Dimensions:
+      - Name: ServiceName
+        Value: !Ref GPIOService
+      - Name: ClusterName
+        Value: !Ref FargateCluster
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+
+  AutoscaleGPIOPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub "${CoreName}-GPIOASPolicy"
+      PolicyType: StepScaling
+      ScalingTargetId: !Ref AutoscaleTargetGPIO
+      ScalableDimension: ecs:service:DesiredCount
+      ServiceNamespace: ecs
+      StepScalingPolicyConfiguration:
+        AdjustmentType: ChangeInCapacity
+        Cooldown: 60
+        MetricAggregationType: Average
+        StepAdjustments:
+        - MetricIntervalLowerBound: 0
+          ScalingAdjustment: 2
+        - MetricIntervalUpperBound: 0
+          ScalingAdjustment: -1
+
+# S3 Logging Bucket  
+  DeliveryRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: ''
+            Effect: Allow
+            Principal:
+              Service: firehose.amazonaws.com
+            Action: 'sts:AssumeRole'
+            Condition:
+              StringEquals:
+                'sts:ExternalId': !Ref 'AWS::AccountId'
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/AWSGlueConsoleFullAccess
+
+  LoggingBucket:
+    Type: AWS::S3::Bucket
+    Properties: 
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      BucketName: !Sub "teletracpipeline-clientlogging-${Env}"
+      VersioningConfiguration: 
+        Status: Enabled
+
+  LogGroup: 
+    Type: AWS::Logs::LogGroup
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties: 
+      LogGroupName: !Sub "${CoreName}-LogGroup"
+      RetentionInDays: 7
+
+  LogStream: 
+    Type: AWS::Logs::LogStream
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties: 
+      LogGroupName: !Ref LogGroup
+      LogStreamName: !Sub "${CoreName}-LogStream"
+
+  KinesisLogHose:
+    Type: AWS::KinesisFirehose::DeliveryStream
+    Properties: 
+      DeliveryStreamName: !Sub "${CoreName}-KinesisDataFirehose"
+      DeliveryStreamType: DirectPut 
+      ExtendedS3DestinationConfiguration:
+        RoleARN: !GetAtt DeliveryRole.Arn
+        BucketARN: !Sub ${LoggingBucket.Arn}
+        BufferingHints:
+          SizeInMBs: 128
+          IntervalInSeconds: 300
+        CompressionFormat: UNCOMPRESSED
+        EncryptionConfiguration:
+          NoEncryptionConfig: NoEncryption
+        CloudWatchLoggingOptions:
+          Enabled: true
+          LogGroupName: !Ref LogGroup
+          LogStreamName: !Ref LogStream
+        S3BackupMode: Disabled
+
+Outputs:
+  TeletracGPIOMsgAndRTRadioMsgSG:
+    Description: Teletrac GPIOMsg And RTRadioMsg Security Group
+    Value: !Ref GPIOMsgAndRTRadioMsgSecurityGroup
+    Export:
+      Name: TeletracGPIOMsgAndRTRadioMsgSG

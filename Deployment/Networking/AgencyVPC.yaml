@@ -1,0 +1,463 @@
+---
+# NOTICE: THIS IS A DERIVATIVE WORK!
+# Reformatted and modified by Global Traffic Technologies, LLC on 2019-05-30.
+#
+# Original copyright notice:
+# Copyright 2018 widdix GmbH
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: Create a VPC with a public and private subnet in one availability zone (AZ).
+
+###
+### =========================================================================
+###
+
+Parameters:
+
+  FriendlyName:
+    Description: A friendly name for the VPC and its associated resources
+    Type: String
+
+  VpcCidr:
+    AllowedPattern: '^([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\/([0-9]|[1-2][0-9]|3[0-2])$'
+    ConstraintDescription: Must match the IPv4 CIDR pattern XXX.XXX.XXX.XXX/XX
+    Description: The CIDR of the VPC
+    Type: String
+
+  PrivateSubnetCidr:
+    AllowedPattern: '^([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\/([0-9]|[1-2][0-9]|3[0-2])$'
+    ConstraintDescription: Must match the IPv4 CIDR pattern XXX.XXX.XXX.XXX/XX
+    Description: The CIDR of the private subnet in the VPC
+    Type: String
+
+  PublicSubnetCidr:
+    AllowedPattern: '^([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\/([0-9]|[1-2][0-9]|3[0-2])$'
+    ConstraintDescription: Must match the IPv4 CIDR pattern XXX.XXX.XXX.XXX/XX
+    Description: The CIDR of the public subnet in the VPC
+    Type: String
+
+###
+### =========================================================================
+###
+
+Resources:
+
+  VPC:
+    Type: 'AWS::EC2::VPC'
+    Properties:
+      CidrBlock: !Ref VpcCidr
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      InstanceTenancy: default
+      Tags:
+      - Key: Name
+        Value: !Ref FriendlyName
+
+  ###
+  ### Internet gateway
+  ###
+  InternetGateway:
+    Type: 'AWS::EC2::InternetGateway'
+    Properties:
+      Tags:
+      - Key: Name
+        Value: !Ref FriendlyName
+
+  VpcGatewayAttachment:
+    Type: 'AWS::EC2::VPCGatewayAttachment'
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+
+  ###
+  ### Public subnet
+  ###
+  SubnetAPublic:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      AvailabilityZone: !Select [0, !GetAZs '']
+      CidrBlock: !Ref PublicSubnetCidr
+      MapPublicIpOnLaunch: true
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: !Sub '${FriendlyName} A public'
+      - Key: Access
+        Value: public
+
+  RouteTableAPublic:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: !Sub '${FriendlyName} A public'
+
+  RouteTableAssociationAPublic:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref SubnetAPublic
+      RouteTableId: !Ref RouteTableAPublic
+
+  RouteToPublicInternet:
+    Type: 'AWS::EC2::Route'
+    DependsOn: VpcGatewayAttachment
+    Properties:
+      RouteTableId: !Ref RouteTableAPublic
+      DestinationCidrBlock: '0.0.0.0/0'
+      GatewayId: !Ref InternetGateway
+
+  NetworkAclPublic:
+    Type: 'AWS::EC2::NetworkAcl'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: !Sub '${FriendlyName} A public'
+
+  SubnetNetworkAclAssociationAPublic:
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref SubnetAPublic
+      NetworkAclId: !Ref NetworkAclPublic
+
+  NetworkAclEntryInPublicAllowGTT1:
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      NetworkAclId: !Ref NetworkAclPublic
+      RuleNumber: 1
+      Protocol: -1
+      RuleAction: allow
+      Egress: false
+      CidrBlock: '23.25.152.229/32'
+
+  NetworkAclEntryInPublicAllowGTT2:
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      NetworkAclId: !Ref NetworkAclPublic
+      RuleNumber: 2
+      Protocol: -1
+      RuleAction: allow
+      Egress: false
+      CidrBlock: '65.248.214.109/32'
+
+  NetworkAclEntryInPublicAllowGTT3:
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      NetworkAclId: !Ref NetworkAclPublic
+      RuleNumber: 3
+      Protocol: -1
+      RuleAction: allow
+      Egress: false
+      CidrBlock: '104.129.198.0/23'
+
+  NetworkAclEntryInPublicAllowGTT4:
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      NetworkAclId: !Ref NetworkAclPublic
+      RuleNumber: 4
+      Protocol: -1
+      RuleAction: allow
+      Egress: false
+      CidrBlock: '104.129.202.0/23'
+
+  NetworkAclEntryInPublicAllowGTT5:
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      NetworkAclId: !Ref NetworkAclPublic
+      RuleNumber: 5
+      Protocol: -1
+      RuleAction: allow
+      Egress: false
+      CidrBlock: '104.129.206.0/23'
+
+  NetworkAclEntryInPublicAllowGTT6:
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      NetworkAclId: !Ref NetworkAclPublic
+      RuleNumber: 6
+      Protocol: -1
+      RuleAction: allow
+      Egress: false
+      CidrBlock: '165.225.0.0/23'
+
+  NetworkAclEntryInPublicAllowGTT7:
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      NetworkAclId: !Ref NetworkAclPublic
+      RuleNumber: 7
+      Protocol: -1
+      RuleAction: allow
+      Egress: false
+      CidrBlock: '165.225.8.0/23'
+
+  NetworkAclEntryInPublicAllowGTT8:
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      NetworkAclId: !Ref NetworkAclPublic
+      RuleNumber: 8
+      Protocol: -1
+      RuleAction: allow
+      Egress: false
+      CidrBlock: '165.225.10.0/23'
+
+  NetworkAclEntryInPublicAllowGTT9:
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      NetworkAclId: !Ref NetworkAclPublic
+      RuleNumber: 9
+      Protocol: -1
+      RuleAction: allow
+      Egress: false
+      CidrBlock: '165.225.34.0/23'
+
+  NetworkAclEntryInPublicAllowGTT10:
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      NetworkAclId: !Ref NetworkAclPublic
+      RuleNumber: 10
+      Protocol: -1
+      RuleAction: allow
+      Egress: false
+      CidrBlock: '165.225.36.0/23'
+
+  NetworkAclEntryInPublicAllowGTT11:
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      NetworkAclId: !Ref NetworkAclPublic
+      RuleNumber: 11
+      Protocol: -1
+      RuleAction: allow
+      Egress: false
+      CidrBlock: '165.225.38.0/23'
+
+  NetworkAclEntryInPublicAllowGTT12:
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      NetworkAclId: !Ref NetworkAclPublic
+      RuleNumber: 12
+      Protocol: -1
+      RuleAction: allow
+      Egress: false
+      CidrBlock: '165.225.48.0/24'
+
+  NetworkAclEntryInPublicAllowGTT13:
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      NetworkAclId: !Ref NetworkAclPublic
+      RuleNumber: 13
+      Protocol: -1
+      RuleAction: allow
+      Egress: false
+      CidrBlock: '165.225.50.0/23'
+
+  NetworkAclEntryInPublicAllowGTT14:
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      NetworkAclId: !Ref NetworkAclPublic
+      RuleNumber: 14
+      Protocol: -1
+      RuleAction: allow
+      Egress: false
+      CidrBlock: '165.225.60.0/22'
+
+  NetworkAclEntryInPublicAllowGTT15:
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      NetworkAclId: !Ref NetworkAclPublic
+      RuleNumber: 15
+      Protocol: -1
+      RuleAction: allow
+      Egress: false
+      CidrBlock: '165.225.208.0/20'
+
+  NetworkAclEntryInPublicAllowGTT16:
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      NetworkAclId: !Ref NetworkAclPublic
+      RuleNumber: 16
+      Protocol: -1
+      RuleAction: allow
+      Egress: false
+      CidrBlock: '165.225.242.0/23'
+
+  NetworkAclEntryOutPublicAllowAll:
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      NetworkAclId: !Ref NetworkAclPublic
+      RuleNumber: 99
+      Protocol: -1
+      RuleAction: allow
+      Egress: true
+      CidrBlock: '0.0.0.0/0'
+
+  LimitAccessSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+        GroupDescription: Allow to GTT network
+        VpcId: !Ref VPC
+        SecurityGroupIngress:
+        - IpProtocol: "-1"
+          CidrIp: 23.25.152.229/32
+        - IpProtocol: "-1"
+          CidrIp: 65.248.214.109/32
+        - IpProtocol: "-1"
+          CidrIp: 104.129.198.0/23
+        - IpProtocol: "-1"
+          CidrIp: 104.129.202.0/23
+        - IpProtocol: "-1"
+          CidrIp: 104.129.206.0/23
+        - IpProtocol: "-1"
+          CidrIp: 165.225.0.0/23
+        - IpProtocol: "-1"
+          CidrIp: 165.225.8.0/23
+        - IpProtocol: "-1"
+          CidrIp: 165.225.10.0/23
+        - IpProtocol: "-1"
+          CidrIp: 165.225.34.0/23
+        - IpProtocol: "-1"
+          CidrIp: 165.225.36.0/23
+        - IpProtocol: "-1"
+          CidrIp: 165.225.38.0/23
+        - IpProtocol: "-1"
+          CidrIp: 165.225.48.0/24
+        - IpProtocol: "-1"
+          CidrIp: 165.225.50.0/23
+        - IpProtocol: "-1"
+          CidrIp: 165.225.60.0/22
+        - IpProtocol: "-1"
+          CidrIp: 165.225.208.0/23
+        - IpProtocol: "-1"
+          CidrIp: 165.225.210.0/23
+        - IpProtocol: "-1"
+          CidrIp: 165.225.212.0/23
+        - IpProtocol: "-1"
+          CidrIp: 165.225.214.0/23
+        - IpProtocol: "-1"
+          CidrIp: 165.225.216.0/23
+        - IpProtocol: "-1"
+          CidrIp: 165.225.218.0/23
+        - IpProtocol: "-1"
+          CidrIp: 165.225.222.0/23
+        - IpProtocol: "-1"
+          CidrIp: 165.225.242.0/23
+        SecurityGroupEgress:
+        - IpProtocol: "-1"
+          CidrIp: 0.0.0.0/0
+
+  ###
+  ### Private subnet
+  ###
+  SubnetAPrivate:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      AvailabilityZone: !Select [0, !GetAZs '']
+      CidrBlock: !Ref PrivateSubnetCidr
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: !Sub '${FriendlyName} A private'
+      - Key: Access
+        Value: private
+
+  ###
+  ### Private subnet
+  ###
+  RouteTableAPrivate:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: !Sub '${FriendlyName} A private'
+
+  RouteTableAssociationAPrivate:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref SubnetAPrivate
+      RouteTableId: !Ref RouteTableAPrivate
+
+  NetworkAclPrivate:
+    Type: 'AWS::EC2::NetworkAcl'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: !Sub '${FriendlyName} A private'
+
+  SubnetNetworkAclAssociationAPrivate:
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref SubnetAPrivate
+      NetworkAclId: !Ref NetworkAclPrivate
+
+  NetworkAclEntryInPrivateAllowVPC:
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      NetworkAclId: !Ref NetworkAclPrivate
+      RuleNumber: 99
+      Protocol: -1
+      RuleAction: allow
+      Egress: false
+      CidrBlock: '0.0.0.0/0'
+
+  NetworkAclEntryOutPrivateAllowVPC:
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      NetworkAclId: !Ref NetworkAclPrivate
+      RuleNumber: 99
+      Protocol: -1
+      RuleAction: allow
+      Egress: true
+      CidrBlock: '0.0.0.0/0'
+
+###
+### =========================================================================
+###
+
+Outputs:
+
+
+  AZs:
+    Description: 'AZs'
+    Value: 1
+
+  AZA:
+    Description: 'AZ of A'
+    Value: !Select [0, !GetAZs '']
+
+  CidrBlock:
+    Description: 'The set of IP addresses for the VPC'
+    Value: !GetAtt 'VPC.CidrBlock'
+
+  VPC:
+    Description: 'VPC'
+    Value: !Ref VPC
+
+  SubnetAPublic:
+    Description: 'Subnet A public'
+    Value: !Ref SubnetAPublic
+
+  RouteTableAPublic:
+    Description: 'Route table A public'
+    Value: !Ref RouteTableAPublic
+
+  SubnetAPrivate:
+    Description: 'Subnet A private'
+    Value: !Ref SubnetAPrivate
+
+  RouteTableAPrivate:
+    Description: 'Route table A private'
+    Value: !Ref RouteTableAPrivate

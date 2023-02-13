@@ -1,0 +1,19 @@
+{
+  "aws": {
+    "s3": {
+      "crl": {
+        "bucket": "cdf-957905153352-us-west-2",
+        "key": "crl/crl.json"
+      }
+    }
+  },
+  "assetLibrary": {
+    "apiFunctionName": "",
+    "templateProfiles": {
+      "edge": "default"
+    }
+  },
+  "provisioning": {
+    "apiFunctionName": ""
+  }
+}

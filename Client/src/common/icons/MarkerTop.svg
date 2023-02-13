@@ -1,0 +1,58 @@
+<svg
+width="50"
+height="93"
+viewBox="0 0 54 75"
+fill="none"
+xmlns="http://www.w3.org/2000/svg"
+>
+<g filter="url(#filter0_d)">
+  <g clipPath="url(#clip0)">
+    <path
+      d="M7 11C7 9.89543 7.89543 9 9 9H45C46.1046 9 47 9.89543 47 11V47C47 48.1046 46.1046 49 45 49H7V11Z"
+      fill="white"
+    />
+  </g>
+  <path d="M7 66V46H27L7 66Z" fill="white" />
+</g>
+<defs>
+  <filter
+    id="filter0_d"
+    x="0"
+    y="-5"
+    width="54"
+    height="80"
+    filterUnits="userSpaceOnUse"
+    colorInterpolationFilters="sRGB"
+  >
+    <feColorMatrix
+      in="SourceAlpha"
+      type="matrix"
+      values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+      result="hardAlpha"
+    />
+    <feOffset dy="2" />
+    <feGaussianBlur stdDeviation="3.5" />
+    <feColorMatrix
+      type="matrix"
+      values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
+    />
+    <feBlend
+      mode="normal"
+      in2="BackgroundImageFix"
+      result="effect1_dropShadow"
+    />
+    <feBlend
+      mode="normal"
+      in="SourceGraphic"
+      in2="effect1_dropShadow"
+      result="shape"
+    />
+  </filter>
+  <clipPath id="clip0">
+    <path
+      d="M7 11C7 9.89543 7.89543 9 9 9H45C46.1046 9 47 9.89543 47 11V47C47 48.1046 46.1046 49 45 49H7V11Z"
+      fill="white"
+    />
+  </clipPath>
+</defs>
+</svg>

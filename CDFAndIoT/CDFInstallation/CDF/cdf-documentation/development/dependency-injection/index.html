@@ -1,0 +1,1440 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      
+      
+      
+      
+        <meta name="lang:clipboard.copy" content="Copy to clipboard">
+      
+        <meta name="lang:clipboard.copied" content="Copied to clipboard">
+      
+        <meta name="lang:search.language" content="en">
+      
+        <meta name="lang:search.pipeline.stopwords" content="True">
+      
+        <meta name="lang:search.pipeline.trimmer" content="True">
+      
+        <meta name="lang:search.result.none" content="No matching documents">
+      
+        <meta name="lang:search.result.one" content="1 matching document">
+      
+        <meta name="lang:search.result.other" content="# matching documents">
+      
+        <meta name="lang:search.tokenizer" content="[\s\-]+">
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-0.17.5, mkdocs-material-2.9.4">
+    
+    
+      
+        <title>Dependency Injection - Connected Device Framework (CDF)</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/application.451f80e5.css">
+      
+      
+    
+    
+      <script src="../../assets/javascripts/modernizr.1aa3b519.js"></script>
+    
+    
+      <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+      
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono">
+        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
+      
+    
+    <link rel="stylesheet" href="../../assets/fonts/material-icons.css">
+    
+    
+  </head>
+  
+    <body dir="ltr">
+  
+    <svg class="md-svg">
+      <defs>
+        
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+    
+      <a href="#dependency-injection" tabindex="1" class="md-skip">
+        Skip to content
+      </a>
+    
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href="../.." title="Connected Device Framework (CDF)" class="md-header-nav__button md-logo">
+          
+            <i class="md-icon"></i>
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          
+            
+              <span class="md-header-nav__topic">
+                Connected Device Framework (CDF)
+              </span>
+              <span class="md-header-nav__topic">
+                Dependency Injection
+              </span>
+            
+          
+        </div>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        
+          
+            <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+            
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+          
+        
+      </div>
+      
+    </div>
+  </nav>
+</header>
+    
+    <div class="md-container">
+      
+        
+      
+      
+      <main class="md-main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href="../.." title="Connected Device Framework (CDF)" class="md-nav__button md-logo">
+      
+        <i class="md-icon"></i>
+      
+    </a>
+    Connected Device Framework (CDF)
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../.." title="CONNECTED DEVICE FRAMEWORK (CDF)" class="md-nav__link">
+      CONNECTED DEVICE FRAMEWORK (CDF)
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2">
+    
+    <label class="md-nav__link" for="nav-2">
+      Advanced
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        Advanced
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../advanced/cicd/" title="CI/CD" class="md-nav__link">
+      CI/CD
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../advanced/deployment/" title="Deployment" class="md-nav__link">
+      Deployment
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../advanced/" title="Advanced Track" class="md-nav__link">
+      Advanced Track
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
+    
+    <label class="md-nav__link" for="nav-3">
+      Beginner
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        Beginner
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../beginner/" title="Beginner Track" class="md-nav__link">
+      Beginner Track
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4" checked>
+    
+    <label class="md-nav__link" for="nav-4">
+      Development
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-4">
+        Development
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../async/" title="Asynchronous Operations" class="md-nav__link">
+      Asynchronous Operations
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../config/" title="Configuration" class="md-nav__link">
+      Configuration
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Dependency Injection
+      </label>
+    
+    <a href="./" title="Dependency Injection" class="md-nav__link md-nav__link--active">
+      Dependency Injection
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#adding-to-a-project" title="Adding to a project" class="md-nav__link">
+    Adding to a project
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuring-dependency-injection" title="Configuring dependency injection" class="md-nav__link">
+    Configuring dependency injection
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing-classes-with-mocked-dependencies" title="Testing classes with mocked dependencies" class="md-nav__link">
+    Testing classes with mocked dependencies
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../prerequisites/" title="Prerequisites" class="md-nav__link">
+      Prerequisites
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../quickstart/" title="Quickstart" class="md-nav__link">
+      Quickstart
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../tech-stack/" title="Tech stack" class="md-nav__link">
+      Tech stack
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../unit-testing/" title="Unit testing" class="md-nav__link">
+      Unit testing
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-5" type="checkbox" id="nav-5">
+    
+    <label class="md-nav__link" for="nav-5">
+      Intermediate
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-5">
+        Intermediate
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../intermediate/" title="Home" class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-6" type="checkbox" id="nav-6">
+    
+    <label class="md-nav__link" for="nav-6">
+      Postman
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-6">
+        Postman
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../postman/" title="Home" class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7" type="checkbox" id="nav-7">
+    
+    <label class="md-nav__link" for="nav-7">
+      Projects
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-7">
+        Projects
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/overview/" title="Overview" class="md-nav__link">
+      Overview
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7-2" type="checkbox" id="nav-7-2">
+    
+    <label class="md-nav__link" for="nav-7-2">
+      Assetlibrary
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
+      <label class="md-nav__title" for="nav-7-2">
+        Assetlibrary
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/assetlibrary/assetlibrary-swagger/" title="Assetlibrary swagger" class="md-nav__link">
+      Assetlibrary swagger
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/assetlibrary/events/" title="Events" class="md-nav__link">
+      Events
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/assetlibrary/fine-grained-access-control/" title="Fine grained access control" class="md-nav__link">
+      Fine grained access control
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/assetlibrary/modes/" title="Modes" class="md-nav__link">
+      Modes
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/assetlibrary/overview/" title="Overview" class="md-nav__link">
+      Overview
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/assetlibrary/profiles/" title="Profiles" class="md-nav__link">
+      Profiles
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/assetlibrary/templates-developer/" title="Templates developer" class="md-nav__link">
+      Templates developer
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/assetlibrary/templates-user/" title="Templates user" class="md-nav__link">
+      Templates user
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7-3" type="checkbox" id="nav-7-3">
+    
+    <label class="md-nav__link" for="nav-7-3">
+      Assetlibrary history
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
+      <label class="md-nav__title" for="nav-7-3">
+        Assetlibrary history
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/assetlibrary-history/assetlibraryhistory-swagger/" title="Assetlibraryhistory swagger" class="md-nav__link">
+      Assetlibraryhistory swagger
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/assetlibrary-history/overview/" title="Overview" class="md-nav__link">
+      Overview
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7-4" type="checkbox" id="nav-7-4">
+    
+    <label class="md-nav__link" for="nav-7-4">
+      Auth devicecert
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
+      <label class="md-nav__title" for="nav-7-4">
+        Auth devicecert
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/auth-devicecert/overview/" title="Overview" class="md-nav__link">
+      Overview
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7-5" type="checkbox" id="nav-7-5">
+    
+    <label class="md-nav__link" for="nav-7-5">
+      Bulkcerts
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
+      <label class="md-nav__title" for="nav-7-5">
+        Bulkcerts
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/bulkcerts/bulkcerts-swagger/" title="Bulkcerts swagger" class="md-nav__link">
+      Bulkcerts swagger
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/bulkcerts/overview/" title="Overview" class="md-nav__link">
+      Overview
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7-6" type="checkbox" id="nav-7-6">
+    
+    <label class="md-nav__link" for="nav-7-6">
+      Certificateactivator
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
+      <label class="md-nav__title" for="nav-7-6">
+        Certificateactivator
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/certificateactivator/overview/" title="Overview" class="md-nav__link">
+      Overview
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7-7" type="checkbox" id="nav-7-7">
+    
+    <label class="md-nav__link" for="nav-7-7">
+      Certificatevendor
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
+      <label class="md-nav__title" for="nav-7-7">
+        Certificatevendor
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/certificatevendor/overview/" title="Overview" class="md-nav__link">
+      Overview
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7-8" type="checkbox" id="nav-7-8">
+    
+    <label class="md-nav__link" for="nav-7-8">
+      Commands
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
+      <label class="md-nav__title" for="nav-7-8">
+        Commands
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/commands/commands-swagger/" title="Commands swagger" class="md-nav__link">
+      Commands swagger
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/commands/ephemeral-groups/" title="Ephemeral groups" class="md-nav__link">
+      Ephemeral groups
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/commands/overview/" title="Overview" class="md-nav__link">
+      Overview
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/commands/presigned-urls-developer/" title="Presigned urls developer" class="md-nav__link">
+      Presigned urls developer
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/commands/presigned-urls-user/" title="Presigned urls user" class="md-nav__link">
+      Presigned urls user
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7-9" type="checkbox" id="nav-7-9">
+    
+    <label class="md-nav__link" for="nav-7-9">
+      Devicemonitoring
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
+      <label class="md-nav__title" for="nav-7-9">
+        Devicemonitoring
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/devicemonitoring/overview/" title="Overview" class="md-nav__link">
+      Overview
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7-10" type="checkbox" id="nav-7-10">
+    
+    <label class="md-nav__link" for="nav-7-10">
+      Libraries
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
+      <label class="md-nav__title" for="nav-7-10">
+        Libraries
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/libraries/README/" title="README" class="md-nav__link">
+      README
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7-11" type="checkbox" id="nav-7-11">
+    
+    <label class="md-nav__link" for="nav-7-11">
+      Notifications
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
+      <label class="md-nav__title" for="nav-7-11">
+        Notifications
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/notifications/design/" title="Design" class="md-nav__link">
+      Design
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/notifications/events-processor-swagger/" title="Events processor swagger" class="md-nav__link">
+      Events processor swagger
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/notifications/overview/" title="Overview" class="md-nav__link">
+      Overview
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/notifications/walkthrough/" title="Walkthrough" class="md-nav__link">
+      Walkthrough
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7-12" type="checkbox" id="nav-7-12">
+    
+    <label class="md-nav__link" for="nav-7-12">
+      Provisioning
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
+      <label class="md-nav__title" for="nav-7-12">
+        Provisioning
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/provisioning/overview/" title="Overview" class="md-nav__link">
+      Overview
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/provisioning/provisioning-swagger/" title="Provisioning swagger" class="md-nav__link">
+      Provisioning swagger
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/provisioning/provisioning-templates/" title="Provisioning templates" class="md-nav__link">
+      Provisioning templates
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-7-13" type="checkbox" id="nav-7-13">
+    
+    <label class="md-nav__link" for="nav-7-13">
+      Request queue
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
+      <label class="md-nav__title" for="nav-7-13">
+        Request queue
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../projects/request-queue/overview/" title="Overview" class="md-nav__link">
+      Overview
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#adding-to-a-project" title="Adding to a project" class="md-nav__link">
+    Adding to a project
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuring-dependency-injection" title="Configuring dependency injection" class="md-nav__link">
+    Configuring dependency injection
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing-classes-with-mocked-dependencies" title="Testing classes with mocked dependencies" class="md-nav__link">
+    Testing classes with mocked dependencies
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="dependency-injection">Dependency Injection<a class="headerlink" href="#dependency-injection" title="Permanent link">&para;</a></h1>
+<p>Dependency injection is a technique that makes it easy to follow the <a href="https://en.wikipedia.org/wiki/Single_responsibility_principle">Single Responsibility Principle</a> and <a href="https://en.wikipedia.org/wiki/Open/closed_principle">Open/Closed Principle</a> of the <a href="https://en.wikipedia.org/wiki/SOLID">SOLID</a> design principles, which allow for software designs to be more understandable, flexible, testable and maintainable.</p>
+<p><a href="http://inversify.io">InversifyJS</a> is a lightweight dependency injection framework with full support for TypeScript.</p>
+<h2 id="adding-to-a-project">Adding to a project<a class="headerlink" href="#adding-to-a-project" title="Permanent link">&para;</a></h2>
+<p>The following dependencies are required:</p>
+<ul>
+<li>inversify</li>
+<li>inversify-binding-decorators</li>
+<li>inversify-express-utils</li>
+</ul>
+<p>In addition, for unit testng, the following development dependencies are required:</p>
+<ul>
+<li>@types/jest</li>
+<li>jest</li>
+<li>jest-create-mock-instance</li>
+<li>ts-jest</li>
+</ul>
+<h2 id="configuring-dependency-injection">Configuring dependency injection<a class="headerlink" href="#configuring-dependency-injection" title="Permanent link">&para;</a></h2>
+<p>The following example describes how to wire a <code>Parent</code> class to consume a <code>Child</code> class via dependency injection.</p>
+<p>First, let's create the <code>Child</code> class.  We mark the class as <code>@injectable()</code>:</p>
+<div class="highlight"><pre><span></span><span class="kr">import</span> <span class="p">{</span> <span class="nx">injectable</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;inversify&#39;</span><span class="p">;</span>
+
+<span class="err">@</span><span class="nx">injectable</span><span class="p">()</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">Child</span> <span class="p">{</span>
+    <span class="kr">public</span> <span class="nx">returnSomething</span><span class="p">()</span> <span class="o">:</span> <span class="nx">string</span> <span class="p">{</span>
+        <span class="k">return</span><span class="p">(</span><span class="s1">&#39;Hello&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>Next, create a symbol to identify the <code>Child</code> class:</p>
+<div class="highlight"><pre><span></span><span class="kr">export</span> <span class="kr">const</span> <span class="nx">TYPES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">Child</span><span class="o">:</span> <span class="nx">Symbol</span><span class="p">.</span><span class="k">for</span><span class="p">(</span><span class="s1">&#39;Child&#39;</span><span class="p">)</span>
+<span class="p">};</span>
+</pre></div>
+
+<p>Now, create the <code>Parent</code> class.  In addition to marking the class as <code>@injectable()</code>, we also inject an instance of <code>Child</code> into the constructor, annotating it with <code>@inject(TYPES.Child)</code>: </p>
+<div class="highlight"><pre><span></span><span class="kr">import</span> <span class="p">{</span> <span class="nx">injectable</span><span class="p">,</span> <span class="nx">inject</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;inversify&#39;</span><span class="p">;</span>
+
+<span class="err">@</span><span class="nx">injectable</span><span class="p">()</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">Parent</span> <span class="p">{</span>
+
+    <span class="nx">constructor</span><span class="p">(</span> <span class="err">@</span><span class="nx">inject</span><span class="p">(</span><span class="nx">TYPES</span><span class="p">.</span><span class="nx">Child</span><span class="p">)</span> <span class="kr">private</span> <span class="nx">child</span><span class="o">:</span> <span class="nx">Child</span><span class="p">)</span> <span class="p">{}</span>
+
+    <span class="kr">public</span> <span class="nx">doSomething</span><span class="p">()</span><span class="o">:</span> <span class="nx">string</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">child</span><span class="p">.</span><span class="nx">returnSomething</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39; World&#39;</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>We need to configure InversifyJS on how to bind classes.  Within the CDF projects, this is handled in <code>/src/di/inversify,config.ts</code>:</p>
+<div class="highlight"><pre><span></span><span class="kr">import</span> <span class="p">{</span> <span class="nx">Container</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;inversify&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span><span class="nx">TYPES</span><span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;./types&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">Parent</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;./parent&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">Child</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;./child&#39;</span><span class="p">;</span>
+
+<span class="c1">// Load everything needed to the Container</span>
+<span class="kr">export</span> <span class="kr">const</span> <span class="nx">container</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Container</span><span class="p">();</span>
+<span class="nx">container</span><span class="p">.</span><span class="nx">bind</span><span class="o">&lt;</span><span class="nx">Parent</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">TYPES</span><span class="p">.</span><span class="nx">Parent</span><span class="p">).</span><span class="nx">to</span><span class="p">(</span><span class="nx">Parent</span><span class="p">);</span>
+<span class="nx">container</span><span class="p">.</span><span class="nx">bind</span><span class="o">&lt;</span><span class="nx">Child</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">TYPES</span><span class="p">.</span><span class="nx">Child</span><span class="p">).</span><span class="nx">to</span><span class="p">(</span><span class="nx">Child</span><span class="p">);</span>
+</pre></div>
+
+<p>The last piece of the puzzle is to pass our InversifyJS container into our Express server.  Within the CDF projects, this is handled in <code>/src/app.js</code>:</p>
+<div class="highlight"><pre><span></span><span class="kr">import</span> <span class="s1">&#39;reflect-metadata&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">container</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;./di/inversify.config&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">InversifyExpressServer</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;inversify-express-utils&#39;</span><span class="p">;</span>
+
+<span class="c1">// Start the Express server, passing in our dependency injection container</span>
+<span class="kr">const</span> <span class="nx">server</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">InversifyExpressServer</span><span class="p">(</span><span class="nx">container</span><span class="p">);</span>
+
+<span class="c1">// continue setting up the Express server as needed....</span>
+</pre></div>
+
+<h2 id="testing-classes-with-mocked-dependencies">Testing classes with mocked dependencies<a class="headerlink" href="#testing-classes-with-mocked-dependencies" title="Permanent link">&para;</a></h2>
+<p>Let's continue with the <code>Parent</code> and <code>Child</code> class examples above.</p>
+<p>If the <code>Parent</code> class is run as is, it will call the <code>returnSomething()</code> method of <code>Child</code>, and return <code>Hello World</code>.  But when writing unit tests we need to isolate the <code>Parent</code> class, and not call the <code>Child</code> class.  The following is an exmaple of how to mock the <code>Child</code> class using the <a href="https://facebook.github.io/jest/">jest</a> testing framework:</p>
+<div class="highlight"><pre><span></span><span class="kr">import</span> <span class="s1">&#39;reflect-metadata&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{}</span> <span class="nx">from</span> <span class="s1">&#39;jest&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">createMockInstance</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;jest-create-mock-instance&#39;</span><span class="p">;</span>
+
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">Parent</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;./parent&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">Child</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;./child&#39;</span><span class="p">;</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;Parent&#39;</span><span class="p">,</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">mockedChild</span><span class="o">:</span> <span class="nx">jest</span><span class="p">.</span><span class="nx">Mocked</span><span class="o">&lt;</span><span class="nx">Child</span><span class="o">&gt;</span><span class="p">;</span>
+    <span class="kd">let</span> <span class="nx">classUnderTest</span><span class="o">:</span> <span class="nx">Parent</span><span class="p">;</span>
+
+    <span class="nx">beforeEach</span><span class="p">(()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+        <span class="nx">mockedChild</span> <span class="o">=</span> <span class="nx">createMockInstance</span><span class="p">(</span><span class="nx">Child</span><span class="p">);</span>
+        <span class="nx">classUnderTest</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Parent</span><span class="p">(</span><span class="nx">mockedChild</span><span class="p">);</span>
+    <span class="p">});</span>
+
+    <span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should return goodbye world&#39;</span><span class="p">,</span> <span class="nx">async</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+
+        <span class="c1">// Set the mocks on the dependent classes</span>
+        <span class="nx">mockedChild</span><span class="p">.</span><span class="nx">returnSomething</span><span class="p">.</span><span class="nx">mockImplementationOnce</span><span class="p">(()=&gt;</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="s1">&#39;Goodbye&#39;</span><span class="p">;</span>
+        <span class="p">});</span>
+
+        <span class="c1">// Make the call</span>
+        <span class="kr">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">classUnderTest</span><span class="p">.</span><span class="nx">doSomething</span><span class="p">();</span>
+
+        <span class="c1">// Finally, verify the results</span>
+        <span class="nx">expect</span><span class="p">(</span><span class="nx">result</span><span class="p">).</span><span class="nx">toBeDefined</span><span class="p">();</span>
+        <span class="nx">expect</span><span class="p">(</span><span class="nx">result</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;Goodbye World&#39;</span><span class="p">);</span>
+    <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+
+<p>The important piece above is the use of <code>jest.Mocked&lt;Child&gt;</code>.  This will ensure that all requested instances of <code>Child</code> post the <code>jest.Mocked&lt;Child&gt;</code> return a mocked instance of <code>Child</code> instead of a real <code>Child</code>.</p>
+<p>Next, as part of your test, use the <code>mockImplementationOnce()</code> method to configure the responses of your mocked classes.</p>
+                
+                  
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+          <a href="../config/" title="Configuration" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Configuration
+              </span>
+            </div>
+          </a>
+        
+        
+          <a href="../prerequisites/" title="Prerequisites" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Prerequisites
+              </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        powered by
+        <a href="https://www.mkdocs.org">MkDocs</a>
+        and
+        <a href="https://squidfunk.github.io/mkdocs-material/">
+          Material for MkDocs</a>
+      </div>
+      
+        
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/application.30f6b8b1.js"></script>
+      
+      <script>app.initialize({version:"0.17.5",url:{base:"../.."}})</script>
+      
+    
+    
+      
+    
+  </body>
+</html>

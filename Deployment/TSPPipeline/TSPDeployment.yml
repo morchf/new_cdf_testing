@@ -1,0 +1,1464 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: "AWS::Serverless-2016-10-31"
+Description: This template creates resources shared by agencies for TSP in the Cloud
+
+# ! Temporarily ignore some checks due to outdated cfn-lint version
+Metadata:
+  cfn-lint:
+    config:
+      ignore_checks:
+      # Resources/GTFSRealtimeAPIPollerFargateTaskDefinition/Properties/RuntimePlatform
+      # Resources/AgencyManagerFargateTaskDefinition/Properties/RuntimePlatform
+      # Resources/VehicleManagerFargateTaskDefinition/Properties/RuntimePlatform
+      # Resources/GTFSRealtimeAPIPollerFargateService/Properties/EnableExecuteCommand
+      # Resources/AgencyManagerFargateService/Properties/EnableExecuteCommand
+      # Resources/Route2101Data/Properties/TopicRulePayload/Actions/1/Firehose/BatchMode
+      # Resources/RouteModemData/Properties/TopicRulePayload/Actions/1/Firehose/BatchMode
+      - E3002
+      # Invalid GetAtt FirehoseDeliveryRole.Arn for resource Route2101Data
+      # Invalid GetAtt FirehoseDeliveryRole.Arn for resource Route2101DataKinesisDeliveryStream
+      - E1010
+
+# before creating stack, run `pre-deploy-core.sh` to create image and bastion ssh key
+Parameters:
+  TSPCoreName:
+    Type: String
+    Description: Base name for TSP resources
+    Default: TSP
+
+  VPCCIDR:
+    Type: String
+    Description: CIDR range for VPC creation
+
+  PublicSubnetCIDR:
+    Type: String
+    Description: IP range (CIDR notation) for public subnet
+
+  PrivateSubnetCIDR:
+    Type: String
+    Description: IP range (CIDR notation) for private subnet
+
+#   ECRRepository:
+#     Description: The ECR repository name
+#     Type: String
+#     Default: gtt/tsp-gtfs-realtime
+
+#   VehicleManagerImageTag:
+#     Description: Tag for VehicleManager image
+#     Type: String
+#     Default: latest
+
+  # RecordedDataPlaybackImageTag:
+  #   Description: Tag for RecordedDataPlayback image
+  #   Type: String
+  #   Default: latest
+
+#   DataAggregatorImageTag:
+#     Description: Tag for DataAggregator image
+#     Type: String
+#     Default: latest
+
+#   SimulateDriveTestImageTag:
+#     Description: Tag for SimulateDriveTest image
+#     Type: String
+#     Default: latest
+
+#   AgencyManagerImageTag:
+#     Description: Tag for AgencyManager image
+#     Type: String
+#     Default: latest
+
+#   GTFSRealtimeAPIPollerImageTag:
+#     Description: Tag for GTFSRealtimeAPIPoller image
+#     Type: String
+#     Default: latest
+
+#   GTFSRealtimeTestServerECRRepository:
+#     Type: String
+#     Description: >-
+#       The name of the ECR-repository where the image for the
+#       RT-GTFS-Mock-Test-Server exists
+#     Default: gtt/gtfs-realtime-test-server
+
+#   GTFSRealtimeTestServerECRRepositoryImageTag:
+#     Description: Tag for GTFSRealtimeTestServer image
+#     Type: String
+#     Default: latest
+
+#   RegionName:
+#     Description: Region Name for CDF group path
+#     Type: String
+#     Default: tsptest
+
+  AgencyName:
+    Description: Agency Name for CDF group path
+    Type: String
+    Default: tsptest
+
+#   # ToDo: remove
+#   AgencyID:
+#     Description: temporary, not used
+#     Type: String
+#     Default: tsptest
+
+  Env:
+    Type: String
+    AllowedValues:
+      - develop
+      - test
+      - production
+      - pilot
+    Description: "Environment in which the deployment is happening. Allowed values: develop, test, production, or pilot"
+
+  CDFAPIARN:
+    Type: String
+    Description: CDF Asset Library API endpoint required by the SAM template
+
+  RuntimeDeviceMessageBucketARN:
+    Type: String
+    Description: S3 bucket(managed by CDFDeployment pipeline) for runtime EVP device message
+
+#   HostedZoneName:
+#     Type: String
+#     Description: Name of route53 hosted zone on which to deploy the test server. Must include trailing '.'
+#     Default: developgtt.com.
+
+# Conditions:
+#   CreateTestResources: !Or
+#     - !Equals [!Ref Env, develop]
+#     - !Equals [!Ref Env, test]
+
+Resources:
+  # Networking
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref VPCCIDR
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${TSPCoreName}-${Env}-VPC
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+
+  VPCGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+
+  PublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      # AvailabilityZone: !Select [ 0, !GetAZs '' ]
+      CidrBlock: !Ref PublicSubnetCIDR
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${TSPCoreName}-${Env}-PublicSubnet
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+
+  PublicRoute:
+    Type: AWS::EC2::Route
+    # DependsOn: VPCGatewayAttachment
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      # Internal route needed?
+      GatewayId: !Ref InternetGateway
+
+  PublicSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet
+
+  PrivateSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      # AvailabilityZone: !Select [ 0, !GetAZs '' ]
+      CidrBlock: !Ref PrivateSubnetCIDR
+      Tags:
+        - Key: Name
+          Value: !Sub ${TSPCoreName}-${Env}-PrivateSubnet
+
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+
+  PrivateRoute:
+    Type: AWS::EC2::Route
+    # DependsOn: VPCGatewayAttachment
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGateway
+
+  PrivateSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      SubnetId: !Ref PrivateSubnet
+
+  NatGateway:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt NatGatewayEIP.AllocationId
+      SubnetId: !Ref PublicSubnet
+
+  NatGatewayEIP:
+    Type: AWS::EC2::EIP
+    # DependsOn: VPCGatewayAttachment
+    Properties:
+      Domain: vpc
+
+  # ToDo: Restrict the SG as per requirements
+  LambdaSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "Security group for TSP Lambdas VPC config"
+      GroupName: TSPLambdasSG
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 6379
+          ToPort: 6379
+
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 6379
+          ToPort: 6379
+          CidrIp: 0.0.0.0/0
+      VpcId: !Ref VPC
+
+  LambdaElastiCacheSecurityIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref ElastiCacheSecurityGroup
+      IpProtocol: tcp
+      FromPort: 6379
+      ToPort: 6379
+      SourceSecurityGroupId: !Ref LambdaSecurityGroup
+
+  # IAM Policies
+  AllowIoTPublish:
+    Type: "AWS::IAM::ManagedPolicy"
+    Properties:
+      ManagedPolicyName: !Sub AllowIoTPublish-${TSPCoreName}-${AgencyName}
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - "iot:Connect"
+              - "iot:Publish"
+            Resource:
+              - !Sub "arn:${AWS::Partition}:iot:*:${AWS::AccountId}:client/*"
+              - !Sub "arn:${AWS::Partition}:iot:*:${AWS::AccountId}:topic/*"
+
+  AllowCDFAPIAccess:
+    Type: "AWS::IAM::ManagedPolicy"
+    Properties:
+      ManagedPolicyName: !Sub AllowCDFAPIAccess-${TSPCoreName}-${AgencyName}
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - "execute-api:Invoke"
+              - "execute-api:ManageConnections"
+            Resource: !Sub "arn:${AWS::Partition}:execute-api:us-east-1:${AWS::AccountId}:*"
+
+  AllowS3Access:
+    Type: "AWS::IAM::ManagedPolicy"
+    Properties:
+      ManagedPolicyName: !Sub AllowS3Access-${TSPCoreName}-${AgencyName}
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              # ToDo: limit to only the necessary actions bucket.creation_date was not working
+              - "s3:*"
+            Resource:
+              - !Sub ${RuntimeDeviceMessageBucketARN}
+
+  #! This permission allows remote connections to containers, ok for prod?
+  AllowSSMAgentForECSExec:
+    Type: "AWS::IAM::ManagedPolicy"
+    Properties:
+      ManagedPolicyName: !Sub AllowSSMAgentForECSExec-${TSPCoreName}-${AgencyName}
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - ssmmessages:CreateControlChannel
+              - ssmmessages:CreateDataChannel
+              - ssmmessages:OpenControlChannel
+              - ssmmessages:OpenDataChannel
+            Resource: "*"
+
+  # AllowECSRunVehicleManagerTask:
+  #   Type: "AWS::IAM::ManagedPolicy"
+  #   Properties:
+  #     ManagedPolicyName: !Sub AllowECSRunVehicleManagerTask-${TSPCoreName}-${AgencyName}
+  #     PolicyDocument:
+  #       Version: "2012-10-17"
+  #       Statement:
+  #         - Effect: Allow
+  #           Action: ecs:RunTask
+  #           Resource:
+  #             - !Ref VehicleManagerFargateTaskDefinition
+  #         - Effect: Allow
+  #           Action: iam:PassRole
+  #           Resource:
+  #             - !GetAtt FargateTaskExecutionRole.Arn
+  #             - !GetAtt VehicleManagerFargateTaskRole.Arn
+
+  AllowDescribeCDFStack:
+    Type: "AWS::IAM::ManagedPolicy"
+    Properties:
+      ManagedPolicyName: !Sub AllowDescribeCDFStack-${TSPCoreName}-${AgencyName}
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action: cloudformation:DescribeStacks
+            Resource:
+              - !Sub arn:${AWS::Partition}:cloudformation:us-east-1:${AWS::AccountId}:stack/CDFDeploymentPipelineStack-SAM/*
+
+  # # Roles
+  # FargateTaskExecutionRole:
+  #   Type: AWS::IAM::Role
+  #   Properties:
+  #     RoleName: !Sub FargateTaskExecutionRole-${TSPCoreName}-${AgencyName}
+  #     AssumeRolePolicyDocument:
+  #       Statement:
+  #         - Effect: Allow
+  #           Principal:
+  #             Service:
+  #               - ecs-tasks.amazonaws.com
+  #           Action: sts:AssumeRole
+  #     Description: "Role to be assumed by Fargate tasks when executing"
+  #     ManagedPolicyArns:
+  #       - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+  #       - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+
+  # GTFSRealtimeAPIPollerRole:
+  #   Type: AWS::IAM::Role
+  #   Properties:
+  #     RoleName: !Sub GTFSRealtimeAPIPollerRole-${TSPCoreName}-${AgencyName}
+  #     AssumeRolePolicyDocument:
+  #       Statement:
+  #         - Effect: Allow
+  #           Principal:
+  #             Service:
+  #               - ecs-tasks.amazonaws.com
+  #           Action: sts:AssumeRole
+  #     Description: "Role to be assumed by GTFSRealtimeAPIPoller task when executing"
+  #     ManagedPolicyArns:
+  #       - !Ref AllowCDFAPIAccess
+  #       - !Ref AllowCDFAPIInvoke
+  #       - !Ref AllowSSMAgentForECSExec
+  #       - !Ref AllowDescribeCDFStack # for FeaturePersistence URL
+
+  # AgencyManagerFargateTaskRole:
+  #   Type: AWS::IAM::Role
+  #   Properties:
+  #     RoleName: !Sub AgencyManagerFargateTaskRole-${TSPCoreName}-${AgencyName}
+  #     AssumeRolePolicyDocument:
+  #       Statement:
+  #         - Effect: Allow
+  #           Principal:
+  #             Service:
+  #               - ecs-tasks.amazonaws.com
+  #           Action: sts:AssumeRole
+  #     Description: "Role to be assumed by AgencyManager to execute and create other Fargate tasks"
+  #     ManagedPolicyArns:
+  #       - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+  #       - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+  #       - !Ref AllowECSRunVehicleManagerTask
+  #       - !Ref AllowCDFAPIAccess
+  #       - !Ref AllowCDFAPIInvoke
+  #       - !Ref AllowSSMAgentForECSExec
+
+  # VehicleManagerFargateTaskRole:
+  #   Type: AWS::IAM::Role
+  #   Properties:
+  #     RoleName: !Sub VehicleManagerFargateTaskRole-${TSPCoreName}-${AgencyName}
+  #     AssumeRolePolicyDocument:
+  #       Statement:
+  #         - Effect: Allow
+  #           Principal:
+  #             Service:
+  #               - ecs-tasks.amazonaws.com
+  #           Action: sts:AssumeRole
+  #     Description: "Role to be assumed by VehicleManager tasks when executing"
+  #     ManagedPolicyArns:
+  #       - !Ref AllowCDFAPIAccess
+  #       - !Ref AllowCDFAPIInvoke
+  #       - !Ref AllowIoTPublish
+  #       - !Ref AllowSSMAgentForECSExec
+
+  # DataAggregatorFargateTaskRole:
+  #   Type: AWS::IAM::Role
+  #   Properties:
+  #     RoleName: !Sub DataAggregatorFargateTaskRole-${TSPCoreName}-${AgencyName}
+  #     AssumeRolePolicyDocument:
+  #       Statement:
+  #         - Effect: Allow
+  #           Principal:
+  #             Service:
+  #               - ecs-tasks.amazonaws.com
+  #           Action: sts:AssumeRole
+  #     Description: "Role to be assumed by DataAggregator tasks when executing"
+  #     ManagedPolicyArns:
+  #       - !Ref AllowCDFAPIAccess
+  #       - !Ref AllowCDFAPIInvoke
+  #       - !Ref AllowS3Access
+  #       - !Ref AllowSSMAgentForECSExec
+
+  # # Fargate base configuration
+  # FargateLogGroup:
+  #   Type: AWS::Logs::LogGroup
+  #   Properties:
+  #     LogGroupName: !Sub FargateLogGroup/${TSPCoreName}
+  #   UpdateReplacePolicy: Delete
+  #   DeletionPolicy: Delete
+
+  # FargateCluster:
+  #   Type: AWS::ECS::Cluster
+  #   Properties:
+  #     ClusterName: !Sub Cluster-${TSPCoreName}-${AgencyName}
+
+  # FargateSecurityGroup:
+  #   Type: AWS::EC2::SecurityGroup
+  #   Properties:
+  #     GroupName: !Sub FargateSecurityGroup-${TSPCoreName}-${AgencyName}
+  #     GroupDescription: Security group for Fargate containers, enables redis access
+  #     VpcId: !Ref VPC
+
+  # FargateElastiCacheSecurityIngress:
+  #   Type: AWS::EC2::SecurityGroupIngress
+  #   Properties:
+  #     GroupId: !Ref ElastiCacheSecurityGroup
+  #     IpProtocol: tcp
+  #     FromPort: 6379
+  #     ToPort: 6379
+  #     SourceSecurityGroupId: !Ref FargateSecurityGroup
+
+  # # Fargate Task Definitions
+  # # generic, to be clarified when used by an agency's services/tasks
+  # GTFSRealtimeAPIPollerFargateTaskDefinition:
+  #   Type: AWS::ECS::TaskDefinition
+  #   Properties:
+  #     Family: !Sub GTFSRealtimeAPIPoller-${TSPCoreName}-${AgencyID}
+  #     Cpu: "256"
+  #     Memory: "512"
+  #     NetworkMode: awsvpc
+  #     RequiresCompatibilities:
+  #       - FARGATE
+  #     RuntimePlatform:
+  #       CpuArchitecture: X86_64
+  #       OperatingSystemFamily: LINUX
+  #     ExecutionRoleArn: !GetAtt FargateTaskExecutionRole.Arn
+  #     TaskRoleArn: !GetAtt GTFSRealtimeAPIPollerRole.Arn
+  #     ContainerDefinitions:
+  #       - Name: !Sub GTFSRealtimeAPIPoller-${TSPCoreName}-${AgencyName}
+  #         Cpu: 256
+  #         Memory: 512
+  #         Image: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.${AWS::URLSuffix}/${ECRRepository}:gtfs-realtime-api-poller-${GTFSRealtimeAPIPollerImageTag}
+  #         Essential: true
+  #         #! This permission allows remote connections to containers, ok for prod?
+  #         LinuxParameters:
+  #           InitProcessEnabled: true
+  #         Environment:
+  #           - Name: REGION_NAME
+  #             Value: !Ref RegionName
+  #           - Name: AGENCY_NAME
+  #             Value: !Ref AgencyName
+  #           - Name: REDIS_URL
+  #             Value: !GetAtt ElastiCacheCluster.RedisEndpoint.Address
+  #           - Name: REDIS_PORT
+  #             Value: !GetAtt ElastiCacheCluster.RedisEndpoint.Port
+  #         Command:
+  #           - gtfs-realtime-api-poller
+  #         LogConfiguration:
+  #           LogDriver: awslogs
+  #           Options:
+  #             awslogs-group: !Ref FargateLogGroup
+  #             awslogs-region: !Ref AWS::Region
+  #             awslogs-stream-prefix: gtfs-realtime-api-poller
+
+  # AgencyManagerFargateTaskDefinition:
+  #   Type: AWS::ECS::TaskDefinition
+  #   Properties:
+  #     Family: !Sub AgencyManager-${TSPCoreName}-${AgencyID}
+  #     Cpu: "256"
+  #     Memory: "512"
+  #     NetworkMode: awsvpc
+  #     RequiresCompatibilities:
+  #       - FARGATE
+  #     RuntimePlatform:
+  #       CpuArchitecture: X86_64
+  #       OperatingSystemFamily: LINUX
+  #     ExecutionRoleArn: !GetAtt FargateTaskExecutionRole.Arn
+  #     TaskRoleArn: !GetAtt AgencyManagerFargateTaskRole.Arn
+  #     ContainerDefinitions:
+  #       - Name: !Sub AgencyManager-${TSPCoreName}-${AgencyName}
+  #         Cpu: 256
+  #         Memory: 512
+  #         Image: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.${AWS::URLSuffix}/${ECRRepository}:agency-manager-${AgencyManagerImageTag}
+  #         Essential: true
+  #         #! This permission allows remote connections to containers, ok for prod?
+  #         LinuxParameters:
+  #           InitProcessEnabled: true
+  #         Environment:
+  #           - Name: REGION_NAME
+  #             Value: !Ref RegionName
+  #           - Name: AGENCY_NAME
+  #             Value: !Ref AgencyName
+  #           - Name: REDIS_URL
+  #             Value: !GetAtt ElastiCacheCluster.RedisEndpoint.Address
+  #           - Name: REDIS_PORT
+  #             Value: !GetAtt ElastiCacheCluster.RedisEndpoint.Port
+  #           - Name: VEHICLE_MANAGER_SUBNET
+  #             Value: !Ref PrivateSubnet
+  #           - Name: VEHICLE_MANAGER_SECURITY_GROUP
+  #             Value: !Ref FargateSecurityGroup
+  #           - Name: VEHICLE_MANAGER_CLUSTER
+  #             Value: !Ref FargateCluster
+  #           - Name: VEHICLE_MANAGER_TASK_DEFINITION
+  #             Value: !Ref VehicleManagerFargateTaskDefinition
+  #           - Name: VEHICLE_MANAGER_CONTAINER_NAME
+  #             Value: !Sub VehicleManager-${TSPCoreName}-${AgencyName}
+  #         Command:
+  #           - agency-manager
+  #           - --get-statistics
+  #         LogConfiguration:
+  #           LogDriver: awslogs
+  #           Options:
+  #             awslogs-group: !Ref FargateLogGroup
+  #             awslogs-region: !Ref AWS::Region
+  #             awslogs-stream-prefix: agency-manager
+
+  # VehicleManagerFargateTaskDefinition:
+  #   Type: AWS::ECS::TaskDefinition
+  #   Properties:
+  #     Family: !Sub VehicleManager-${TSPCoreName}-${AgencyID}
+  #     Cpu: "256"
+  #     Memory: "512"
+  #     NetworkMode: awsvpc
+  #     RequiresCompatibilities:
+  #       - FARGATE
+  #     RuntimePlatform:
+  #       CpuArchitecture: X86_64
+  #       OperatingSystemFamily: LINUX
+  #     ExecutionRoleArn: !GetAtt FargateTaskExecutionRole.Arn
+  #     TaskRoleArn: !GetAtt VehicleManagerFargateTaskRole.Arn
+  #     ContainerDefinitions:
+  #       - Name: !Sub VehicleManager-${TSPCoreName}-${AgencyName}
+  #         Cpu: 256
+  #         Memory: 512
+  #         Image: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.${AWS::URLSuffix}/${ECRRepository}:vehicle-manager-${VehicleManagerImageTag}
+  #         Essential: true
+  #         LinuxParameters:
+  #           InitProcessEnabled: true
+  #         Environment:
+  #           - Name: REGION_NAME
+  #             Value: !Ref RegionName
+  #           - Name: AGENCY_NAME
+  #             Value: !Ref AgencyName
+  #           - Name: REDIS_URL
+  #             Value: !GetAtt ElastiCacheCluster.RedisEndpoint.Address
+  #           - Name: REDIS_PORT
+  #             Value: !GetAtt ElastiCacheCluster.RedisEndpoint.Port
+  #           # - Name: REDIS_URL
+  #           #   Value: !GetAtt ElastiCacheCluster.RedisEndpoint.Address
+  #           # - Name: REDIS_PORT
+  #           #   Value: !GetAtt ElastiCacheCluster.RedisEndpoint.Port
+  #         Command:
+  #           - vehicle-manager
+  #         LogConfiguration:
+  #           LogDriver: awslogs
+  #           Options:
+  #             awslogs-group: !Ref FargateLogGroup
+  #             awslogs-region: !Ref AWS::Region
+  #             awslogs-stream-prefix: vehicle-manager
+
+  # DataAggregatorFargateTaskDefinition:
+  #   Type: AWS::ECS::TaskDefinition
+  #   Properties:
+  #     Family: !Sub DataAggregator-${TSPCoreName}-${AgencyName}
+  #     Cpu: "256"
+  #     Memory: "512"
+  #     NetworkMode: awsvpc
+  #     RequiresCompatibilities:
+  #       - FARGATE
+  #     RuntimePlatform:
+  #       CpuArchitecture: X86_64
+  #       OperatingSystemFamily: LINUX
+  #     ExecutionRoleArn: !GetAtt FargateTaskExecutionRole.Arn
+  #     TaskRoleArn: !GetAtt DataAggregatorFargateTaskRole.Arn
+  #     ContainerDefinitions:
+  #       - Name: !Sub DataAggregator-${TSPCoreName}-${AgencyName}
+  #         Cpu: 256
+  #         Memory: 512
+  #         Image: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.${AWS::URLSuffix}/${ECRRepository}:data-aggregator-${DataAggregatorImageTag}
+  #         Essential: true
+  #         #! This permission allows remote connections to containers, ok for prod?
+  #         LinuxParameters:
+  #           InitProcessEnabled: true
+  #         Environment:
+  #           - Name: AWS_ENVIRONMENT
+  #             Value: !Ref Env
+  #           - Name: REGION_NAME
+  #             Value: !Ref RegionName
+  #           - Name: AGENCY_NAME
+  #             Value: !Ref AgencyName
+  #           - Name: REDIS_URL
+  #             Value: !GetAtt ElastiCacheCluster.RedisEndpoint.Address
+  #           - Name: REDIS_PORT
+  #             Value: !GetAtt ElastiCacheCluster.RedisEndpoint.Port
+  #         Command:
+  #           - data-aggregator
+  #         LogConfiguration:
+  #           LogDriver: awslogs
+  #           Options:
+  #             awslogs-group: !Ref FargateLogGroup
+  #             awslogs-region: !Ref AWS::Region
+  #             awslogs-stream-prefix: data-aggregator
+
+  # SimulateDriveTestFargateTaskDefinition:
+  #   Type: AWS::ECS::TaskDefinition
+  #   Properties:
+  #     Family: !Sub SimulateDriveTest-${TSPCoreName}-${AgencyName}
+  #     Cpu: "256"
+  #     Memory: "512"
+  #     NetworkMode: awsvpc
+  #     RequiresCompatibilities:
+  #       - FARGATE
+  #     RuntimePlatform:
+  #       CpuArchitecture: X86_64
+  #       OperatingSystemFamily: LINUX
+  #     ExecutionRoleArn: !GetAtt FargateTaskExecutionRole.Arn
+  #     TaskRoleArn: !GetAtt DataAggregatorFargateTaskRole.Arn
+  #     ContainerDefinitions:
+  #       - Name: !Sub SimulateDriveTest-${TSPCoreName}-${AgencyName}
+  #         Cpu: 256
+  #         Memory: 512
+  #         Image: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.${AWS::URLSuffix}/${ECRRepository}:simulate-drive-test-${SimulateDriveTestImageTag}
+  #         Essential: true
+  #         #! This permission allows remote connections to containers, ok for prod?
+  #         LinuxParameters:
+  #           InitProcessEnabled: true
+  #         Environment:
+  #           - Name: AWS_ENVIRONMENT
+  #             Value: !Ref Env
+  #           - Name: REGION_NAME
+  #             Value: !Ref RegionName
+  #           - Name: AGENCY_NAME
+  #             Value: !Ref AgencyName
+  #         Command:
+  #           - python
+  #           - /home/python/simulate_drive_test.py
+  #           - --repeat
+  #         LogConfiguration:
+  #           LogDriver: awslogs
+  #           Options:
+  #             awslogs-group: !Ref FargateLogGroup
+  #             awslogs-region: !Ref AWS::Region
+  #             awslogs-stream-prefix: simulate-drive-test
+
+  # # Fargate services
+  # GTFSRealtimeAPIPollerFargateService:
+  #   Type: AWS::ECS::Service
+  #   Properties:
+  #     ServiceName: !Sub GTFS-Realtime-API-Poller-${TSPCoreName}-${AgencyName}
+  #     Cluster: !Ref FargateCluster
+  #     TaskDefinition: !Ref GTFSRealtimeAPIPollerFargateTaskDefinition
+  #     DeploymentConfiguration:
+  #       MinimumHealthyPercent: 100
+  #       MaximumPercent: 200
+  #     DesiredCount: 1
+  #     #! This permission allows remote connections to containers, ok for prod?
+  #     EnableExecuteCommand: true
+  #     # HealthCheckGracePeriodSeconds: 30
+  #     LaunchType: FARGATE
+  #     # PlatformVersion: 1.4.0
+  #     # PropagateTags: SERVICE
+  #     # SchedulingStrategy: REPLICA
+  #     NetworkConfiguration:
+  #       AwsvpcConfiguration:
+  #         #! This option had to be enabled when testing elasticache on gttdev,
+  #         #! but not when I was using my own VPC, should be possible to remove
+  #         AssignPublicIp: ENABLED
+  #         Subnets:
+  #           - !Ref PrivateSubnet
+  #         SecurityGroups:
+  #           - !Ref FargateSecurityGroup
+
+  # AgencyManagerFargateService:
+  #   Type: AWS::ECS::Service
+  #   Properties:
+  #     ServiceName: !Sub Agency-Manager-${TSPCoreName}-${AgencyName}
+  #     Cluster: !Ref FargateCluster
+  #     TaskDefinition: !Ref AgencyManagerFargateTaskDefinition
+  #     DeploymentConfiguration:
+  #       MinimumHealthyPercent: 100
+  #       MaximumPercent: 200
+  #     DesiredCount: 1
+  #     #! This permission allows remote connections to containers, ok for prod?
+  #     EnableExecuteCommand: true
+  #     # HealthCheckGracePeriodSeconds: 30
+  #     LaunchType: FARGATE
+  #     # PlatformVersion: 1.4.0
+  #     # PropagateTags: SERVICE
+  #     # SchedulingStrategy: REPLICA
+  #     NetworkConfiguration:
+  #       AwsvpcConfiguration:
+  #         #! This option had to be enabled when testing elasticache on gttdev,
+  #         #! but not when I was using my own VPC, should be possible to remove
+  #         AssignPublicIp: ENABLED
+  #         Subnets:
+  #           - !Ref PrivateSubnet
+  #         SecurityGroups:
+  #           - !Ref FargateSecurityGroup
+
+  # DataAggregatorFargateService:
+  #   Type: AWS::ECS::Service
+  #   Properties:
+  #     ServiceName: !Sub DataAggregator-${TSPCoreName}-${AgencyName}
+  #     Cluster: !Ref FargateCluster
+  #     TaskDefinition: !Ref DataAggregatorFargateTaskDefinition
+  #     DeploymentConfiguration:
+  #       MinimumHealthyPercent: 100
+  #       MaximumPercent: 200
+  #     DesiredCount: 1
+  #     #! This permission allows remote connections to containers, ok for prod?
+  #     EnableExecuteCommand: true
+  #     # HealthCheckGracePeriodSeconds: 30
+  #     LaunchType: FARGATE
+  #     # PlatformVersion: 1.4.0
+  #     # PropagateTags: SERVICE
+  #     # SchedulingStrategy: REPLICA
+  #     NetworkConfiguration:
+  #       AwsvpcConfiguration:
+  #         #! This option had to be enabled when testing elasticache on gttdev,
+  #         #! but not when I was using my own VPC, should be possible to remove
+  #         AssignPublicIp: ENABLED
+  #         Subnets:
+  #           - !Ref PrivateSubnet
+  #         SecurityGroups:
+  #           - !Ref FargateSecurityGroup
+
+  # #Resources created apart from what are listed in the new template
+
+  # ToDo: inherit ElastiCache from core resources
+  # Depending on actual ElastiCache permissions, a policies/roles might need to be extended
+  ElastiCacheSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for ElastiCache
+      GroupName: !Sub ElastiCacheSecurityGroup-${TSPCoreName}-${AgencyName}
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+      VpcId: !Ref VPC
+
+  # ToDo: restrict to only required resources, split for each stream?
+  FirehoseDeliveryRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub FirehoseDeliveryRole-${TSPCoreName}
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: firehose.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonS3FullAccess
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonKinesisFullAccess
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSGlueServiceRole
+
+  IoTFirehoseRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub IoTFirehoseRole-${TSPCoreName}
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect : Allow
+            Principal:
+              Service : iot.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      Policies:
+        - PolicyName: !Sub IoTFirehoseRole-Policy-${TSPCoreName}
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: firehose:PutRecord
+                Resource:
+                  - !GetAtt Route2101DataKinesisDeliveryStream.Arn
+                  - !GetAtt RouteModemDataKinesisDeliveryStream.Arn
+
+  CDFLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      CompatibleRuntimes:
+        - python3.7
+        - python3.8
+      ContentUri: ./../../CDFAndIoT/Lambdas/LambdaLayers/CDFLambdaLayer/CDFLambdaLayer.zip
+      Description: "Layer containing CDF library and dependencies"
+      LayerName: !Sub CDFLayer-${TSPCoreName}
+      RetentionPolicy: Delete
+
+  TSPResourceLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      CompatibleRuntimes:
+        - python3.7
+        - python3.8
+      ContentUri: ./../../CDFAndIoT/Lambdas/LambdaLayers/TSPResources/TSPResources.zip
+      Description: "Layer containing CDF library and dependencies"
+      LayerName: !Sub TSPResourceLayer-${TSPCoreName}
+      RetentionPolicy: Delete
+
+  Process2101Data:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      FunctionName: !Sub Process2101Data-${TSPCoreName}
+      Handler: Process2101Data.lambda_handler
+      Runtime: python3.8
+      CodeUri: ./../../TSP/Lambdas/Process2101Data/LambdaCode
+      Description: "Get 2101 message, process it and publish to CMS"
+      MemorySize: 128
+      Timeout: 3
+      Role: !GetAtt "Process2101DataRole.Arn"
+      Layers:
+        #- !Sub arn:${AWS::Partition}:lambda:us-east-1:${AWS::AccountId}:layer:CDF_layer:4
+        #- !Sub arn:${AWS::Partition}:lambda:us-east-1:${AWS::AccountId}:layer:TSPResources:1
+        - !Ref CDFLayer
+        - !Ref TSPResourceLayer
+      Environment:
+        Variables:
+          CDF_URL: !Ref CDFAPIARN
+          REDIS_URL: !GetAtt ElastiCacheCluster.RedisEndpoint.Address
+          REDIS_PORT: !GetAtt ElastiCacheCluster.RedisEndpoint.Port
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroup
+        SubnetIds:
+          - !Ref PrivateSubnet
+
+  Route2101Data:
+    Type: AWS::IoT::TopicRule
+    Properties:
+      RuleName: !Sub Route2101Data_${TSPCoreName}
+      # IoT Topic Rules cannot have '-' in the name, hence '_'
+      TopicRulePayload:
+        Description: "Gets 2101 message and invokes the Process2101Data Lambda"
+        RuleDisabled: false
+        AwsIotSqlVersion: "2016-03-23"
+        Sql: >-
+          SELECT encode(*, 'base64') AS data, topic() as topic, parse_time('YYYY/MM/dd HH:mm:ss', timestamp()) as timestamp FROM 'GTT/GTT/VEH/EVP/2101/#'
+        Actions:
+          - Lambda:
+              FunctionArn: !GetAtt "Process2101Data.Arn"
+          - Firehose:
+              DeliveryStreamName: !Ref Route2101DataKinesisDeliveryStream
+              RoleArn: !GetAtt IoTFirehoseRole.Arn
+              BatchMode: True
+
+  Route2101DataKinesisDeliveryStream:
+    Type: AWS::KinesisFirehose::DeliveryStream
+    Properties:
+      DeliveryStreamName: !Sub Route2101DataKinesisDeliveryStream-${TSPCoreName}
+      DeliveryStreamType: DirectPut
+      S3DestinationConfiguration:
+        BucketARN: !Sub ${RuntimeDeviceMessageBucketARN}
+        BufferingHints:
+          IntervalInSeconds: 60
+          SizeInMBs: 1
+        CloudWatchLoggingOptions:
+          Enabled: True
+          LogGroupName: /kinesis/Route2101Data
+          LogStreamName: TSP
+        # partition based on yyyy-mm-dd date
+        Prefix: '2101-TSP/utc_date=!{timestamp:yyyy}-!{timestamp:mm}-!{timestamp:dd}/'
+        ErrorOutputPrefix: '!{firehose:error-output-type}/2101-TSP/utc_date=!{timestamp:yyyy}-!{timestamp:mm}-!{timestamp:dd}/'
+        RoleARN: !GetAtt FirehoseDeliveryRole.Arn
+
+  Process2101DataRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub Process2101DataRole-${TSPCoreName}
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - !Ref "AllowCDFAPIAccess"
+        - !Ref "AllowCDFAPIInvoke"
+        - !Ref "AllowIoTPublish"
+        - !Ref "AllowDynamoDBAccess"
+        - !Ref "LambdaVPCPolicy"
+
+  Process2101DataRBPolicy:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt Process2101Data.Arn
+      Principal: iot.amazonaws.com
+      SourceAccount: !Ref "AWS::AccountId"
+      SourceArn: !GetAtt Route2101Data.Arn
+
+  AllowDynamoDBAccess:
+    Type: "AWS::IAM::ManagedPolicy"
+    Properties:
+      ManagedPolicyName: !Sub AllowDynamoDBAccess-${TSPCoreName}
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - "dynamodb:UpdateTimeToLive"
+              - "dynamodb:PutItem"
+              - "dynamodb:GetItem"
+              - "dynamodb:UpdateItem"
+            Resource: !Sub "arn:${AWS::Partition}:dynamodb:us-east-1:${AWS::AccountId}:table/CachingTable"
+
+  AllowCDFAPIInvoke:
+    Type: "AWS::IAM::ManagedPolicy"
+    Properties:
+      ManagedPolicyName: !Sub AllowCDFAPIInvoke-${TSPCoreName}
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - "lambda:InvokeFunction"
+            Resource: !Sub "arn:${AWS::Partition}:lambda:us-east-1:${AWS::AccountId}:function:cdf-assetlibrary-stage-LambdaFunction*"
+
+  CreateRTRADIOMsgRBPolicy:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt CreateRTRADIOMsg.Arn
+      Principal: iot.amazonaws.com
+      SourceAccount: !Ref "AWS::AccountId"
+      SourceArn: !GetAtt RouteModemData.Arn
+
+  LambdaVPCPolicy:
+    Type: "AWS::IAM::ManagedPolicy"
+    Properties:
+      ManagedPolicyName: !Sub LambdaVPCPolicy-${TSPCoreName}
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - "ec2:DescribeNetworkInterfaces"
+              - "ec2:CreateNetworkInterface"
+              - "ec2:DeleteNetworkInterface"
+              - "ec2:DescribeInstances"
+              - "ec2:AttachNetworkInterface"
+            Resource: "*"
+
+  CreateRTRADIOMsgRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub CreateRTRADIOMsgRole-${TSPCoreName}
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - !Ref "AllowCDFAPIAccess"
+        - !Ref "AllowCDFAPIInvoke"
+        - !Ref "AllowIoTPublish"
+        - !Ref "AllowDynamoDBAccess"
+        - !Ref "LambdaVPCPolicy"
+
+  # The layer TSPResources is created manually. To be done in an automated manner later on.
+  CreateRTRADIOMsg:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      FunctionName: !Sub CreateRTRADIOMsg-${TSPCoreName}
+      Handler: CreateRTRADIOMsg.lambda_handler
+      Runtime: python3.8
+      CodeUri: ./../../TSP/Lambdas/CreateRTRADIOMsg/LambdaCode
+      Description: "Get data from CDF and construct RTRADIO message"
+      MemorySize: 128
+      Timeout: 5
+      Role: !GetAtt "CreateRTRADIOMsgRole.Arn"
+      Layers:
+        #- !Sub arn:${AWS::Partition}:lambda:us-east-1:${AWS::AccountId}:layer:CDF_layer:4
+        #- !Sub arn:${AWS::Partition}:lambda:us-east-1:${AWS::AccountId}:layer:TSPResources:1
+        - !Ref CDFLayer
+        - !Ref TSPResourceLayer
+      Environment:
+        Variables:
+          CDF_URL: !Ref CDFAPIARN
+          REDIS_URL: !GetAtt ElastiCacheCluster.RedisEndpoint.Address
+          REDIS_PORT: !GetAtt ElastiCacheCluster.RedisEndpoint.Port
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroup
+        SubnetIds:
+          - !Ref PrivateSubnet
+
+  RouteModemData:
+    Type: AWS::IoT::TopicRule
+    Properties:
+      RuleName: !Sub RouteModemData_${TSPCoreName}
+      # IoT Topic Rules cannot have '-' in the name, hence '_'
+      TopicRulePayload:
+        Description: "Gets MP70 message, and invokes lambda to process and create RT radio message"
+        RuleDisabled: false
+        AwsIotSqlVersion: "2016-03-23"
+        Sql: >-
+          SELECT *, topic() AS topic, parse_time('YYYY/MM/dd HH:mm:ss', timestamp()) as timestamp FROM 'SW/+/GTT/SIERRA/VEH/TSP/MP70'
+        Actions:
+          - Lambda:
+              FunctionArn: !GetAtt "CreateRTRADIOMsg.Arn"
+          - Firehose:
+              DeliveryStreamName: !Ref RouteModemDataKinesisDeliveryStream
+              RoleArn: !GetAtt IoTFirehoseRole.Arn
+              BatchMode: True
+
+  RouteModemDataKinesisDeliveryStream:
+    Type: AWS::KinesisFirehose::DeliveryStream
+    Properties:
+      DeliveryStreamName: !Sub RouteModemDataKinesisDeliveryStream-${TSPCoreName}
+      DeliveryStreamType: DirectPut
+      S3DestinationConfiguration:
+        BucketARN: !Sub ${RuntimeDeviceMessageBucketARN}
+        BufferingHints:
+          IntervalInSeconds: 60
+          SizeInMBs: 1
+        CloudWatchLoggingOptions:
+          Enabled: True
+          LogGroupName: /kinesis/RouteModemData
+          LogStreamName: TSP
+        # partition based on yyyy-mm-dd date
+        Prefix: 'MP70-TSP/utc_date=!{timestamp:yyyy}-!{timestamp:mm}-!{timestamp:dd}/'
+        ErrorOutputPrefix: '!{firehose:error-output-type}/MP70-TSP/utc_date=!{timestamp:yyyy}-!{timestamp:mm}-!{timestamp:dd}/'
+        RoleARN: !GetAtt FirehoseDeliveryRole.Arn
+
+  # Shared cluster between TSP and other services
+  ElastiCacheCluster:
+    Type: AWS::ElastiCache::CacheCluster
+    Properties:
+      AutoMinorVersionUpgrade: True
+      CacheNodeType: cache.t2.micro
+      CacheSubnetGroupName: !Ref ElastiCacheSubnetGroup
+      ClusterName: !Sub Cluster-${TSPCoreName}-${AgencyName}
+      Engine: redis
+      NumCacheNodes: 1
+      # PreferredAvailabilityZone: !Sub ${AWS::Region}
+      VpcSecurityGroupIds:
+        - !GetAtt ElastiCacheSecurityGroup.GroupId
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+
+  ElastiCacheSubnetGroup:
+    Type: AWS::ElastiCache::SubnetGroup
+    Properties:
+      CacheSubnetGroupName: !Sub ElastiCacheSubnetGroup-${TSPCoreName}-${AgencyName}
+      Description: Subnet Group for ElastiCache
+      SubnetIds:
+        - !Ref PublicSubnet
+
+  # # GTFS Realtime Test Server (not needed in prod)
+  # GTFSRealtimeTestServerSecurityGroup:
+  #   Type: AWS::EC2::SecurityGroup
+  #   Condition: CreateTestResources
+  #   Properties:
+  #     GroupName: !Sub GTFSRealtimeTestServerSecurityGroup-${TSPCoreName}-${AgencyName}
+  #     GroupDescription: Security group for GTFSRealtimeTestServer
+  #     SecurityGroupIngress:
+  #       - IpProtocol: tcp
+  #         FromPort: 80
+  #         ToPort: 80
+  #         CidrIp: 0.0.0.0/0
+  #       - IpProtocol: tcp
+  #         FromPort: 8080
+  #         ToPort: 8080
+  #         CidrIp: 0.0.0.0/0
+  #     VpcId: !Ref VPC
+
+  # GTFSRealtimeTestServerDNSNamespace:
+  #   Type: AWS::ServiceDiscovery::PrivateDnsNamespace
+  #   Condition: CreateTestResources
+  #   Properties:
+  #       Name: test-server.local
+  #       Vpc: !Ref VPC
+
+  # GTFSRealtimeTestServerDiscoveryService:
+  #   Type: AWS::ServiceDiscovery::Service
+  #   Condition: CreateTestResources
+  #   Properties:
+  #     Description: Discovery Service for the GTFSRealtimeTestServer
+  #     DnsConfig:
+  #       RoutingPolicy: MULTIVALUE
+  #       DnsRecords:
+  #         - TTL: 60
+  #           Type: A
+  #         - TTL: 60
+  #           Type: SRV
+  #     Name: gtfs-realtime
+  #     NamespaceId: !Ref GTFSRealtimeTestServerDNSNamespace
+
+  # GTFSRealtimeTestServerTargetGroup:
+  #   Type: AWS::ElasticLoadBalancingV2::TargetGroup
+  #   Condition: CreateTestResources
+  #   Properties:
+  #     Name: gtfs-rt-test-server-tg-group # 32 char limit
+  #     Protocol: TCP
+  #     Port: 8080
+  #     TargetType: ip
+  #     VpcId: !Ref VPC
+
+  # GTFSRealtimeTestServerELB:
+  #   Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+  #   Condition: CreateTestResources
+  #   Properties:
+  #     Name: GTFSRealtimeTestServerELB
+  #     Scheme: internet-facing
+  #     Subnets:
+  #       - !Ref PublicSubnet
+  #     Type: network
+
+  # GTFSRealtimeTestServerELBListener:
+  #   Type: AWS::ElasticLoadBalancingV2::Listener
+  #   Condition: CreateTestResources
+  #   Properties:
+  #     DefaultActions:
+  #       - Type: forward
+  #         TargetGroupArn: !Ref GTFSRealtimeTestServerTargetGroup
+  #     LoadBalancerArn: !Ref GTFSRealtimeTestServerELB
+  #     Port: 80
+  #     Protocol: TCP
+
+  # GTFSRealtimeTestServerRoute53Record:
+  #   Type: AWS::Route53::RecordSet
+  #   Condition: CreateTestResources
+  #   Properties:
+  #     HostedZoneName: !Ref HostedZoneName
+  #     Name: !Join ['.', [gtfs-realtime-test-server, !Ref HostedZoneName]]
+  #     Type: A
+  #     AliasTarget:
+  #       DNSName: !GetAtt GTFSRealtimeTestServerELB.DNSName
+  #       HostedZoneId: !GetAtt GTFSRealtimeTestServerELB.CanonicalHostedZoneID
+
+  # AllowIoTSubscribe:
+  #   Type: AWS::IAM::ManagedPolicy
+  #   Condition: CreateTestResources
+  #   Properties:
+  #     ManagedPolicyName: !Sub AllowIoTSubscribe-${TSPCoreName}-${AgencyName}
+  #     PolicyDocument:
+  #       Version: "2012-10-17"
+  #       Statement:
+  #         - Effect: Allow
+  #           Action:
+  #             - "iot:DescribeEndpoint"
+  #           Resource: "*"
+  #         - Effect: Allow
+  #           Action:
+  #             - "iot:Connect"
+  #             - "iot:Subscribe"
+  #             - "iot:Receive"
+  #           Resource:
+  #             - !Sub "arn:${AWS::Partition}:iot:*:${AWS::AccountId}:topic/*"
+  #             - !Sub "arn:${AWS::Partition}:iot:*:${AWS::AccountId}:client/*"
+  #             - !Sub "arn:${AWS::Partition}:iot:*:${AWS::AccountId}:topicfilter/*"
+
+  # GTFSRealtimeTestServerTaskRole:
+  #   Type: AWS::IAM::Role
+  #   Condition: CreateTestResources
+  #   Properties:
+  #     RoleName: !Sub GTFSRealtimeTestServerTaskRole-${TSPCoreName}-${AgencyName}
+  #     AssumeRolePolicyDocument:
+  #       Statement:
+  #         - Effect: Allow
+  #           Principal:
+  #             Service:
+  #               - ecs-tasks.amazonaws.com
+  #           Action: sts:AssumeRole
+  #     Description: "Role to be assumed by GTFSRealtimeTestServer tasks when executing"
+  #     ManagedPolicyArns:
+  #       - !Ref AllowSSMAgentForECSExec
+  #       - !Ref AllowIoTSubscribe
+
+  # GTFSRealtimeTestServerTaskDefinition:
+  #   Type: AWS::ECS::TaskDefinition
+  #   Condition: CreateTestResources
+  #   Properties:
+  #     Family: !Sub GTFSRealtimeTestServer-${TSPCoreName}-${AgencyID}
+  #     Cpu: "256"
+  #     Memory: "512"
+  #     NetworkMode: awsvpc
+  #     RequiresCompatibilities:
+  #       - FARGATE
+  #     RuntimePlatform:
+  #       CpuArchitecture: X86_64
+  #       OperatingSystemFamily: LINUX
+  #     ExecutionRoleArn: !GetAtt FargateTaskExecutionRole.Arn
+  #     TaskRoleArn: !GetAtt GTFSRealtimeTestServerTaskRole.Arn
+  #     ContainerDefinitions:
+  #       - Name: !Sub GTFSRealtimeTestServer-${TSPCoreName}-${AgencyName}
+  #         Cpu: 256
+  #         Memory: 512
+  #         Image: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.${AWS::URLSuffix}/${GTFSRealtimeTestServerECRRepository}:${GTFSRealtimeTestServerECRRepositoryImageTag}
+  #         Essential: true
+  #         LinuxParameters:
+  #           InitProcessEnabled: true
+  #         Environment:
+  #           # ToDo: either query from CDF or use parameter once lifecycle management updated
+  #           - Name: MQTT_TOPICS
+  #             Value: GTT/0537199e-e853-11ec-a8b8-f65b686c7d91/SVR/TSP/2101/+/RTRADIO/+
+  #         Command:
+  #           - test-server
+  #         LogConfiguration:
+  #           LogDriver: awslogs
+  #           Options:
+  #             awslogs-group: !Ref FargateLogGroup
+  #             awslogs-region: !Ref AWS::Region
+  #             awslogs-stream-prefix: gtfs-realtime-test-server
+  #         PortMappings:
+  #           - ContainerPort: 8080
+
+  # GTFSRealtimeTestServerECSService:
+  #   Type: AWS::ECS::Service
+  #   Condition: CreateTestResources
+  #   DependsOn: GTFSRealtimeTestServerELBListener
+  #   Properties:
+  #     ServiceName: !Sub GTFS-Realtime-Test-Server-${TSPCoreName}-${AgencyName}
+  #     Cluster: !Ref FargateCluster
+  #     TaskDefinition: !Ref GTFSRealtimeTestServerTaskDefinition
+  #     DesiredCount: 1
+  #     EnableExecuteCommand: true
+  #     LaunchType: FARGATE
+  #     # ToDo: use Route53 to have DNS entry instead of Public IP
+  #     NetworkConfiguration:
+  #       AwsvpcConfiguration:
+  #         AssignPublicIp: ENABLED
+  #         Subnets:
+  #           - !Ref PublicSubnet
+  #         SecurityGroups:
+  #           - !Ref GTFSRealtimeTestServerSecurityGroup
+  #     ServiceRegistries:
+  #       - RegistryArn: !GetAtt GTFSRealtimeTestServerDiscoveryService.Arn
+  #         Port: 8080
+  #     LoadBalancers:
+  #       - ContainerName: !Sub GTFSRealtimeTestServer-${TSPCoreName}-${AgencyName}
+  #         ContainerPort: 8080
+  #         TargetGroupArn: !Ref GTFSRealtimeTestServerTargetGroup
+
+
+
+
+  # Networking
+
+  #   # Bastion Server
+  #   CreateBastionServer:
+  #     Description: Whether to create EC2 instance and resources to communicate with private services
+  #     Type: String
+  #     Default: false
+  #     AllowedValues: [true, false]
+
+  #   BastionServerImageId:
+  #     Description: AMI ID for creating EC2 instance
+  #     Type: AWS::EC2::Image::Id
+  #     Default: ami-001089eb624938d9f
+
+  #   BastionServerSSHKeyPairName:
+  #     Description: Existing KeyName for which you have the private key .pem file
+  #     Type: String
+  #     Default: TSPBastionKey
+
+  # Conditions:
+  #   ShouldCreateBastionServer:
+  #     !Equals [true, !Ref CreateBastionServer]
+
+  #   # Bastion Server
+  #   BastionSecurityGroup:
+  #     Type: AWS::EC2::SecurityGroup
+  #     Condition: ShouldCreateBastionServer
+  #     Properties:
+  #       GroupDescription: Enable SSH and Elasticache access to instance
+  #       VpcId: !Ref VPC
+  #       SecurityGroupIngress:
+  #         - IpProtocol: tcp
+  #           FromPort: 22
+  #           ToPort: 22
+  #           CidrIp: 0.0.0.0/0
+
+  #   BastionElastiCacheSecurityIngress:
+  #     Type: AWS::EC2::SecurityGroupIngress
+  #     Condition: ShouldCreateBastionServer
+  #     Properties:
+  #       GroupId: !Ref ElastiCacheSecurityGroup
+  #       IpProtocol: tcp
+  #       FromPort: 6379
+  #       ToPort: 6379
+  #       SourceSecurityGroupId: !Ref BastionSecurityGroup
+
+  #   BastionInstance:
+  #     Type: AWS::EC2::Instance
+  #     Condition: ShouldCreateBastionServer
+  #     Properties:
+  #       Tags:
+  #         - Key: Name
+  #           Value: !Sub ${TSPCoreName}-${Env}-Bastion
+  #       ImageId: !Ref BastionServerImageId
+  #       InstanceType: t3.small
+  #       # IamInstanceProfile: !Ref BastionInstanceProfile
+  #       KeyName: !Ref BastionServerSSHKeyPairName
+  #       SubnetId: !Ref PublicSubnet
+  #       SecurityGroupIds:
+  #         - !Ref BastionSecurityGroup
+
+  #   FargateTaskCreationRole:
+  #     Type: AWS::IAM::Role
+  #     Properties:
+  #       RoleName: FargateTaskCreationRole
+  #       AssumeRolePolicyDocument:
+  #         Statement:
+  #           - Effect: Allow
+  #             Principal:
+  #               Service:
+  #                 - ecs-tasks.amazonaws.com
+  #             Action: sts:AssumeRole
+  #       Description: "Role to be assumed by Fargate tasks to execute and create other Fargate tasks"
+  #       ManagedPolicyArns:
+  #         - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+  #         - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+  #       Policies:
+  #         - PolicyName: FargateTaskCreationPolicy
+  #           PolicyDocument:
+  #             Statement:
+  #               - Effect: Allow
+  #                 Action: ecs:RunTask
+  #                 Resource:
+  #                   # - !Ref GTFSRealtimeAPIPollerFargateTaskDefinition
+  #                   # - !Ref AgencyManagerFargateTaskDefinition
+  #                   # - !Ref RecordedDataPlaybackFargateTaskDefinition
+  #                   - !Ref VehicleManagerFargateTaskDefinition
+  #               - Effect: Allow
+  #                 Action: iam:PassRole
+  #                 Resource:
+  #                   - !GetAtt FargateTaskExecutionRole.Arn
+
+  # RecordedDataPlaybackFargateTaskDefinition:
+  #   Type: AWS::ECS::TaskDefinition
+  #   Properties:
+  #     Cpu: 256
+  #     Memory: 1024
+  #     ExecutionRoleArn: !GetAtt FargateTaskExecutionRole.Arn
+  #     Family: !Sub RecordedDataPlayback-${TSPCoreName}
+  #     NetworkMode: awsvpc
+  #     RequiresCompatibilities:
+  #       - FARGATE
+  #     RuntimePlatform:
+  #       CpuArchitecture: X86_64
+  #       OperatingSystemFamily: LINUX
+  #     ContainerDefinitions:
+  #       - Name: !Sub RecordedDataPlayback-${TSPCoreName}
+  #         Cpu: 256
+  #         Memory: 1024
+  #         Image: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.${AWS::URLSuffix}/${ECRRepository}:recorded-data-playback-${RecordedDataPlaybackImageTag}
+  #         Essential: true
+  #         Environment:
+  #           - Name: REDIS_URL
+  #             Value: !GetAtt ElastiCacheCluster.RedisEndpoint.Address
+  #           - Name: REDIS_PORT
+  #             Value: !GetAtt ElastiCacheCluster.RedisEndpoint.Port
+  #         Command:
+  #           - python
+  #           - /home/python/recorded_data_publisher.py
+  #           - --get-statistics
+  #         LogConfiguration:
+  #           LogDriver: awslogs
+  #           Options:
+  #             awslogs-group: !Ref FargateLogGroup
+  #             awslogs-region: !Ref AWS::Region
+  #             awslogs-stream-prefix: recorded-data-playback
+
+  # RecordedDataPlaybackFargateService:
+  #   Type: AWS::ECS::Service
+  #   Properties:
+  #     ServiceName: !Sub TSPService-RecordedDataPlayback-${AgencyName}
+  #     Cluster: !Ref FargateCluster
+  #     TaskDefinition: !Ref RecordedDataPlaybackFargateTaskDefinition
+  #     DeploymentConfiguration:
+  #       MinimumHealthyPercent: 100
+  #       MaximumPercent: 200
+  #     DesiredCount: 1
+  #     # HealthCheckGracePeriodSeconds: 30
+  #     LaunchType: FARGATE
+  #     # PlatformVersion: 1.4.0
+  #     # PropagateTags: SERVICE
+  #     # SchedulingStrategy: REPLICA
+  #     NetworkConfiguration:
+  #       AwsvpcConfiguration:
+  #         Subnets:
+  #           - !Ref PrivateSubnet
+  #         SecurityGroups:
+  #           - !Ref FargateSecurityGroup

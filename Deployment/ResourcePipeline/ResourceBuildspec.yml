@@ -1,0 +1,56 @@
+version: 0.2
+
+
+env:
+  exported-variables:
+    - Env
+
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.8
+
+
+  pre_build:
+    commands:
+    # Updating packages on container, installing AWSCLI and PyTest, and checking home path and python version for logging purposes.
+      - ls -l
+      - pwd=`pwd`
+      - echo $pwd
+      - yum -y update --skip-broken
+      - python -V
+      - python3 -V
+      - pip -V
+      - pip3 -V
+      - python3 -m pip -V
+      - pip3 install --upgrade pip
+      - npm -v
+      - node -v
+      - yum install -y sudo
+      - pip3 install pyopenssl
+      - pip3 install pytest
+      - pip3 install pytest-cov
+
+  build:
+    commands:
+      # S3 bucket for storing pipeline artifacts
+      - PipelineArtifactsS3=pipeline-artifacts-$Env
+      - python3 Deployment/ResourcePipeline/ResourceMgmt.py
+      - ls -l
+      - cat unused_volume.txt
+      - cat unused_old_snapshots.txt
+      - cat unused_loadbalancer.txt
+      - cat unused_dynamodb_tables.txt
+      - cat unused_amis.txt
+      - cat unused_EIP.txt
+
+      # Executing SAM template
+      - aws cloudformation package --template-file Deployment/ResourcePipeline/ResourceControlSAM.yml --s3-bucket $PipelineArtifactsS3 --s3-prefix ResourceControl --output-template-file Deployment/ResourcePipeline/ResourceControlSAMOutput.yml
+      - ls -l Deployment/ResourcePipeline
+
+
+artifacts:
+  files:
+    - '**/*'
+  base-directory: .

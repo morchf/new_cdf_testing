@@ -1,0 +1,20 @@
+{
+  "aws": {
+    "region": "us-west-2"
+  },
+  "assetLibrary": {
+    "apiFunctionName": "cdf-assetlibrary-development-LambdaFunction-1H9R4DUEYUBF4"
+  },
+  "provisioning": {
+    "apiFunctionName": "cdf-provisioning-development-LambdaFunction-1J9KZ4G6DF5B4"
+  },
+  "commands": {
+    "apiFunctionName": "cdf-commands-development-RESTLambdaFunction-10GW65C9U8YG5"
+  },
+  "cors": {
+    "origin": "*"
+  },
+  "supplierRootCa": {
+    "demodevicesupplier": "b5a1c0945714bee68c13a7ddce2a5aecfd8c250f44577d658186c380177ec789"
+  }
+}

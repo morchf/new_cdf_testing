@@ -1,0 +1,37 @@
+name: flow
+
+on:
+  push:
+    branches: [master, test, develop]
+  pull_request:
+    branches: [test, develop]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Install Client Linter Dependencies
+        run: (cd Client && npm install -D)
+
+      - name: Run Linter
+        uses: github/super-linter@v4.9.7
+        env:
+          DEFAULT_BRANCH: develop
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_ALL_CODEBASE: false
+          VALIDATE_CLOUDFORMATION: true
+          VALIDATE_PYTHON_FLAKE8: true
+          VALIDATE_PYTHON_BLACK: true
+
+          # Client
+          VALIDATE_JAVASCRIPT_ES: true
+          VALIDATE_JSX: true
+          FILTER_REGEX_EXCLUDE: Extras/**
+          JAVASCRIPT_ES_CONFIG_FILE: ../../Client/.eslintrc.yml
+
+      - name: Run Formatter
+        run: (cd Client && npm run format)

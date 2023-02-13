@@ -1,0 +1,33 @@
+{
+    "aws": {
+        "region": "us-west-2",
+        "accountId": "157731826412",
+        "iot": {
+            "endpoint": "aofuby49j6efy-ats.iot.us-west-2.amazonaws.com"
+        },
+        "dynamoDb": {
+            "tables": {
+                "eventConfig": {
+                    "name": "cdf-eventConfig-development"
+                },
+                "eventNotifications": {
+                    "name": "cdf-eventNotifications-development"
+                }
+            },
+            "dax": {
+                "endpoints": "daxclus-gocn0sxqsjgk.jrmfjx.clustercfg.dax.apse2.cache.amazonaws.com:8111"
+            }
+        },
+        "lambda": {
+            "dynamoDbStream": {
+                "name": "cdf-eventsProcessor-devel-DynamoDBStreamLambdaFunc-1N9NKVMGSM06E"
+            },
+            "lambdaInvoke": {
+                "arn": "TODO"
+            }
+        }
+    },
+    "cors": {
+        "origin": "*"
+    }
+}

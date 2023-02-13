@@ -1,0 +1,90 @@
+{
+    "properties": {
+        "description": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "serial": {
+            "type": "string"
+        },
+        "addressMAC": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "IMEI": {
+            "type": "string"
+        },
+        "gttSerial": {
+            "type": "string"
+        },
+        "addressLAN": {
+            "type": "string",
+            "format": "ipv4"
+        },
+        "addressWAN": {
+            "type": "string",
+            "format": "ipv4"
+        },
+        "devCertId": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "make": {
+            "type": [
+                "null",
+                "string"
+            ],
+            "enum": [
+                "GTT",
+                "Sierra Wireless",
+                "Cradlepoint"
+            ]
+        },
+        "model": {
+            "type": [
+                "null",
+                "string"
+            ],
+            "enum": [
+                "MP-70",
+                "2100",
+                "2101",
+                "2150",
+                "2151",
+                "IBR900",
+                "IBR1700",
+                "R1900"
+            ]
+        },
+        "uniqueId": {
+            "type": [
+                "null",
+                "string"
+            ]
+        }
+    },
+    "relations": {
+        "out": {
+            "ownedby": [
+                "agency"
+            ]
+        }
+    },
+    "required": [
+        "devCertId",
+        "gttSerial",
+        "IMEI",
+        "addressLAN",
+        "addressWAN",
+        "addressMAC",
+        "make",
+        "model",
+        "uniqueId"
+    ]
+}

@@ -1,0 +1,99 @@
+.btn-analytics {
+  background-color: transparent;
+  border: none;
+  color: #0290d4;
+  cursor: pointer;
+  text-decoration-line: underline;
+}
+
+.btn-analytics:focus,
+.btn-analytics:focus-visible {
+  border: none;
+  outline: none;
+}
+
+main {
+  background-color: #f5f5fa;
+  padding: 24px 30px 160px 24px;
+}
+
+.map-container {
+  position: relative;
+  border-radius: 5px;
+}
+
+.map-container .map-settings {
+  position: absolute;
+  z-index: 999;
+}
+
+.ScheduleDevOverviewPage {
+  --card-height: 94px;
+
+  display: grid;
+  margin-top: 1rem;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: var(--card-height) var(--card-height) auto auto auto;
+  grid-gap: 15px;
+  grid-auto-columns: minmax(200px, auto);
+  grid-auto-rows: auto;
+}
+
+/* Default to children filling the width of the grid */
+.ScheduleDevOverviewPage > * {
+  grid-column: 1 / -1;
+}
+
+.ScheduleDevOverviewPage .data-card-container {
+  grid-column: 1;
+  grid-row: 1/3;
+}
+
+.ScheduleDevOverviewPage .mostOntimeSec {
+  grid-column: 2/3;
+}
+
+.ScheduleDevOverviewPage .leastOntimeSec {
+  grid-column: 2/3;
+}
+.ScheduleDevOverviewPage .table-container {
+  grid-column: 1/3;
+}
+.ScheduleDevOverviewPage .analyzed-route-container {
+  grid-column: 1/3;
+}
+.ScheduleDevOverviewPage .map-container {
+  grid-column: 1/3;
+}
+
+.ScheduleDevOverviewPage .map-container .map-settings {
+  position: absolute;
+  z-index: 999;
+}
+
+.ScheduleDevOverviewPage__tab-view {
+  grid-column: 1 / -1;
+  position: relative;
+}
+
+.ScheduleDevOverviewPage__table {
+  grid-column: 1 / -1;
+}
+
+@media only screen and (max-width: 1440px) {
+  .ScheduleDevOverviewPage {
+    /* display: flex;
+    flex-direction: column; */
+
+    display: grid;
+    grid-template-rows:
+      auto
+      calc(2 * var(--card-height))
+      var(--card-height) var(--card-height)
+      auto;
+  }
+
+  .ScheduleDevOverviewPage > * {
+    grid-column: 1 / -1 !important;
+  }
+}

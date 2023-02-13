@@ -1,0 +1,13 @@
+.outputs-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #363636 !important; 
+}
+
+.outputs-tabs .ant-tabs-ink-bar {
+  position: absolute;
+  background: dimgray;
+  pointer-events: none;
+}
+
+.outputs-button {
+  margin: 0px !important;
+}

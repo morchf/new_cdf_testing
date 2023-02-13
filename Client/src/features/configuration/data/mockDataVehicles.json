@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Vehicle 1",
+    "description": "text",
+    "type": "Police",
+    "priority": "High",
+    "devices": ["Whelencom"],
+    "state": "active",
+    "VID": 1,
+    "class": 4
+  },
+  {
+    "name": "Vehicle 2",
+    "description": "text",
+    "type": "Police",
+    "priority": "High",
+    "devices": ["Whelencom"],
+    "state": "inactive",
+    "VID": 2,
+    "class": 4
+  },
+  {
+    "name": "Vehicle 3",
+    "description": "text",
+    "type": "Police",
+    "priority": "High",
+    "devices": ["Whelencom"],
+    "state": "active",
+    "VID": 3,
+    "class": 4
+  }
+]

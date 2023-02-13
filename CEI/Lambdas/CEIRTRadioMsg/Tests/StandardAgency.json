@@ -1,0 +1,20 @@
+{
+    "attributes": {
+        "city": "CEI_RTR_Agency",
+        "state": "MN",
+        "timezone": "Central",
+        "agencyCode": 23,
+        "agencyID": "CEI_RTR_AgencyGUID",
+        "vpsCertId": "NULL_CERT",
+        "priority": "High",
+        "CMSId": "CEI_RTR_Agency",
+        "caCertId": "CEI_RTR_AgencyGUID"
+    },
+    "category": "group",
+    "templateId": "agency",
+    "name": "CEI_RTR_Agency",
+    "groupPath": "/CEI_RTR_Region/CEI_RTR_Agency",
+    "parentPath": "/CEI_RTR_Region",
+    "description": "CEI_RTR_Agency"
+}
+

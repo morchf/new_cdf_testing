@@ -1,0 +1,31 @@
+{
+  "aws": {
+    "region": "",
+    "accountId": "",
+    "s3": {
+      "roleArn": "",
+      "templates": {
+        "bucket": "cdf-957905153352-us-west-2",
+        "prefix": "provisioning/templates/",
+        "suffix": ".json"
+      },
+      "certificates": {
+        "bucket": "cdf-957905153352-us-west-2",
+        "prefix": "provisioning/certificates/"
+      },
+      "bulkrequests": {
+        "bucket": "cdf-957905153352-us-west-2",
+        "prefix": "provisioning/bulkrequests/"
+      }  
+    }
+  },
+  "features": {
+      "delete": {
+          "certificates": false,
+          "policies": false
+      }
+  },
+  "cors": {
+    "origin": "*"
+  }
+}

@@ -1,0 +1,236 @@
+Transform: AWS::Serverless-2016-10-31
+
+Globals:
+  Function:
+    Runtime: python3.8
+    Timeout: 180
+    Handler: index.handler
+
+Description: Create a Pet Store API.
+
+# Metadata:
+#   template metadata
+
+Parameters:
+
+  StageName:
+    Description: API Gateway stage name
+    Type: String
+
+# Mappings:
+#   set of mappings
+
+# Conditions:
+#   set of conditions
+
+Resources:
+  Api:
+    Type: AWS::Serverless::Api
+    Properties:
+      EndpointConfiguration: REGIONAL
+      OpenApiVersion: 3.0.1
+      StageName: !Ref StageName
+
+      # Inlining the API specification into the template increases the template
+      # size dramatically, especially for a complex API. This can cause
+      # problems with the template size limit for direct uploads; an
+      # alternative is to upload the template to S3 and deploy from there. It's
+      # also much more difficult to read.
+      #
+      # Inlining is necessary because there is no support for inserting the
+      # x-amazon-apigateway-* properties into an API spec defined with the
+      # DefinitionUri property.
+      #
+      # If the x-amazon-apigateway-* properties are missing, deployment will
+      # fail because integrations are not defined for the resources defined in
+      # the API spec.
+      #
+      # See this issue and specific comment on GitHub:
+      # https://github.com/awslabs/serverless-application-model/issues/8#issuecomment-290212883
+      DefinitionBody:
+        openapi: "3.0.1"
+        info:
+          title: "Mini Pet Store"
+          description: "A mini API for a mini pet store"
+          version: "1.0.0"
+        paths:
+          /pet:
+            post:
+              requestBody:
+                content:
+                  application/json:
+                    schema:
+                      $ref: "#/components/schemas/Pet"
+                required: true
+              responses:
+                "400":
+                  description: "400 response"
+                  content:
+                    application/json:
+                      schema:
+                        $ref: "#/components/schemas/ErrorResponse"
+                "201":
+                  description: "201 response"
+                  content:
+                    application/json:
+                      schema:
+                        $ref: "#/components/schemas/CreateResponse"
+              x-amazon-apigateway-request-validator: "Validate body"
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateFunction.Arn}/invocations"
+                responses:
+                  default:
+                    statusCode: "200"
+                passthroughBehavior: "when_no_match"
+                httpMethod: "POST"
+                contentHandling: "CONVERT_TO_TEXT"
+                type: "aws_proxy"
+          /pet/{petId}:
+            get:
+              parameters:
+              - name: "petId"
+                in: "path"
+                required: true
+                schema:
+                  type: "string"
+              responses:
+                "404":
+                  description: "404 response"
+                  content:
+                    application/json:
+                      schema:
+                        $ref: "#/components/schemas/ErrorResponse"
+                "200":
+                  description: "200 response"
+                  content:
+                    application/json:
+                      schema:
+                        $ref: "#/components/schemas/Pet"
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetFunction.Arn}/invocations"
+                responses:
+                  default:
+                    statusCode: "200"
+                passthroughBehavior: "when_no_match"
+                httpMethod: "POST"
+                contentHandling: "CONVERT_TO_TEXT"
+                type: "aws_proxy"
+            delete:
+              parameters:
+              - name: "petId"
+                in: "path"
+                required: true
+                schema:
+                  type: "string"
+              - name: "api_key"
+                in: "header"
+                schema:
+                  type: "string"
+              responses:
+                "404":
+                  description: "404 response"
+                  content:
+                    application/json:
+                      schema:
+                        $ref: "#/components/schemas/ErrorResponse"
+                "200":
+                  description: "200 response"
+                  content:
+                    application/json:
+                      schema:
+                        $ref: "#/components/schemas/Pet"
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DeleteFunction.Arn}/invocations"
+                responses:
+                  default:
+                    statusCode: "200"
+                passthroughBehavior: "when_no_match"
+                httpMethod: "POST"
+                contentHandling: "CONVERT_TO_TEXT"
+                type: "aws_proxy"
+        components:
+          schemas:
+            CreateResponse:
+              type: "object"
+              properties:
+                petId:
+                  type: "string"
+            Pet:
+              required:
+              - "category"
+              - "name"
+              type: "object"
+              properties:
+                id:
+                  type: "string"
+                category:
+                  type: "string"
+                name:
+                  type: "string"
+                tags:
+                  type: "array"
+                  items:
+                    type: "string"
+                status:
+                  type: "string"
+                  description: "pet status in the store"
+                  enum:
+                  - "available"
+                  - "pending"
+                  - "sold"
+            ErrorResponse:
+              type: "object"
+              properties:
+                code:
+                  type: "integer"
+                  format: "int32"
+                type:
+                  type: "string"
+                message:
+                  type: "string"
+        x-amazon-apigateway-request-validators:
+          Validate body:
+            validateRequestParameters: false
+            validateRequestBody: true
+
+  CreateFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./create
+      Description: Pet Store POST method handler.
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Method: post
+            Path: /pet
+            RestApiId: !Ref Api
+
+  GetFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./get
+      Description: Pet Store GET method handler.
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Method: get
+            Path: /pet/{petId}
+            RestApiId: !Ref Api
+
+  DeleteFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./delete
+      Description: Pet Store DELETE method handler.
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Method: delete
+            Path: /pet/{petId}
+            RestApiId: !Ref Api
+
+# Outputs:
+#   set of outputs

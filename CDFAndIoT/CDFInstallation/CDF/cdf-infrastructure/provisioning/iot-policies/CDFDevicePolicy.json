@@ -1,0 +1,46 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": ["iot:Connect"],
+            "Resource": ["*"],  
+            "Condition":{  
+                "Bool":{  
+                    "iot:Connection.Thing.IsAttached":["true"]
+                }
+            }
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iot:Publish",
+                "iot:Receive"
+            ],
+            "Resource": [
+                "arn:aws:iot:${cdf:region}:${cdf:accountId}:topic/cdf/commands/+/${iot:ClientId}/*",
+                "arn:aws:iot:${cdf:region}:${cdf:accountId}:topic/$aws/things/${iot:ClientId}/*"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iot:Subscribe"
+            ],
+            "Resource": [
+                "arn:aws:iot:${cdf:region}:${cdf:accountId}:topicfilter/cdf/commands/+/${iot:ClientId}/*",
+                "arn:aws:iot:${cdf:region}:${cdf:accountId}:topicfilter/$aws/things/${iot:ClientId}/*"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": "iot:AssumeRoleWithCertificate",
+            "Resource": "arn:aws:iot:${cdf:region}:${cdf:accountId}:rolealias/s3-device-access-role-alias",
+            "Condition": {
+                "Bool": {
+                    "iot:Connection.Thing.IsAttached": "true"
+                }
+            }
+        }
+    ]
+}

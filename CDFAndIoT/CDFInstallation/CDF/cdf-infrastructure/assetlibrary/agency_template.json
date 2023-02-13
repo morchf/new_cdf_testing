@@ -1,0 +1,96 @@
+{
+    "properties": {
+        "description": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "city": {
+            "type": "string"
+        },
+        "state": {
+            "type": "string"
+        },
+        "timezone": {
+            "type": "string",
+            "enum": [
+                "Central",
+                "Mountain",
+                "Eastern",
+                "Pacific",
+                "Arizona"
+            ]
+        },
+        "agencyCode": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 254
+        },
+        "agencyID": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "caCertId": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "vpsCertId": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "priority": {
+            "type": "string",
+            "enum": [
+                "High",
+                "Low"
+            ]
+        },
+        "CMSId": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "Cert2100Id": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "displayName": {
+            "type": [
+                "null",
+                "string"
+            ]
+        }
+    },
+    "relations": {
+        "in": {
+            "ownedby": [
+                "communicator",
+                "phaseselector",
+                "vehiclev2",
+                "location",
+                "integrationcom"
+
+            ]
+        }
+    },
+    "required": [
+        "city",
+        "state",
+        "timezone",
+        "agencyCode",
+        "agencyID",
+        "priority",
+        "caCertId",
+        "vpsCertId"
+    ]
+}

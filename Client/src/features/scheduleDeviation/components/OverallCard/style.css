@@ -1,0 +1,58 @@
+.ScheduleDevOverviewPage .data-card-container .status-row {
+  position: relative;
+  top: -1rem;
+}
+.ScheduleDevOverviewPage .ant-col {
+  text-align: center;
+  width: max-content;
+}
+.ScheduleDevOverviewPage p {
+  font-style: normal;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 32px;
+  color: #751313;
+  margin: 0;
+}
+
+.ScheduleDevOverviewPage .ontime-col > p {
+  color: #5a5858;
+}
+
+.ScheduleDevOverviewPage .p1 {
+  font-size: 16px;
+  line-height: 24px;
+  margin: 5px 0 8px 0;
+}
+
+.ScheduleDevOverviewPage .p2 {
+  font-size: 24px;
+  line-height: 32px;
+  margin: 0 0 8px 0;
+}
+
+.ScheduleDevOverviewPage .p3 {
+  font-size: 12px;
+  line-height: 20px;
+}
+
+.ScheduleDevOverviewPage .ontime-col .p1 {
+  margin: 0;
+  font-size: 24px;
+  line-height: 32px;
+}
+
+.ScheduleDevOverviewPage .ontime-col .p2 {
+  font-size: 38px;
+  line-height: 46px;
+  margin: 0;
+}
+
+.ScheduleDevOverviewPage .ontime-col .p3 {
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.overall-card__skeleton {
+  padding: 1rem;
+}

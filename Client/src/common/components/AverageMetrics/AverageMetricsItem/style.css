@@ -1,0 +1,103 @@
+.avg-metrics-item {
+  color: #323140 !important;
+  cursor: pointer;
+  padding: 10px 15px;
+  border-width: 0;
+  border-radius: var(--card-radius) !important;
+  box-shadow: var(--card-shadow);
+  height: auto;
+  display: block;
+  padding-bottom: 4.5rem;
+  overflow: hidden;
+  margin-bottom: -0.25rem;
+}
+
+.avg-metrics-item span {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.avg-metrics_item-info {
+  display: flex;
+  justify-content: right;
+  width: 100%;
+}
+
+.avg-metrics_item-header {
+  font-size: 38px;
+  font-weight: 500;
+  line-height: 46px;
+  margin-bottom: 5px;
+  display: flex;
+  align-items: baseline;
+  width: 100%;
+}
+
+.avg-metrics_item-content {
+  display: flex;
+  align-items: baseline;
+  flex-direction: column;
+}
+
+.avg-metrics_item-content_left {
+  margin-right: 12px;
+}
+
+.avg-metrics_item-name {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 32px;
+  color: #141414;
+  position: absolute;
+  bottom: 0.5em;
+  display: flex;
+  gap: 1rem;
+  margin-right: 0.5rem;
+}
+
+.avg-metrics_item-label1 {
+  font-size: 20px;
+  font-weight: 500;
+  color: #5a5a5a;
+}
+
+.avg-metrics_item-label2 {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.avg-metrics_item-label2--better {
+  color: #1b722f;
+}
+
+.avg-metrics_item-label2--worse {
+  color: #ad1515;
+}
+
+.avg-metrics_item-label3 {
+  font-size: 14px;
+  font-weight: 500;
+  color: #5a5a5a;
+}
+
+.avg-metrics_item-label4 {
+  font-size: 20px;
+  font-weight: 500;
+  margin-left: 0.4em;
+}
+
+.avg-metrics_item-icon {
+  margin: 0 auto;
+}
+
+/* Change border color on bottom */
+.avg-metrics-item.ant-radio-button-wrapper {
+  border-width: 0 0 0.5rem 0;
+  /* transform: translateY(-0.75rem); */
+  border-left: 0 !important;
+}
+
+.avg-metrics-item.ant-radio-button-wrapper:not(.ant-radio-button-wrapper-checked) {
+  border-color: transparent !important;
+}

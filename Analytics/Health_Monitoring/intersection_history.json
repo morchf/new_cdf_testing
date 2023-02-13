@@ -1,0 +1,4 @@
+{
+    "45th Street":[{"date":"7/1", "numberOfReqs":"3"},{"date":"7/2", "numberOfReqs":"3"}],
+    "Portland Ave":[{"date":"7/1", "numberOfReqs":"5"},{"date":"7/2", "numberOfReqs":"7"}]
+}

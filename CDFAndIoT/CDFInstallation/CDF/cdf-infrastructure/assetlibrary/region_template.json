@@ -1,0 +1,30 @@
+{
+  "properties": {
+    "description": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "caCertId": {
+      "type": "string"
+    },
+    "regionGUID": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "displayName": {
+      "type": [
+        "null",
+        "string"
+      ]
+    }
+  },
+  "relations": {},
+  "required": [
+    "caCertId",
+    "regionGUID"
+  ]
+}

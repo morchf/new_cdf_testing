@@ -1,0 +1,22 @@
+{
+  "assetLibrary": {
+    "apiFunctionName": ""
+  },
+  "provisioning": {
+    "apiFunctionName": ""
+  },
+  "commands": {
+    "apiFunctionName": ""
+  },
+  "cors": {
+    "origin": "*"
+  },
+  "supplierRootCa": {
+    "demodevicesupplier": "b5a1c0945714bee68c13a7ddce2a5aecfd8c250f44577d658186c380177ec789"
+  },
+  "events": {
+    "facadeToProv": {
+      "topic": ""
+    }
+  }
+}

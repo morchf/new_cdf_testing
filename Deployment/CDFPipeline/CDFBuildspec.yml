@@ -1,0 +1,58 @@
+version: 0.2
+
+
+env:
+  exported-variables:
+    - Env
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.8
+
+  pre_build:
+    commands:
+      # Updating packages on container, installing AWSCLI and PyTest, and checking home path and python version for logging purposes.
+      - ls -l
+      - pwd=`pwd`
+      - echo $pwd
+      - yum -y update --skip-broken
+      - python -V
+      - python3 -V
+      - pip -V
+      - pip3 -V
+      - python3 -m pip -V
+      - pip3 install --upgrade pip
+      - npm -v
+      - node -v
+      - yum install -y sudo
+      - pip3 install pyopenssl
+      - pip3 install pytest
+      - pip3 install pytest-cov
+
+
+  build:
+    commands:
+      # S3 bucket for storing pipeline artifacts
+      - PipelineArtifactsS3=pipeline-artifacts-$Env
+
+      # CreateJSON commands
+      - for file in Constants.json communicator.py phaseselector.py location.py vehicle.py agency.py asset_lib.py aws_cert_auth.py certs.py config_asset_lib.py device.py iot_core.py misc.py policy.py region.py requests_aws_sign.py status.py thing.py ui.py ui_helper.py ROOTCA_openssl.conf SUBCA_openssl.conf Policy.templ rootCA.pem; do cp $pwd/CDFAndIoT/CDFBackend/$file $pwd/CDFAndIoT/Lambdas/CreateJSON/lambda-code/; done
+
+      # PopulateCDF commands
+      - for file in communicator.py phaseselector.py location.py vehicle.py agency.py asset_lib.py aws_cert_auth.py certs.py config_asset_lib.py device.py iot_core.py misc.py policy.py region.py requests_aws_sign.py status.py thing.py ui.py ROOTCA_openssl.conf SUBCA_openssl.conf Policy.templ rootCA.pem; do cp $pwd/CDFAndIoT/CDFBackend/$file $pwd/CDFAndIoT/Lambdas/PopulateCDF/lambda-code/; done
+
+      # DeleteCDF commands
+      - for file in communicator.py phaseselector.py location.py vehicle.py agency.py asset_lib.py aws_cert_auth.py certs.py config_asset_lib.py device.py iot_core.py misc.py policy.py region.py requests_aws_sign.py status.py thing.py ui.py ROOTCA_openssl.conf SUBCA_openssl.conf Policy.templ rootCA.pem; do cp $pwd/CDFAndIoT/CDFBackend/$file $pwd/CDFAndIoT/Lambdas/DeleteCDF/lambda-code/; done
+
+      # Executing SAM template
+      - aws cloudformation package --template-file Deployment/CDFPipeline/CDFDeploymentNetworking.yml --s3-bucket $PipelineArtifactsS3 --s3-prefix CDFDeploymentNetworking --output-template-file Deployment/CDFPipeline/CDFDeploymentNetworkingOutput.yml
+      - aws cloudformation package --template-file Deployment/CDFPipeline/CDFDeployment.yml --s3-bucket $PipelineArtifactsS3 --s3-prefix CDFDeployment --output-template-file Deployment/CDFPipeline/CDFDeploymentOutput.yml
+
+      # Confirming deployable artifacts files
+      - ls -l $pwd/CDFAndIoT/Lambdas/PopulateCDF/lambda-code $pwd/CDFAndIoT/Lambdas/DeleteCDF/lambda-code $pwd/CDFAndIoT/Lambdas/ConsumeCSVForDeleteCDF/lambda-code $pwd/CDFAndIoT/Lambdas/CreateRTRADIOMsg/lambda-code $pwd/CDFAndIoT/Lambdas/CreateJSON/lambda-code $pwd/CDFAndIoT/Lambdas/ConsumeCSV/lambda-code
+
+
+artifacts:
+  files:
+    - "**/*"

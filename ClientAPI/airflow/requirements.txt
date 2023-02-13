@@ -1,0 +1,4 @@
+pyarrow==5.0.0
+Twisted==18.9.0
+pyOpenSSL==22.0.0
+scrapy==2.5.0

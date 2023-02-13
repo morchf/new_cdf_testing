@@ -1,0 +1,17 @@
+.table-skeleton {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 216px;
+}
+
+.ant-skeleton-element .ant-skeleton-button {
+  display: block;
+  width: auto;
+}
+
+ul.ant-pagination.ant-table-pagination {
+  background-color: #ffffff;
+  margin: 0;
+  padding: 17px 24px 2px;
+}

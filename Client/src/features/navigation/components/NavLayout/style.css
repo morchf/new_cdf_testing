@@ -1,0 +1,30 @@
+.ant-layout-sider {
+  height: 100vh;
+  left: 0;
+  position: fixed !important;
+  top: 50px;
+  z-index: 1000 !important;
+  background-color: black;
+}
+
+.ant-layout.layout {
+  min-height: 100vh;
+}
+
+.ant-layout.content {
+  background-color: #f5f5fa;
+  padding-top: 54px;
+  transition: all 0.2s;
+}
+
+.ant-notification {
+  z-index: 9999;
+}
+
+div.ant-notification {
+  z-index: 9999;
+}
+
+span.ant-select-selection-item svg {
+  vertical-align: initial;
+}

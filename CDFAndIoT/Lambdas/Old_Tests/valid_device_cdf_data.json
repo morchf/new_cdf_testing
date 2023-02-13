@@ -1,0 +1,29 @@
+{
+    "groups": {
+        "ownedby": ["/regUnitTest/agyUnitTest"]
+    },
+    "attributes": {
+        "name": "intveh",
+        "description": "integration tests r cool",
+        "type": "Unassigned",
+        "priority": "High",
+        "class": 10,
+        "VID": 3326,
+        "lat": 0,
+        "long": 0,
+        "heading": 0,
+        "speed": 0,
+        "fixStatus": 0,
+        "numFixSat": 0,
+        "lastGPSMsgTimestamp": "",
+        "lastGPIOMsgTimestamp": "",
+        "gttSerial": "MP70JH7777",
+        "auxiliaryIo": 0,
+        "uniqueId": "NULL_GUID"
+    },
+    "category": "device",
+    "templateId": "vehiclev2",
+    "state": "active",
+    "description": "undefined",
+    "deviceId": "intTestModem"
+}

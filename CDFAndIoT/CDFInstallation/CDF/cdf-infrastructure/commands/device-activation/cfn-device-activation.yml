@@ -1,0 +1,57 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: "Demo Specific Resources"
+
+# Demo specific resources such as IoT rules for routing of CDF events between services
+
+Parameters:
+  Environment:
+    Description:  Name of environment.  Used to name the created resources.
+    Type: String
+    MinLength: 1
+  CommandsStackName:
+    Description:  Name of commands stack name.
+    Type: String
+    MinLength: 1
+
+Resources:
+  IoTDeviceActivationRulesEngineRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          -
+            Effect: "Allow"
+            Principal:
+              Service:
+                - "iot.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Path: /
+      Policies:
+        -
+          PolicyName: "IoTDeviceActivationRulesEnginePolicy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              Action:
+                - "lambda:GetFunction"
+                - "lambda:InvokeFunction"
+              Effect: "Allow"
+              Resource: 
+                Fn::ImportValue: !Sub "${CommandsStackName}-RESTLambdaArn"
+
+  IoTDeviceActivationCommandRule:
+    Type: "AWS::IoT::TopicRule"
+    Properties:
+      TopicRulePayload: 
+        Actions:
+          -
+            Lambda:
+              FunctionArn: 
+                Fn::ImportValue: !Sub "${CommandsStackName}-RESTLambdaArn"
+        Description: "Look for customer change events which attach a device to a customer and route to comands service to send enable telemetry job"
+        AwsIotSqlVersion: "2016-03-23"
+        RuleDisabled: "false" 
+        Sql: 'SELECT {''resource'':''/{proxy+}'',''path'':''/commands'',''httpMethod'':''POST'',''headers'':{''Accept'':''application/vnd.aws-cdf-v1.0+json'',''Content-Type'':''application/vnd.aws-cdf-v1.0+json''},''queryStringParameters'':null,''pathParameters'':{''proxy'': ''commands''},''stageVariables'':null,''requestContext'':null,''body'':concat(''{"templateId":"EnableTelemetry","targets":["'',''arn:aws:iot:us-west-2:957905153352:thing/'',topic(4),''"],"commandStatus":"PUBLISHED"}''),''isBase64Encoded'':false} FROM ''cdf/assetlibrary/events/devices/+/modify'' WHERE type="devices" AND event="modify" AND attributes.relationship="owned_by" and length(attributes.attachedToGroup) > 0'

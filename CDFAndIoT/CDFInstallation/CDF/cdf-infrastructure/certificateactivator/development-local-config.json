@@ -1,0 +1,20 @@
+{
+  "aws": {
+    "region": "us-west-2",
+    "s3": {
+      "crl": {
+        "bucket": "cdf-157731826412-us-west-2",
+        "key": "crl/crl.json"
+      }
+    }
+  },
+  "assetLibrary": {
+    "apiFunctionName": "cdf-assetlibrary-development-LambdaFunction-1H9R4DUEYUBF4",
+    "templateProfiles": {
+      "edge": "default"
+    }
+  },
+  "provisioning": {
+    "apiFunctionName": "cdf-provisioning-development-LambdaFunction-1J9KZ4G6DF5B4"
+  }
+}

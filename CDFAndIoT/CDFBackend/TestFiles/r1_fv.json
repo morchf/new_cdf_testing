@@ -1,0 +1,11 @@
+{
+    "attributes": {
+        "description": "test test test",
+        "regionGUID": "NULL_GUID"
+    },
+    "category": "group",
+    "templateId": "region",
+    "parentPath": "/",
+    "name": "r1",
+    "groupPath": "/r1"
+}

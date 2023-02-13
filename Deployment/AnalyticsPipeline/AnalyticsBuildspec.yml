@@ -1,0 +1,105 @@
+version: 0.2
+
+
+env:
+  exported-variables:
+    - Env
+    - CDFAPIARN
+    - VPCCIDR
+    - PrivateSubnetCIDR
+    - PublicSubnetCIDR
+    - RuntimeDeviceMessageBucketARN
+
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.8
+
+  pre_build:
+    commands:
+      # Updating packages on container, installing AWSCLI and PyTest, and checking home path and python version for logging purposes.
+      - ls -l
+      - pwd=`pwd`
+      - echo $pwd
+      # - yum -y update --skip-broken
+      - python -V
+      - python3 -V
+      - pip -V
+      - pip3 -V
+      - python3 -m pip -V
+      # - pip3 install --upgrade pip
+      - npm -v
+      - node -v
+      - yum install -y sudo
+      - pip3 install pyopenssl
+      - pip3 install pytest
+      - pip3 install pytest-cov
+
+
+  build:
+    commands:
+      # Setting up VPC and Subnet CIDRs
+      - |
+        if [ "$Env" = "develop" ]; then
+          VPCCIDR=10.10.2.0/24
+          PrivateSubnetCIDR=10.10.2.0/25
+          PublicSubnetCIDR=10.10.2.128/25
+        elif [ "$Env" = "test" ]; then
+          VPCCIDR=10.20.3.0/24
+          PrivateSubnetCIDR=10.20.3.0/25
+          PublicSubnetCIDR=10.20.3.128/25
+        elif [ "$Env" = "production" ]; then
+          VPCCIDR=10.30.3.0/24
+          PrivateSubnetCIDR=10.30.3.0/25
+          PublicSubnetCIDR=10.30.3.128/25
+        elif [ "$Env" = "pilot" ]; then
+          VPCCIDR=10.15.6.0/24
+          PrivateSubnetCIDR=10.15.6.0/25
+          PublicSubnetCIDR=10.15.6.128/25
+        else
+          echo "Value of Env is not set or is incorrect"
+        fi
+
+      # S3 bucket for storing pipeline artifacts
+      - PipelineArtifactsS3=pipeline-artifacts-$Env
+
+      # S3 bucket(managed by CDFDeployment pipeline) for runtime EVP device message
+      - RuntimeDeviceMessageBucketARN=arn:aws:s3:::runtime-device-message-$Env
+      - echo $RuntimeDeviceMessageBucketARN
+
+      # CDF Asset Library API endpoint required by the UI
+      - CDFAPIID=`aws apigateway get-rest-apis --query "items[?name=='cdf-assetlibrary-stage'].id" --output text`
+      - CDFAPIARN=https://$CDFAPIID.execute-api.us-east-1.amazonaws.com/Prod
+
+      # Executing SAM template
+      - aws cloudformation package --template-file Deployment/AnalyticsPipeline/AnalyticsDeployment.yml --s3-bucket $PipelineArtifactsS3 --s3-prefix AnalyticsDeployment --output-template-file Deployment/AnalyticsPipeline/AnalyticsDeploymentSAMOutput.yml
+
+      # Setting variables for docker
+      - account_id=$(aws sts get-caller-identity --query Account --output text)
+      - ecr_url=$account_id.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      - repository="gtt/data-aggregation"
+      - tag="latest"
+
+      # Logging in to ECR
+      - docker -v
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ecr_url
+
+      # Creating ECR repo if it doesn't exist
+      - aws ecr describe-repositories --repository-names $repository || aws ecr create-repository --repository-name $repository
+
+      # Explicitly provide dockerfile location and point the build context at the source folder
+      - cd Deployment/AnalyticsPipeline
+      - dockerfile="../../Analytics/DataAggregation/Docker/Dockerfile"
+      - docker_context="../../Analytics/DataAggregation"
+
+      # Building docker image
+      - docker build -f $dockerfile -t ${ecr_url}/${repository}:${tag} $docker_context
+
+      # Push image to ECR
+      - docker push ${ecr_url}/${repository}:${tag}
+
+
+artifacts:
+  files:
+    - "**/*"

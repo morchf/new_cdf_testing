@@ -1,0 +1,18 @@
+{
+  "profiles": {
+    "gtt_service_poc": {
+      "commandName": "Project",
+      "commandLineArgs": "$(ProjectDir)appsettings.json",
+      "environmentVariables": {
+        "UserName": "tn.gttexternal",
+        "Region": "us-east-1",
+        "DOTNET_ENVIRONMENT": "Development",
+        "ServiceURL": "http://sqs.us-east-1.amazonaws.com",
+        "conTag": "gtt",
+        "ProcessingMode": "GPIO",
+        "Port": "5671",
+        "QueueURL": "https://sqs.us-east-1.amazonaws.com/083011521439/TeletracGPSSQS.fifo"
+      }
+    }
+  }
+}

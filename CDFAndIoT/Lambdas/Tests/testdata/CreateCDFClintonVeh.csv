@@ -1,0 +1,10 @@
+DO NOT DELETE THIS ROW Entities to be created. Headers must come before all entities of that type. If no entities of a type will be made remove that header. No blank rows,,,,,,,,,,,
+region,name,description,,,,,,,,,
+region,uticarome,test test test,,,,,,,,,
+agency,name,region,description,city,state,timezone,agencyCode,priority,,,
+agency,clintonfiredept,uticarome,Next to Woodbury,Oakdale,MN,Central,101,High,,,
+vehicleV2,deviceId,region,agency,name,description,type,priority,class,VID,,
+vehicleV2,clintonfdveh1,uticarome,clintonfiredept,clintonfdveh123,a vehicle,Ladder Truck,High,10,933,,
+communicator,deviceId,region,agency,description,gttSerial,addressMAC,addressLAN,addressWAN,IMEI,make,model
+communicator,mp705398,uticarome,clintonfiredept,MP70 vehicle,1332,11:11:11:11:11:11,11.11.11.11,11.11.11.11,123456789123457,Sierra Wireless,MP-70
+Done ,,,,,,,,,,,

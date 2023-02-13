@@ -1,0 +1,9 @@
+{
+	"policyId": "DemoDeviceSupplierProvisioningTemplate",
+	"type": "ProvisioningTemplate",
+	"description": "DemoDeviceSupplier specific device provisioning template",
+	"appliesTo": [
+		"/supplier/demodevicesupplier"
+	],
+	"document": "{\"template\":\"demodevicesupplier\"}"
+}

@@ -1,0 +1,12 @@
+li {
+  margin-bottom: 1em;
+}
+
+.heatmap-text {
+  padding: 1em;
+}
+
+.heatmap-container {
+  background-color: white;
+  padding-top: 0;
+}

@@ -1,0 +1,60 @@
+{
+  "groups": [
+    {
+      "templateId": "root",
+      "parentPath": "/",
+      "name": "customer",
+      "attributes": {}
+    },
+    {
+      "templateId": "root",
+      "parentPath": "/",
+      "name": "supplier",
+      "attributes": {}
+    },
+    {
+      "templateId": "root",
+      "parentPath": "/",
+      "name": "engine",
+      "attributes": {}
+    },
+    {
+      "templateId": "root",
+      "parentPath": "/",
+      "name": "vehicle",
+      "attributes": {}
+    },
+    {
+      "templateId": "root",
+      "parentPath": "/",
+      "name": "location",
+      "attributes": {}
+    },
+    {
+      "templateId": "location",
+      "parentPath": "/location",
+      "name": "USA",
+      "attributes": {}
+    },
+    {
+      "templateId": "location",
+      "parentPath": "/location",
+      "name": "India",
+      "attributes": {}
+    },
+    {
+      "templateId": "supplier",
+      "parentPath": "/supplier",
+      "name": "DemoDeviceSupplier",
+      "groups": {
+        "located_at": [
+          "/location/india"
+        ]
+      },
+      "attributes": {
+        "displayName": "DemoDeviceSupplier",
+        "externalSupplierId": "demodevicesupplier"
+      }
+    }
+  ]
+}

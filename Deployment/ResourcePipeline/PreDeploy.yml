@@ -1,0 +1,413 @@
+# This pipeline controls and administers account resources. It performs following tasks:
+#
+# 1. Implements an IAM policy on all users (except the ones mentioned) that:
+#   - Restricts them from creating high-impact resources like VPCs and Subnets
+#   - Restricts them from creating instances larger than t2.medium
+#   - Restricts them from performing user management tasks like user creation, policy updates, etc
+# 
+# 2. Implements an IAM policy on all users (except the ones mentioned) that only provides read access to the users in the Pilot and Production accounts
+#
+# 3. In the ResourceMgmt.py file write different functions and it will perform the following tasks.
+#   - Creates Tags for all EBS volumes. Outputs tagged volumes to a txt file.
+#   - Creates Tags for all EFS. Outputs tagged EFS to a txt file.
+#   - Get the list of all the roles that are not been used in the last 6 months. Outputs roles to a txt file.
+#   - Scans CloudwatchLogs for Lambdas. Checks if the last event time from each log has been run in the past 6 months. If the log has not been run in the past 6 months, delete (write to the file).
+#   - Helper function to extract Lambda function names.
+#   - Checks all DynamoDBs for encryption. Encrypts the unencrypted DynamoDBs.
+#   - Helper function that encrypts a DynamoDB.
+#   - Given the list of dynamodb tables that are tagged with Dynamodb key and value. outputs the result in a text file.
+#   - Given the access key and password last used info. Outputs accesskey_lastused and password_last_used to a text file.
+#   - Given the log_stream names that are not updated in the last 6 months. Outputs the result in a text file.
+#   - Attached the given IAM policy for all users in the AWS account.
+#   - Given the list of unattached security groups 
+# 4. Implements the backup plans for the EBS, EFS and DynamoDB tables. 
+#
+# 5. On the 1st of every month, we will execute the Resource Control pipeline to get the unused resources from all of the AWS accounts and send the unused resources list to the team members to verify if the listed resources are ready for the deletion. 
+#If team members want to retain the resources, they can send us an email with the retained resources so we will mark them as do not delete and destroy the unretained resources after 15 days.
+
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Backup Config for Multiple Resources
+
+Metadata:
+ cfn-lint:
+  config:
+    ignore_checks:
+      - I3042
+      - W2001
+      
+Resources:
+# This policy will not allowed to create a VPC, Subnet, instance size greater than t2.medium, user management tasks
+  ResourceMgmtPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: "Restricted Resource Management Policy"
+      ManagedPolicyName: LimitedResourceAccessMgmtPolicy
+      Path: "/"
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action:
+          - ec2:*
+          - cloudwatch:*
+          Resource:
+          - "*"
+        - Effect: Deny
+          Action: ec2:RunInstances
+          Resource:
+          - arn:aws:ec2:*:*:instance/*
+          Condition:
+            ForAnyValue:StringNotLike:
+              ec2:InstanceType:
+              - t1.micro
+              - t2.nano
+              - t2.micro
+              - t2.small
+              - t2.medium
+        - Effect: Deny
+          Action:
+          - ec2:CreateVpc
+          - ec2:CreateSubnet
+          Resource: "*"
+        - Effect: Allow
+          Action:
+          - iam:Generate*
+          - iam:Get*
+          - iam:List*
+          Resource: "*"
+        - Sid: LimitUserGroupManagementAccess
+          Effect: Deny
+          Action:
+          - iam:DeleteGroup
+          - iam:CreateUser
+          - iam:UpdateUser
+          - iam:DeleteUser
+          - iam:CreateVirtualMFADevice
+          - iam:EnableMFADevice
+          - iam:DeactivateMFADevice
+          - iam:DeleteVirtualMFADevice
+          - iam:CreateLoginProfile
+          - iam:UpdateLoginProfile
+          - iam:DeleteLoginProfile
+          - iam:DetachUserPolicy
+          Resource: "*"
+          Condition:
+            StringNotEquals:
+              aws:username:
+              - jitendra.panchal
+              - nishant.jain
+              - saravanan.rajagopal
+              - christian.kulus
+              - teigen.leonard
+
+# This policy will provide read only access to the users in the  Pilot and Prod Aws account
+  ReadonlyAccessPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: "Read Only Access Policy"
+      ManagedPolicyName: ReadOnlyAccessPolicy
+      Path: "/"
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action:
+          - acm-pca:Describe*
+          - acm-pca:Get*
+          - acm-pca:List*
+          - acm:Describe*
+          - acm:Get*
+          - acm:List*
+          - airflow:ListEnvironments
+          - airflow:ListTagsForResource
+          - apigateway:GET
+          - autoscaling-plans:Describe*
+          - autoscaling-plans:GetScalingPlanResourceForecastData
+          - autoscaling:Describe*
+          - autoscaling:GetPredictiveScalingForecast
+          - aws-portal:View*
+          - backup:Describe*
+          - backup:Get*
+          - backup:List*
+          - batch:Describe*
+          - batch:List*
+          - cloudformation:Describe*
+          - cloudformation:Detect*
+          - cloudformation:Estimate*
+          - cloudformation:Get*
+          - cloudformation:List*
+          - cloudfront:DescribeFunction
+          - cloudfront:Get*
+          - cloudfront:List*
+          - cloudtrail:Describe*
+          - cloudtrail:Get*
+          - cloudtrail:List*
+          - cloudtrail:LookupEvents
+          - cloudwatch:Describe*
+          - cloudwatch:Get*
+          - cloudwatch:List*
+          - codebuild:DescribeCodeCoverages
+          - codebuild:DescribeTestCases
+          - codebuild:List*
+          - codecommit:BatchGet*
+          - codecommit:Describe*
+          - codecommit:Get*
+          - codecommit:GitPull
+          - codecommit:List*
+          - codedeploy:BatchGet*
+          - codedeploy:Get*
+          - codedeploy:List*
+          - codepipeline:Get*
+          - codepipeline:List*
+          - codestar-connections:GetConnection
+          - codestar-connections:GetHost
+          - codestar-connections:ListConnections
+          - codestar-connections:ListHosts
+          - codestar:Describe*
+          - codestar:Get*
+          - codestar:List*
+          - codestar:Verify*
+          - cognito-identity:Lookup*
+          - cognito-idp:Get*
+          - cognito-idp:List*
+          - cognito-sync:Describe*
+          - cognito-sync:Get*
+          - cognito-sync:List*
+          - config:Deliver*
+          - config:Describe*
+          - config:Get*
+          - config:List*
+          - config:SelectAggregateResourceConfig
+          - config:SelectResourceConfig
+          - connect:Describe*
+          - connect:GetFederationToken
+          - connect:List*
+          - datapipeline:Describe*
+          - datapipeline:Get*
+          - datapipeline:List*
+          - datasync:Describe*
+          - datasync:List*
+          - directconnect:Describe*
+          - dynamodb:BatchGet*
+          - dynamodb:Describe*
+          - dynamodb:Get*
+          - dynamodb:List*
+          - dynamodb:Query
+          - dynamodb:Scan
+          - ec2:Describe*
+          - ec2:Get*
+          - ec2:ListSnapshotsInRecycleBin
+          - ec2:SearchLocalGatewayRoutes
+          - ec2:SearchTransitGatewayRoutes
+          - ec2messages:Get*
+          - ecr-public:BatchCheckLayerAvailability
+          - ecr-public:DescribeImages
+          - ecr-public:DescribeImageTags
+          - ecr-public:DescribeRegistries
+          - ecr-public:DescribeRepositories
+          - ecr-public:GetAuthorizationToken
+          - ecr-public:GetRegistryCatalogData
+          - ecr-public:GetRepositoryCatalogData
+          - ecr-public:GetRepositoryPolicy
+          - ecr-public:ListTagsForResource
+          - ecr:BatchCheck*
+          - ecr:BatchGet*
+          - ecr:Describe*
+          - ecr:Get*
+          - ecr:List*
+          - ecs:Describe*
+          - ecs:List*
+          - eks:Describe*
+          - eks:List*
+          - elasticache:Describe*
+          - elasticache:List*
+          - elasticbeanstalk:Check*
+          - elasticbeanstalk:Describe*
+          - elasticbeanstalk:List*
+          - elasticbeanstalk:Request*
+          - elasticbeanstalk:Retrieve*
+          - elasticbeanstalk:Validate*
+          - elasticfilesystem:Describe*
+          - elasticloadbalancing:Describe*
+          - elasticmapreduce:Describe*
+          - elasticmapreduce:List*
+          - elasticmapreduce:View*
+          - elastictranscoder:List*
+          - elastictranscoder:Read*
+          - es:Describe*
+          - es:Get*
+          - es:List*
+          - events:Describe*
+          - events:List*
+          - events:Test*
+          - glacier:Describe*
+          - glacier:Get*
+          - glacier:List*
+          - glue:BatchGetDevEndpoints
+          - grafana:ListWorkspaces
+          - iam:Generate*
+          - iam:Get*
+          - iam:List*
+          - iam:Simulate*
+          - imagebuilder:Get*
+          - iot:Describe*
+          - iot:Get*
+          - iot:List*
+          - kms:Describe*
+          - kms:Get*
+          - kms:List*
+          - lambda:Get*
+          - lambda:List*
+          - license-manager:Get*
+          - license-manager:List*
+          - logs:Describe*
+          - logs:FilterLogEvents
+          - logs:Get*
+          - logs:ListTagsLogGroup
+          - logs:StartQuery
+          - logs:StopQuery
+          - logs:TestMetricFilter
+          - mq:Describe*
+          - mq:List*
+          - rds:Describe*
+          - rds:Download*
+          - rds:List*
+          - redshift:Describe*
+          - redshift:GetReservedNodeExchangeOfferings
+          - redshift:View*
+          - resource-groups:Get*
+          - resource-groups:List*
+          - resource-groups:Search*
+          - route53-recovery-cluster:Get*
+          - route53-recovery-readiness:Get*
+          - route53-recovery-readiness:List*
+          - route53:Get*
+          - route53:List*
+          - route53:Test*
+          - s3-object-lambda:GetObject
+          - s3-object-lambda:ListBucket
+          - s3-object-lambda:ListMultipartUploadParts
+          - s3:DescribeJob
+          - s3:Get*
+          - s3:List*
+          - sdb:Get*
+          - sdb:List*
+          - sdb:Select*
+          - secretsmanager:Describe*
+          - secretsmanager:GetResourcePolicy
+          - secretsmanager:List*
+          - securityhub:List*
+          - serverlessrepo:Get*
+          - serverlessrepo:List*
+          - serverlessrepo:SearchApplications
+          - servicediscovery:List*
+          - ses:Describe*
+          - ses:Get*
+          - ses:List*
+          - sns:Check*
+          - sns:Get*
+          - sns:List*
+          - sqs:Get*
+          - sqs:List*
+          - sqs:Receive*
+          - ssm:Describe*
+          - ssm:Get*
+          - ssm:List*
+          - sts:GetCallerIdentity
+          - sts:GetSessionToken
+          - tag:DescribeReportCreation
+          - tag:Get*
+          - iam:DetachUserPolicy
+          Resource: "*"
+          Condition:
+            StringNotEquals:
+              aws:username:
+              - jitendra.panchal
+              - nishant.jain
+              - saravanan.rajagopal
+              - christian.kulus
+              - teigen.leonard
+
+  ResourceControlPipelineMgmtPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: "This policy will provide restricted access to the aws codepipeline"
+      ManagedPolicyName: ResourceControlPipelineMgmtPolicy
+      Path: "/"
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Action:
+          - codebuild:BatchGet*
+          - codebuild:GetResourcePolicy
+          - codebuild:List*
+          - codebuild:DescribeTestCases
+          - codebuild:DescribeCodeCoverages
+          - codecommit:GetBranch
+          - codecommit:GetCommit
+          - codecommit:GetRepository
+          - codebuild:StopBuild
+          - codebuild:StartBuild
+          - codebuild:RetryBuild
+          - codebuild:UpdateWebhook
+          - cloudwatch:GetMetricStatistics
+          - events:DescribeRule
+          - events:ListTargetsByRule
+          - events:ListRuleNamesByTarget
+          - logs:GetLogEvents
+          Effect: Allow
+          Resource: "*"
+        - Sid: CodeStarConnectionsUserAccess
+          Effect: Allow
+          Action:
+          - codestar-connections:ListConnections
+          - codestar-connections:GetConnection
+          Resource: arn:aws:codestar-connections:*:*:connection/*
+        - Sid: CodeStarNotificationsPowerUserAccess
+          Effect: Allow
+          Action:
+          - codestar-notifications:DescribeNotificationRule
+          Resource: "*"
+        - Sid: CodeStarNotificationsListAccess
+          Effect: Allow
+          Action:
+          - codestar-notifications:ListNotificationRules
+          - codestar-notifications:ListEventTypes
+          - codestar-notifications:ListTargets
+          - codestar-connections:UseConnection
+          - codestar-connections:PassConnection
+          Resource: "*"
+        - Action:
+          - codepipeline:List*
+          - codepipeline:GetPipeline
+          - codepipeline:GetPipelineState
+          - codepipeline:GetPipelineExecution
+          - codepipeline:StartPipelineExecution
+          - codepipeline:StopPipelineExecution
+          - codepipeline:RetryStageExecution
+          - codepipeline:PutWebhook
+          - s3:ListAllMyBuckets
+          - iam:PassRole
+          - codestar-connections:PassConnection
+          Effect: Allow
+          Resource: "*"
+        - Action:
+          - s3:GetObject
+          - s3:ListBucket
+          - s3:GetBucketPolicy
+          Effect: Allow
+          Resource: arn:aws:s3::*:codepipeline-*
+        - Action:
+          - codedeploy:List*
+          - codedeploy:Get*
+          - codedeploy:StopDeployment
+          Effect: Allow
+          Resource: "*"
+          Condition:
+            StringNotEquals:
+              aws:username:
+              - jitendra.panchal
+              - nishant.jain
+              - saravanan.rajagopal
+              - christian.kulus
+              - teigen.leonard

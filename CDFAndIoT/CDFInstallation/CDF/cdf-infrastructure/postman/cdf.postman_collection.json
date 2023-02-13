@@ -1,0 +1,4352 @@
+{
+	"info": {
+		"_postman_id": "e2b7c5c6-b43c-465e-80ae-978d82d085c8",
+		"name": "cdf",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "provisioning",
+			"item": [
+				{
+					"name": "bulkcertificates",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{media_type_version}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "{{media_type_version}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{cognito_id_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"certInfo\": {\n\t\t\"commonName\": \"\",\n\t\t\"organization\": \"\",\n\t\t\"organizationalUnit\": \"\",\n\t\t\"locality\": \"\",\n\t\t\"stateName\": \"\",\n\t\t\"country\": \"\",\n\t\t\"emailAddress\": \"\",\n\t\t\"distinguishedNameQualifier\": \"\",\n\t\t\"serialNumber\": \"\",\n\t\t\"id\": \"\"\n\t},\n\t\"quantity\": 100,\n\t\"tag\": \"\",\n\t\"batchId\": \"\"\n}"
+						},
+						"url": {
+							"raw": "{{provisioning_base_url}}/bulkcertificates",
+							"host": [
+								"{{provisioning_base_url}}"
+							],
+							"path": [
+								"bulkcertificates"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "bulkcertificate",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{media_type_version}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "{{media_type_version}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{cognito_id_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{provisioning_base_url}}/bulkcertificates/{{batch_id}}",
+							"host": [
+								"{{provisioning_base_url}}"
+							],
+							"path": [
+								"bulkcertificates",
+								"{{batch_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "bulkcertificate",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{media_type_version}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "{{media_type_version}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{cognito_id_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{provisioning_base_url}}/bulkcertificates/{{batch_id}}",
+							"host": [
+								"{{provisioning_base_url}}"
+							],
+							"path": [
+								"bulkcertificates",
+								"{{batch_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "things",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{media_type_version}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "{{media_type_version}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{cognito_id_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"provisioningTemplateId\": \"simple\",\n  \"parameters\": {\n    \"ThingName\": \"myThing11\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{provisioning_base_url}}/things",
+							"host": [
+								"{{provisioning_base_url}}"
+							],
+							"path": [
+								"things"
+							]
+						},
+						"description": "Provision a new asset within the AWS IoT Device Registry."
+					},
+					"response": []
+				},
+				{
+					"name": "thing",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{media_type_version}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "{{media_type_version}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{cognito_id_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{provisioning_base_url}}/things/{{thing_name}}",
+							"host": [
+								"{{provisioning_base_url}}"
+							],
+							"path": [
+								"things",
+								"{{thing_name}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "thing",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{media_type_version}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "{{media_type_version}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{cognito_id_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://{{provisioning_base_url}}/things/{{thing_name}}",
+							"protocol": "https",
+							"host": [
+								"{{provisioning_base_url}}"
+							],
+							"path": [
+								"things",
+								"{{thing_name}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "assetlibrary",
+			"item": [
+				{
+					"name": "deviceTypes",
+					"item": [
+						{
+							"name": "CDF Demo",
+							"item": [
+								{
+									"name": "deviceType - edge",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "{{media_type_version}}"
+											},
+											{
+												"key": "Authorization",
+												"value": "{{cognito_id_token}}"
+											},
+											{
+												"key": "Content-Type",
+												"value": "{{media_type_version}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"properties\": {\n        \"status\": {\n            \"type\": \"string\",\n            \"enum\": [ \"unregistered\", \"registered\", \"active\" ]\n        },\n        \"serial\": { \"type\": \"string\" },\n        \"imei\": { \"type\": \"string\" },\n        \"plantCode\": { \"type\": \"string\" },\n        \"variant\": { \"type\": \"string\" },\n        \"hardwareVersion\": { \"type\": \"string\" },\n        \"softwareVersion\": { \"type\": \"string\" },\n        \"firmwareVersion\": { \"type\": \"string\" },\n        \"manufacturerInfo\": { \"type\": \"string\" },\n        \"manufacturerCustomerCode\": { \"type\": \"string\" },\n        \"manufacturingDate\": { \"type\": \"string\" },\n        \"softwarePackageVersion\": { \"type\": \"string\" }\n    },\n    \"required\": [ \"status\" ],\n    \"relations\": {\n        \"out\": {\n            \"monitors\": [ \"engine\" ],\n            \"owned_by\": [ \"customer\" ],\n            \"manufactured_by\": [ \"supplier\" ]\n        }\n    }\n}"
+										},
+										"url": {
+											"raw": "{{assetlibrary_base_url}}/templates/device/edge",
+											"host": [
+												"{{assetlibrary_base_url}}"
+											],
+											"path": [
+												"templates",
+												"device",
+												"edge"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "deviceType - edge",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "{{media_type_version}}"
+													},
+													{
+														"key": "Authorization",
+														"value": "{{cognito_id_token}}"
+													},
+													{
+														"key": "Content-Type",
+														"value": "{{media_type_version}}"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n    \"properties\": {\n        \"firmware\": { \"type\": \"string\" },\n        \"status\": {\n            \"type\": \"string\",\n            \"enum\": [ \"unregistered\", \"registered\", \"active\" ]\n        },\n        \"attributes\": {\n            \"serial\": { \"type\": \"string\" },\n            \"imei\": { \"type\": \"string\" },\n            \"plant_code\": { \"type\": \"string\" },\n            \"variant\": { \"type\": \"string\" },\n            \"hw_version\": { \"type\": \"string\" },\n            \"manufacturer_info\": { \"type\": \"string\" },\n            \"demodevicesupplier_customer_code\": { \"type\": \"string\" },\n            \"manufacturing_date\": { \"type\": \"string\" },\n            \"software_package_version\": { \"type\": \"string\" }\n        }\n    },\n    \"required\": [ \"status\" ],\n    \"relations\": {\n        \"out\": {\n            \"monitors\": [ \"engine\" ],\n            \"owned_by\": [ \"customer\" ],\n            \"manufactured_by\": [ \"supplier\" ]\n        }\n    }\n}"
+												},
+												"url": {
+													"raw": "{{assetlibrary_base_url}}/templates/device/edge",
+													"host": [
+														"{{assetlibrary_base_url}}"
+													],
+													"path": [
+														"templates",
+														"device",
+														"edge"
+													]
+												}
+											},
+											"status": "Conflict",
+											"code": 409,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "X-Powered-By",
+													"value": "Express"
+												},
+												{
+													"key": "Content-Type",
+													"value": "application/vnd.aws-cdf-v1.0+json; charset=utf-8"
+												},
+												{
+													"key": "Content-Length",
+													"value": "31"
+												},
+												{
+													"key": "ETag",
+													"value": "W/\"1f-KuLHXzct8gKBj+Kzepm2ejIZiII\""
+												},
+												{
+													"key": "Date",
+													"value": "Thu, 25 Oct 2018 18:11:09 GMT"
+												},
+												{
+													"key": "Connection",
+													"value": "keep-alive"
+												}
+											],
+											"cookie": [],
+											"body": "{\n    \"error\": \"Item already exists\"\n}"
+										}
+									]
+								}
+							],
+							"_postman_isSubFolder": true
+						},
+						{
+							"name": "deviceType",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"properties\": {\n        \"serialNumber\": {\"type\": \"string\"},\n        \"firmware\": {\"type\": \"string\"},\n        \"status\": {\"type\": \"string\"}\n    },\n    \"required\": [\"serialNumber\"],\n    \"relations\": {\n    \t\"out\": {\n    \t\t\"monitors\": [\"engine\"],\n    \t\t\"owned_by\": [\"customer\"],\n    \t\t\"manufactured_by\": [\"supplier\"]\n    \t}\n    },\n    \"components\": []\n}"
+								},
+								"url": {
+									"raw": "{{assetlibrary_base_url}}/templates/device/edge",
+									"host": [
+										"{{assetlibrary_base_url}}"
+									],
+									"path": [
+										"templates",
+										"device",
+										"edge"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "deviceType (update device type)",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"properties\": {\n        \"status\": {\n            \"type\": \"string\",\n            \"enum\": [ \"unregistered\", \"registered\", \"active\" ]\n        },\n        \"serial\": { \"type\": \"string\" },\n        \"imei\": { \"type\": \"string\" },\n        \"plantCode\": { \"type\": \"string\" },\n        \"variant\": { \"type\": \"string\" },\n        \"hardwareVersion\": { \"type\": \"string\" },\n        \"softwareVersion\": { \"type\": \"string\" },\n        \"firmwareVersion\": { \"type\": \"string\" },\n        \"manufacturerInfo\": { \"type\": \"string\" },\n        \"manufacturerCustomerCode\": { \"type\": \"string\" },\n        \"manufacturingDate\": { \"type\": \"string\" },\n        \"softwarePackageVersion\": { \"type\": \"string\" }\n    },\n    \"required\": [ \"status\" ],\n    \"relations\": {\n        \"out\": {\n            \"monitors\": [ \"engine\" ],\n            \"owned_by\": [ \"customer\" ],\n            \"manufactured_by\": [ \"supplier\" ]\n        }\n    }\n}"
+								},
+								"url": {
+									"raw": "{{assetlibrary_base_url}}/templates/device/edge",
+									"host": [
+										"{{assetlibrary_base_url}}"
+									],
+									"path": [
+										"templates",
+										"device",
+										"edge"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "deviceType (publish)",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{assetlibrary_base_url}}/templates/device/edge/publish",
+									"host": [
+										"{{assetlibrary_base_url}}"
+									],
+									"path": [
+										"templates",
+										"device",
+										"edge",
+										"publish"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "deviceTypes",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{assetlibrary_base_url}}/templates/device?status=published",
+									"host": [
+										"{{assetlibrary_base_url}}"
+									],
+									"path": [
+										"templates",
+										"device"
+									],
+									"query": [
+										{
+											"key": "status",
+											"value": "published"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "deviceType",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{assetlibrary_base_url}}/templates/device/edge?status=published",
+									"host": [
+										"{{assetlibrary_base_url}}"
+									],
+									"path": [
+										"templates",
+										"device",
+										"edge"
+									],
+									"query": [
+										{
+											"key": "status",
+											"value": "published"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "deviceType",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{assetlibrary_base_url}}/templates/device/testDevice",
+									"host": [
+										"{{assetlibrary_base_url}}"
+									],
+									"path": [
+										"templates",
+										"device",
+										"testDevice"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "groupTypes",
+					"item": [
+						{
+							"name": "CDF Demo",
+							"item": [
+								{
+									"name": "groupType - location",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "{{media_type_version}}"
+											},
+											{
+												"key": "Authorization",
+												"value": "{{cognito_id_token}}"
+											},
+											{
+												"key": "Content-Type",
+												"value": "{{media_type_version}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"properties\": {\n    },\n    \"required\": []\n}"
+										},
+										"url": {
+											"raw": "{{assetlibrary_base_url}}/templates/group/location",
+											"host": [
+												"{{assetlibrary_base_url}}"
+											],
+											"path": [
+												"templates",
+												"group",
+												"location"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "groupType - customer",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "{{media_type_version}}"
+											},
+											{
+												"key": "Authorization",
+												"value": "{{cognito_id_token}}"
+											},
+											{
+												"key": "Content-Type",
+												"value": "{{media_type_version}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"properties\": {\n    \t\"eulaAccepted\": { \"type\": \"boolean\" }\n    },\n    \"relations\": {\n        \"out\": {\n            \"located_at\": [\n                \"location\"\n            ]\n        }\n    },\n    \"required\": []\n}"
+										},
+										"url": {
+											"raw": "{{assetlibrary_base_url}}/templates/group/customer",
+											"host": [
+												"{{assetlibrary_base_url}}"
+											],
+											"path": [
+												"templates",
+												"group",
+												"customer"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "groupType - supplier",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "{{media_type_version}}"
+											},
+											{
+												"key": "Authorization",
+												"value": "{{cognito_id_token}}"
+											},
+											{
+												"key": "Content-Type",
+												"value": "{{media_type_version}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"properties\": {\n    \t\"displayName\": { \"type\": \"string\" },\n    \t\"externalSupplierId\": { \"type\": \"string\" }\n    },\n    \"relations\": {\n        \"out\": {\n            \"located_at\": [\n                \"location\"\n            ]\n        }\n    },\n    \"required\": []\n}"
+										},
+										"url": {
+											"raw": "{{assetlibrary_base_url}}/templates/group/supplier",
+											"host": [
+												"{{assetlibrary_base_url}}"
+											],
+											"path": [
+												"templates",
+												"group",
+												"supplier"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "groupType - engine",
+									"request": {
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "{{media_type_version}}"
+											},
+											{
+												"key": "Authorization",
+												"value": "{{cognito_id_token}}"
+											},
+											{
+												"key": "Content-Type",
+												"value": "{{media_type_version}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"properties\": {\n    \t\"ecmCodes\": { \"type\": [\"string\",\"null\"] },\n    \t\"containerId\": { \"type\": \"string\" },\n    \t\"sourceAddress\": { \"type\": [\"string\",\"null\"] },\n    \t\"make\": { \"type\": [\"string\",\"null\"] },\n    \t\"model\": { \"type\": [\"string\",\"null\"] }\n    },\n    \"relations\": {\n        \"out\": {\n            \"installed_in\": [ \"vehicle\" ]\n            },\n        \"in\": {\n            \"monitors\": [ \"edge\" ]\n        }\n    },\n    \"required\": []\n}"
+										},
+										"url": {
+											"raw": "{{assetlibrary_base_url}}/templates/group/engine",
+											"host": [
+												"{{assetlibrary_base_url}}"
+											],
+											"path": [
+												"templates",
+												"group",
+												"engine"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "groupType - vehicle",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "{{media_type_version}}"
+											},
+											{
+												"key": "Content-Type",
+												"value": "{{media_type_version}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"properties\": {\n    },\n    \"required\": []\n}"
+										},
+										"url": {
+											"raw": "{{assetlibrary_base_url}}/templates/group/vehicle",
+											"host": [
+												"{{assetlibrary_base_url}}"
+											],
+											"path": [
+												"templates",
+												"group",
+												"vehicle"
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"_postman_isSubFolder": true
+						},
+						{
+							"name": "groupType",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"properties\": {\n    },\n    \"required\": []\n}"
+								},
+								"url": {
+									"raw": "{{assetlibrary_base_url}}/templates/group/root",
+									"host": [
+										"{{assetlibrary_base_url}}"
+									],
+									"path": [
+										"templates",
+										"group",
+										"root"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "groupType - root",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"properties\": {\n    },\n    \"required\": []\n}"
+								},
+								"url": {
+									"raw": "{{assetlibrary_base_url}}/templates/group/root",
+									"host": [
+										"{{assetlibrary_base_url}}"
+									],
+									"path": [
+										"templates",
+										"group",
+										"root"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "groupType (update group type)",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"properties\": {\n    \t\"displayName\": { \"type\": \"string\" },\n    \t\"externalSupplierId\": { \"type\": \"string\" }\n    },\n    \"relations\": {\n        \"out\": {\n            \"located_at\": [\n                \"location\"\n            ]\n        }\n    },\n    \"required\": []\n}"
+								},
+								"url": {
+									"raw": "{{assetlibrary_base_url}}/templates/group/supplier",
+									"host": [
+										"{{assetlibrary_base_url}}"
+									],
+									"path": [
+										"templates",
+										"group",
+										"supplier"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "groupType (publish)",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{assetlibrary_base_url}}/templates/group/engine/publish",
+									"host": [
+										"{{assetlibrary_base_url}}"
+									],
+									"path": [
+										"templates",
+										"group",
+										"engine",
+										"publish"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "groupTypes",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{assetlibrary_base_url}}/templates/group?status=published",
+									"host": [
+										"{{assetlibrary_base_url}}"
+									],
+									"path": [
+										"templates",
+										"group"
+									],
+									"query": [
+										{
+											"key": "status",
+											"value": "published"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "groupType",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{assetlibrary_base_url}}/templates/group/engine?status=published",
+									"host": [
+										"{{assetlibrary_base_url}}"
+									],
+									"path": [
+										"templates",
+										"group",
+										"engine"
+									],
+									"query": [
+										{
+											"key": "status",
+											"value": "published"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "groupType",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{assetlibrary_base_url}}/templates/group/test-devicehistory-group-type",
+									"host": [
+										"{{assetlibrary_base_url}}"
+									],
+									"path": [
+										"templates",
+										"group",
+										"test-devicehistory-group-type"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "devices",
+					"item": [
+						{
+							"name": "device",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+										"type": "text/javascript",
+										"exec": [
+											"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+											"postman.setEnvironmentVariable('selector_encoded', encoded);"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"deviceId\": \"EDSN003\",\n\t\"templateId\": \"edge\",\n    \"groups\": {\n        \"manufactured_by\": [\"/supplier/sup123\"]\n    },\n    \"attributes\": {\n  \n        \"firmware\": \"F001\",\n        \"status\": \"unregistered\"\n    }\n}\n\n"
+								},
+								"url": {
+									"raw": "{{assetlibrary_base_url}}/devices",
+									"host": [
+										"{{assetlibrary_base_url}}"
+									],
+									"path": [
+										"devices"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "device",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+										"exec": [
+											"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+											"postman.setEnvironmentVariable('selector_encoded', encoded);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{assetlibrary_base_url}}/devices/cdfdemo031",
+									"host": [
+										"{{assetlibrary_base_url}}"
+									],
+									"path": [
+										"devices",
+										"cdfdemo031"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "device",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+										"type": "text/javascript",
+										"exec": [
+											"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+											"postman.setEnvironmentVariable('selector_encoded', encoded);"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/vnd.aws-cdf-v1.0+json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"attributes\": {\n        \"firmware\": \"F002\"\n    }\n}"
+								},
+								"url": {
+									"raw": "{{assetlibrary_base_url}}/devices/edsn013",
+									"host": [
+										"{{assetlibrary_base_url}}"
+									],
+									"path": [
+										"devices",
+										"edsn013"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "component",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+										"type": "text/javascript",
+										"exec": [
+											"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+											"postman.setEnvironmentVariable('selector_encoded', encoded);"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/vnd.aws-cdf-v1.0+json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"attributes\": {\n        \"alertMax\": 1,\n        \"deltaTransmit\": 2,\n        \"pollingRate\": 3,\n        \"position\": 1,\n        \"metrics\": \"T1u\",\n        \"alertMin\": 4\n    },\n    \"description\": \"Surface temperature sensor for mote 67:49:26:44:73:45:35:22\",\n    \"deviceId\": \"T1u\"\n}"
+								},
+								"url": {
+									"raw": "{{assetlibrary_base_url}}/devices/deans-device-006/components/T1u",
+									"host": [
+										"{{assetlibrary_base_url}}"
+									],
+									"path": [
+										"devices",
+										"deans-device-006",
+										"components",
+										"T1u"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "component",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+										"type": "text/javascript",
+										"exec": [
+											"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+											"postman.setEnvironmentVariable('selector_encoded', encoded);"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/vnd.aws-cdf-v1.0+json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{assetlibrary_base_url}}/devices/deans-device-007/components/T2u",
+									"host": [
+										"{{assetlibrary_base_url}}"
+									],
+									"path": [
+										"devices",
+										"deans-device-007",
+										"components",
+										"T2u"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "component",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+										"type": "text/javascript",
+										"exec": [
+											"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+											"postman.setEnvironmentVariable('selector_encoded', encoded);"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/vnd.aws-cdf-v1.0+json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"attributes\": {\n        \"alertMax\": 1,\n        \"deltaTransmit\": 2,\n        \"pollingRate\": 3,\n        \"position\": 1,\n        \"metrics\": \"T2u\",\n        \"alertMin\": 4\n    },\n    \"description\": \"Surface temperature sensor for mote 67:49:26:44:73:45:35:22\",\n    \"deviceId\": \"T2u\",\n    \"templateId\": \"sensor\"\n}"
+								},
+								"url": {
+									"raw": "{{assetlibrary_base_url}}/devices/deans-device-007/components",
+									"host": [
+										"{{assetlibrary_base_url}}"
+									],
+									"path": [
+										"devices",
+										"deans-device-007",
+										"components"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "attach device to group",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "98531c8c-4f6c-4ffd-9689-4769b0ecc1a8",
+										"type": "text/javascript",
+										"exec": [
+											"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+											"postman.setEnvironmentVariable('selector_encoded', encoded);"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{assetlibrary_base_url}}/devices/edsn001/owned_by/groups/%2fcustomer%2facme farming",
+									"host": [
+										"{{assetlibrary_base_url}}"
+									],
+									"path": [
+										"devices",
+										"edsn001",
+										"owned_by",
+										"groups",
+										"%2fcustomer%2facme farming"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "detach device from group",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "98531c8c-4f6c-4ffd-9689-4769b0ecc1a8",
+										"type": "text/javascript",
+										"exec": [
+											"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+											"postman.setEnvironmentVariable('selector_encoded', encoded);"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{assetlibrary_base_url}}/devices/deans-device-004/installed_at/%2flocation%2fdeans4%2faaa",
+									"host": [
+										"{{assetlibrary_base_url}}"
+									],
+									"path": [
+										"devices",
+										"deans-device-004",
+										"installed_at",
+										"%2flocation%2fdeans4%2faaa"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "attach device to device",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "98531c8c-4f6c-4ffd-9689-4769b0ecc1a8",
+										"type": "text/javascript",
+										"exec": [
+											"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+											"postman.setEnvironmentVariable('selector_encoded', encoded);"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{assetlibrary_base_url}}/devices/edsn001/broadcasts_to/devices/edsn002",
+									"host": [
+										"{{assetlibrary_base_url}}"
+									],
+									"path": [
+										"devices",
+										"edsn001",
+										"broadcasts_to",
+										"devices",
+										"edsn002"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "detatch device from device",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "98531c8c-4f6c-4ffd-9689-4769b0ecc1a8",
+										"type": "text/javascript",
+										"exec": [
+											"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+											"postman.setEnvironmentVariable('selector_encoded', encoded);"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{assetlibrary_base_url}}/devices/edsn001/owned_by/devices/edsn002",
+									"host": [
+										"{{assetlibrary_base_url}}"
+									],
+									"path": [
+										"devices",
+										"edsn001",
+										"owned_by",
+										"devices",
+										"edsn002"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "device",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+										"type": "text/javascript",
+										"exec": [
+											"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+											"postman.setEnvironmentVariable('selector_encoded', encoded);"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{assetlibrary_base_url}}/devices/deans-device-004",
+									"host": [
+										"{{assetlibrary_base_url}}"
+									],
+									"path": [
+										"devices",
+										"deans-device-004"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "devices (batch)",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+										"type": "text/javascript",
+										"exec": [
+											"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+											"postman.setEnvironmentVariable('selector_encoded', encoded);"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n\t{\n\t  \"id\": \"deans-sensor-b5\",\n\t  \"deviceType\": \"Sensor\",\n\t  \"parentPaths\": [\"/deans/a1/a12\"],\n\t  \n\t    \"attributes\": {\n\t        \"type\": {\"S\": \"Temperarure\"}\n\t    }\n\t}, \n\t{\n\t  \"id\": \"deans-sensor-b6\",\n\t  \"deviceType\": \"Sensor\",\n\t  \"parentPaths\": [\"/deans/a1/a12\"],\n\t  \n\t    \"attributes\": {\n\t        \"type\": {\"S\": \"Temperarure\"}\n\t    }\n\t}\n]\n\n"
+								},
+								"url": {
+									"raw": "{{assetlibrary_base_url}}/devices/batch",
+									"host": [
+										"{{assetlibrary_base_url}}"
+									],
+									"path": [
+										"devices",
+										"batch"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "device search",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+										"type": "text/javascript",
+										"exec": [
+											"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+											"postman.setEnvironmentVariable('selector_encoded', encoded);"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{assetlibrary_base_url}}/devices/search?type=device&offset=1&count=1",
+									"host": [
+										"{{assetlibrary_base_url}}"
+									],
+									"path": [
+										"devices",
+										"search"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "device"
+										},
+										{
+											"key": "offset",
+											"value": "1"
+										},
+										{
+											"key": "count",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "groups",
+					"item": [
+						{
+							"name": "CDF Demo",
+							"item": [
+								{
+									"name": "bulkgroup",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+												"type": "text/javascript",
+												"exec": [
+													"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+													"postman.setEnvironmentVariable('selector_encoded', encoded);"
+												]
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "{{media_type_version}}"
+											},
+											{
+												"key": "Authorization",
+												"value": "{{cognito_id_token}}"
+											},
+											{
+												"key": "Content-Type",
+												"value": "{{media_type_version}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"groups\": [\n\t\t{\n\t\t  \"templateId\": \"root\",\n\t\t  \"parentPath\": \"/\",\n\t\t  \"name\": \"customer\",\n\t\t  \"attributes\": {}\n\t\t}, \n\t\t{\n\t\t  \"templateId\": \"root\",\n\t\t  \"parentPath\": \"/\",\n\t\t  \"name\": \"supplier\",\n\t\t  \"attributes\": {}\n\t\t}, \n\n\t\t{\n\t\t  \"templateId\": \"root\",\n\t\t  \"parentPath\": \"/\",\n\t\t  \"name\": \"engine\",\n\t\t  \"attributes\": {}\n\t\t}, \n\t\t{\n\t\t  \"templateId\": \"root\",\n\t\t  \"parentPath\": \"/\",\n\t\t  \"name\": \"vehicle\",\n\t\t  \"attributes\": {}\n\t\t}, \n\t\t\n\t\t{\n\t\t  \"templateId\": \"root\",\n\t\t  \"parentPath\": \"/\",\n\t\t  \"name\": \"location\",\n\t\t  \"attributes\": {}\n\t\t}, \n\t\t{\n\t\t  \"templateId\": \"root\",\n\t\t  \"parentPath\": \"/location\",\n\t\t  \"name\": \"USA\",\n\t\t  \"attributes\": {}\n\t\t}, \n\t\t{\n\t\t  \"templateId\": \"root\",\n\t\t  \"parentPath\": \"/location\",\n\t\t  \"name\": \"China\",\n\t\t  \"attributes\": {}\n\t\t},\n\t\t\n\t\t\n\t\t{\n\t\t\t\"templateId\": \"supplier\",\n\t\t\t\"parentPath\": \"/supplier\",\n\t\t\t\"name\": \"SUP123\",\n\t\t\n\t\t\t\"groups\": {\n\t\t\t\t\"located_at\": [\"/location/china\"]\n\t\t\t},\n\t\t\t\n\t\t\t\"attributes\": {\n\t\t\t\t\"displayName\": \"EMS\",\n\t\t\t\t\"externalSupplierId\": \"ems456\"\n\t\t\t}\n\t\t}\n\t]\n}\n\t\n"
+										},
+										"url": {
+											"raw": "{{assetlibrary_base_url}}/bulkgroups",
+											"host": [
+												"{{assetlibrary_base_url}}"
+											],
+											"path": [
+												"bulkgroups"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "group: customer",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "{{media_type_version}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{assetlibrary_base_url}}/groups/%2fcustomer%2FPurpleApplesCo024",
+											"host": [
+												"{{assetlibrary_base_url}}"
+											],
+											"path": [
+												"groups",
+												"%2fcustomer%2FPurpleApplesCo024"
+											],
+											"query": [
+												{
+													"key": "",
+													"value": ""
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "group: engine",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "{{media_type_version}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{assetlibrary_base_url}}/groups/%2fengine%2Fengine032",
+											"host": [
+												"{{assetlibrary_base_url}}"
+											],
+											"path": [
+												"groups",
+												"%2fengine%2Fengine032"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "group: vehicle",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"type": "text",
+												"value": "{{media_type_version}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{assetlibrary_base_url}}/groups/%2fvehicle%2Fabc123_031",
+											"host": [
+												"{{assetlibrary_base_url}}"
+											],
+											"path": [
+												"groups",
+												"%2fvehicle%2Fabc123_031"
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"_postman_isSubFolder": true
+						},
+						{
+							"name": "group",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+										"type": "text/javascript",
+										"exec": [
+											"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+											"postman.setEnvironmentVariable('selector_encoded', encoded);"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"templateId\": \"engine\",\n\t\"parentPath\": \"/engine\",\n\t\"name\": \"DEANS\",\n  \n\t\"attributes\": {\n\t}\n}\n\n"
+								},
+								"url": {
+									"raw": "{{assetlibrary_base_url}}/groups",
+									"host": [
+										"{{assetlibrary_base_url}}"
+									],
+									"path": [
+										"groups"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "group - supplier",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+										"type": "text/javascript",
+										"exec": [
+											"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+											"postman.setEnvironmentVariable('selector_encoded', encoded);"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"templateId\": \"supplier\",\n\t\"parentPath\": \"/supplier\",\n\t\"name\": \"SUP123\",\n\n\t\"groups\": {\n\t\t\"located_at\": [\"/location/china\"]\n\t},\n\t\n\t\"attributes\": {\n\t\t\"displayName\": \"EMS\",\n\t\t\"externalSupplierId\": \"ems456\"\n\t}\n}\n\n"
+								},
+								"url": {
+									"raw": "{{assetlibrary_base_url}}/groups",
+									"host": [
+										"{{assetlibrary_base_url}}"
+									],
+									"path": [
+										"groups"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "bulkgroup",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+										"type": "text/javascript",
+										"exec": [
+											"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+											"postman.setEnvironmentVariable('selector_encoded', encoded);"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"groups\": [\n\t\t{\n\t\t  \"templateId\": \"root\",\n\t\t  \"parentPath\": \"/\",\n\t\t  \"name\": \"customer\"\n\t\t}, \n\t\t{\n\t\t  \"templateId\": \"root\",\n\t\t  \"parentPath\": \"/\",\n\t\t  \"name\": \"supplier\"\n\t\t}, \n\t\t{\n\t\t  \"templateId\": \"root\",\n\t\t  \"parentPath\": \"/\",\n\t\t  \"name\": \"engine\"\n\t\t}, \n\t\t{\n\t\t  \"templateId\": \"root\",\n\t\t  \"parentPath\": \"/\",\n\t\t  \"name\": \"location\"\n\t\t}, \n\t\t{\n\t\t  \"templateId\": \"root\",\n\t\t  \"parentPath\": \"/location\",\n\t\t  \"name\": \"USA\"\n\t\t}, \n\t\t{\n\t\t  \"templateId\": \"root\",\n\t\t  \"parentPath\": \"/location\",\n\t\t  \"name\": \"China\"\n\t\t}\n\t]\n}\n\t\n"
+								},
+								"url": {
+									"raw": "{{assetlibrary_base_url}}/bulkgroups",
+									"host": [
+										"{{assetlibrary_base_url}}"
+									],
+									"path": [
+										"bulkgroups"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "group",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+										"exec": [
+											"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+											"postman.setEnvironmentVariable('selector_encoded', encoded);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{assetlibrary_base_url}}/groups/%2fcustomer%2FPurpleApplesCo024",
+									"host": [
+										"{{assetlibrary_base_url}}"
+									],
+									"path": [
+										"groups",
+										"%2fcustomer%2FPurpleApplesCo024"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "group members (devices)",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "302529f2-7505-400d-849b-de886201f4b6",
+										"type": "text/javascript",
+										"exec": [
+											""
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{assetlibrary_base_url}}/groups/%2fsupplier%2fsup123/members/devices",
+									"host": [
+										"{{assetlibrary_base_url}}"
+									],
+									"path": [
+										"groups",
+										"%2fsupplier%2fsup123",
+										"members",
+										"devices"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "group members (groups)",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "302529f2-7505-400d-849b-de886201f4b6",
+										"type": "text/javascript",
+										"exec": [
+											""
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{assetlibrary_base_url}}/groups/%2fsupplier%2fsup123/members/groups",
+									"host": [
+										"{{assetlibrary_base_url}}"
+									],
+									"path": [
+										"groups",
+										"%2fsupplier%2fsup123",
+										"members",
+										"groups"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "group memberships",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "302529f2-7505-400d-849b-de886201f4b6",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{assetlibrary_base_url}}/groups/%2Fcustomer%2Fpurple+apples+co/memberships",
+									"host": [
+										"{{assetlibrary_base_url}}"
+									],
+									"path": [
+										"groups",
+										"%2Fcustomer%2Fpurple+apples+co",
+										"memberships"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "group",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+										"type": "text/javascript",
+										"exec": [
+											"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+											"postman.setEnvironmentVariable('selector_encoded', encoded);"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"templateId\": \"engine\",\n\t\"attributes\":{\n\t\t\"ecmCodes\": null\n\t}\n}"
+								},
+								"url": {
+									"raw": "{{assetlibrary_base_url}}/groups/%2fengine%2fdeans",
+									"host": [
+										"{{assetlibrary_base_url}}"
+									],
+									"path": [
+										"groups",
+										"%2fengine%2fdeans"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "group",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+										"type": "text/javascript",
+										"exec": [
+											"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+											"postman.setEnvironmentVariable('selector_encoded', encoded);"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{assetlibrary_base_url}}/groups/%2fsupplier",
+									"host": [
+										"{{assetlibrary_base_url}}"
+									],
+									"path": [
+										"groups",
+										"%2fsupplier"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "group search",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+										"exec": [
+											"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+											"postman.setEnvironmentVariable('selector_encoded', encoded);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{assetlibrary_base_url}}/groups/search?type=vehicle&eq=name::123123123123123123",
+									"host": [
+										"{{assetlibrary_base_url}}"
+									],
+									"path": [
+										"groups",
+										"search"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "vehicle"
+										},
+										{
+											"key": "eq",
+											"value": "name::123123123123123123"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "groups (batch)",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+										"type": "text/javascript",
+										"exec": [
+											"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+											"postman.setEnvironmentVariable('selector_encoded', encoded);"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n\t{\n\t  \"groupType\": \"Group\",\n\t  \"parentPath\": \"/\",\n\t  \"name\": \"deans\"\n\t}, \n\t{\n\t  \"groupType\": \"Group\",\n\t  \"parentPath\": \"/deans\",\n\t  \"name\": \"a1\"\n\t}, \n\t{\n\t  \"groupType\": \"Group\",\n\t  \"parentPath\": \"/deans/a1\",\n\t  \"name\": \"a12\"\n\t}\n]"
+								},
+								"url": {
+									"raw": "{{assetlibrary_base_url}}/groups/batch",
+									"host": [
+										"{{assetlibrary_base_url}}"
+									],
+									"path": [
+										"groups",
+										"batch"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "policies",
+					"item": [
+						{
+							"name": "CDF Demo",
+							"item": [
+								{
+									"name": "provisioning template",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+												"type": "text/javascript",
+												"exec": [
+													"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+													"postman.setEnvironmentVariable('selector_encoded', encoded);"
+												]
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "{{media_type_version}}"
+											},
+											{
+												"key": "Authorization",
+												"value": "{{cognito_id_token}}"
+											},
+											{
+												"key": "Content-Type",
+												"value": "{{media_type_version}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"policyId\": \"CDFDeviceTemplate_v01\",\n\t\"type\": \"ProvisioningTemplate\",\n\t\"description\": \"CDF template includes thing, certificate, CA\",\n\t\"appliesTo\": [ \"/supplier/SUP123\" ],\n\t\"document\":\"cdf\"\n}\n"
+										},
+										"url": {
+											"raw": "{{assetlibrary_base_url}}/policies",
+											"host": [
+												"{{assetlibrary_base_url}}"
+											],
+											"path": [
+												"policies"
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"_postman_isSubFolder": true
+						},
+						{
+							"name": "policy",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+										"type": "text/javascript",
+										"exec": [
+											"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+											"postman.setEnvironmentVariable('selector_encoded', encoded);"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"policyId\": \"ProvisioningTemplateA\",\n  \"type\": \"ProvisioningTemplate\",\n  \"description\": \"My first provisioning template\",\n  \"appliesTo\": [ \"/location\" ],\n  \"document\": \"MY_POLICY\"\n}\n\n"
+								},
+								"url": {
+									"raw": "{{assetlibrary_base_url}}/policies",
+									"host": [
+										"{{assetlibrary_base_url}}"
+									],
+									"path": [
+										"policies"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "policy",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+										"type": "text/javascript",
+										"exec": [
+											"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+											"postman.setEnvironmentVariable('selector_encoded', encoded);"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"id\": \"policy-001\",\n  \"deviceType\": \"MyCustomPolicy\",\n  \n    \"attributes\": {\n    }\n}\n\n"
+								},
+								"url": {
+									"raw": "{{assetlibrary_base_url}}/policies/policy-001",
+									"host": [
+										"{{assetlibrary_base_url}}"
+									],
+									"path": [
+										"policies",
+										"policy-001"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "policies associated with group paths",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+										"type": "text/javascript",
+										"exec": [
+											"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+											"postman.setEnvironmentVariable('selector_encoded', encoded);"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://localhost:3000/policies?groupPath=%2supplier%2fsup123&type=ProvisioningTemplate",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"policies"
+									],
+									"query": [
+										{
+											"key": "groupPath",
+											"value": "%2supplier%2fsup123"
+										},
+										{
+											"key": "type",
+											"value": "ProvisioningTemplate"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "policies associated with device",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+										"type": "text/javascript",
+										"exec": [
+											"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+											"postman.setEnvironmentVariable('selector_encoded', encoded);"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{assetlibrary_base_url}}/policies/inherited?deviceId=EDSN002&type=ProvisioningTemplate",
+									"host": [
+										"{{assetlibrary_base_url}}"
+									],
+									"path": [
+										"policies",
+										"inherited"
+									],
+									"query": [
+										{
+											"key": "deviceId",
+											"value": "EDSN002"
+										},
+										{
+											"key": "type",
+											"value": "ProvisioningTemplate"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "policy",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+										"type": "text/javascript",
+										"exec": [
+											"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+											"postman.setEnvironmentVariable('selector_encoded', encoded);"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://localhost:3000/policies/ProvisioningTemplateA",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"policies",
+										"ProvisioningTemplateA"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "policies",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+										"type": "text/javascript",
+										"exec": [
+											"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+											"postman.setEnvironmentVariable('selector_encoded', encoded);"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://localhost:3000/policies",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"policies"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "policy",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+										"type": "text/javascript",
+										"exec": [
+											"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+											"postman.setEnvironmentVariable('selector_encoded', encoded);"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}"
+									},
+									{
+										"key": "Authorization",
+										"value": "{{cognito_id_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://localhost:3000/policies/ProvisioningTemplateA",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"policies",
+										"ProvisioningTemplateA"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "init",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+								"type": "text/javascript",
+								"exec": [
+									"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+									"postman.setEnvironmentVariable('selector_encoded', encoded);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{media_type_version}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{cognito_id_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "{{media_type_version}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{assetlibrary_base_url}}/48e876fe-8830-4996-baa0-9c0dd92bd6a2/init",
+							"host": [
+								"{{assetlibrary_base_url}}"
+							],
+							"path": [
+								"48e876fe-8830-4996-baa0-9c0dd92bd6a2",
+								"init"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "assetlibrary-history",
+			"item": [
+				{
+					"name": "devices events",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+								"type": "text/javascript",
+								"exec": [
+									"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+									"postman.setEnvironmentVariable('selector_encoded', encoded);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{media_type_version}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{cognito_id_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "{{media_type_version}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{assetlibraryhistory_base_url}}/devices?timeFrom=2018-08-30T14:02:00.000Z",
+							"host": [
+								"{{assetlibraryhistory_base_url}}"
+							],
+							"path": [
+								"devices"
+							],
+							"query": [
+								{
+									"key": "timeFrom",
+									"value": "2018-08-30T14:02:00.000Z"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "device events",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+								"type": "text/javascript",
+								"exec": [
+									"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+									"postman.setEnvironmentVariable('selector_encoded', encoded);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{media_type_version}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{cognito_id_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "{{media_type_version}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{assetlibraryhistory_base_url}}/devices/EDSN003",
+							"host": [
+								"{{assetlibraryhistory_base_url}}"
+							],
+							"path": [
+								"devices",
+								"EDSN003"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "commands",
+			"item": [
+				{
+					"name": "template",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+								"type": "text/javascript",
+								"exec": [
+									"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+									"postman.setEnvironmentVariable('selector_encoded', encoded);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{media_type_version}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{cognito_id_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "{{media_type_version}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"templateId\": \"CommandTest\",\n    \"document\": \"{\\\"operation\\\":\\\"CommandTest\\\", \\\"file1\\\":\\\"${cdf:file:file1}\\\",\\\"param1\\\":\\\"${cdf:parameter:param1}\\\"}\",\n    \"requiredFiles\": [\"file1\"],\n    \"requiredDocumentParameters\": [\"param1\"],\n\t\"description\": \"A template used for testing\",\n\t\"presignedUrlExpiresInSeconds\": 3600\n}\n\n"
+						},
+						"url": {
+							"raw": "{{jobs_base_url}}/templates",
+							"host": [
+								"{{jobs_base_url}}"
+							],
+							"path": [
+								"templates"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "template",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+								"type": "text/javascript",
+								"exec": [
+									"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+									"postman.setEnvironmentVariable('selector_encoded', encoded);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{media_type_version}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{cognito_id_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "{{media_type_version}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"document\": \"{\\\"cbfFile\\\": \\\"${cdf:file:CBF}\\\",\\\"scrFile\\\": \\\"${cdf:file:SCR}\\\"}\"\n}\n\n"
+						},
+						"url": {
+							"raw": "{{jobs_base_url}}/templates/{{template_id}}",
+							"host": [
+								"{{jobs_base_url}}"
+							],
+							"path": [
+								"templates",
+								"{{template_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "template",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+								"type": "text/javascript",
+								"exec": [
+									"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+									"postman.setEnvironmentVariable('selector_encoded', encoded);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{media_type_version}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{cognito_id_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "{{media_type_version}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{jobs_base_url}}/templates/{{template_id}}",
+							"host": [
+								"{{jobs_base_url}}"
+							],
+							"path": [
+								"templates",
+								"{{template_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "templates",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+								"type": "text/javascript",
+								"exec": [
+									"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+									"postman.setEnvironmentVariable('selector_encoded', encoded);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{media_type_version}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{cognito_id_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "{{media_type_version}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{jobs_base_url}}/templates",
+							"host": [
+								"{{jobs_base_url}}"
+							],
+							"path": [
+								"templates"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "command",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+								"type": "text/javascript",
+								"exec": [
+									"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+									"postman.setEnvironmentVariable('selector_encoded', encoded);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{media_type_version}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{cognito_id_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "{{media_type_version}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"templateId\": \"DataCollectionConfiguration\",\n\t\"targets\": [\"arn:aws:iot:us-west-2:957905153352:thing/DeansDevice\"],\n\t\"type\": \"SNAPSHOT\",\n\t\"rolloutMaximumPerMinute\": 100\n}\n\n"
+						},
+						"url": {
+							"raw": "{{jobs_base_url}}/commands",
+							"host": [
+								"{{jobs_base_url}}"
+							],
+							"path": [
+								"commands"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "command",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+								"type": "text/javascript",
+								"exec": [
+									"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+									"postman.setEnvironmentVariable('selector_encoded', encoded);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{media_type_version}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{cognito_id_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "{{media_type_version}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"commandStatus\": \"PUBLISHED\"\n}"
+						},
+						"url": {
+							"raw": "{{jobs_base_url}}/commands/{{command_id}}",
+							"host": [
+								"{{jobs_base_url}}"
+							],
+							"path": [
+								"commands",
+								"{{command_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "commands",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+								"type": "text/javascript",
+								"exec": [
+									"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+									"postman.setEnvironmentVariable('selector_encoded', encoded);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{media_type_version}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{cognito_id_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "{{media_type_version}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{jobs_base_url}}/commands",
+							"host": [
+								"{{jobs_base_url}}"
+							],
+							"path": [
+								"commands"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "command",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+								"type": "text/javascript",
+								"exec": [
+									"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+									"postman.setEnvironmentVariable('selector_encoded', encoded);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{media_type_version}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{cognito_id_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "{{media_type_version}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{jobs_base_url}}/commands/{{command_id}}",
+							"host": [
+								"{{jobs_base_url}}"
+							],
+							"path": [
+								"commands",
+								"{{command_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "executions",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+								"type": "text/javascript",
+								"exec": [
+									"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+									"postman.setEnvironmentVariable('selector_encoded', encoded);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{media_type_version}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{cognito_id_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "{{media_type_version}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{jobs_base_url}}/commands/{{command_id}}/executions",
+							"host": [
+								"{{jobs_base_url}}"
+							],
+							"path": [
+								"commands",
+								"{{command_id}}",
+								"executions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "execution",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+								"type": "text/javascript",
+								"exec": [
+									"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+									"postman.setEnvironmentVariable('selector_encoded', encoded);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{media_type_version}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{cognito_id_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "{{media_type_version}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{jobs_base_url}}/commands/{{command_id}}/executions/DeansDevice",
+							"host": [
+								"{{jobs_base_url}}"
+							],
+							"path": [
+								"commands",
+								"{{command_id}}",
+								"executions",
+								"DeansDevice"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "execution",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+								"type": "text/javascript",
+								"exec": [
+									"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+									"postman.setEnvironmentVariable('selector_encoded', encoded);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{media_type_version}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{cognito_id_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "{{media_type_version}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"templateId\": \"RequestECMCode\",\n\t\"targets\": [\"arn:aws:iot:us-west-2:957905153352:thing/myThing3\"],\n\t\"type\": \"SNAPSHOT\",\n\t\"rolloutMaximumPerMinute\": 100\n}\n\n"
+						},
+						"url": {
+							"raw": "{{jobs_base_url}}/commands/b89388a0-8acf-11e8-8f6b-812b5713a33e/executions/myThing3",
+							"host": [
+								"{{jobs_base_url}}"
+							],
+							"path": [
+								"commands",
+								"b89388a0-8acf-11e8-8f6b-812b5713a33e",
+								"executions",
+								"myThing3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "file",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+								"type": "text/javascript",
+								"exec": [
+									"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+									"postman.setEnvironmentVariable('selector_encoded', encoded);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{media_type_version}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{cognito_id_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "{{media_type_version}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": ""
+								}
+							]
+						},
+						"url": {
+							"raw": "{{jobs_base_url}}/commands/{{command_id}}/files/file1",
+							"host": [
+								"{{jobs_base_url}}"
+							],
+							"path": [
+								"commands",
+								"{{command_id}}",
+								"files",
+								"file1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "presignedUrl uploads",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+								"type": "text/javascript",
+								"exec": [
+									"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+									"postman.setEnvironmentVariable('selector_encoded', encoded);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{media_type_version}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{cognito_id_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "{{media_type_version}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"thingName\": \"DeansDevice\",\n\t\"jobId\": \"cdf-b0c7d470-bffc-11e8-b37a-31f814a6621f\",\n\t\"requestedObjectKeys\": [\"myupload/1\"]\n}\n\n"
+						},
+						"url": {
+							"raw": "{{jobs_base_url}}/mqtt/presignedurls/uploads",
+							"host": [
+								"{{jobs_base_url}}"
+							],
+							"path": [
+								"mqtt",
+								"presignedurls",
+								"uploads"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "presignedUrl downloads",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+								"type": "text/javascript",
+								"exec": [
+									"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+									"postman.setEnvironmentVariable('selector_encoded', encoded);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{media_type_version}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{cognito_id_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "{{media_type_version}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"thingName\": \"DeansDevice\",\n\t\"jobId\": \"cdf-{{command_id}}\",\n\t\"requestedFileAliases\": [\"testFile\"]\n}\n\n"
+						},
+						"url": {
+							"raw": "{{jobs_base_url}}/mqtt/presignedurls/downloads",
+							"host": [
+								"{{jobs_base_url}}"
+							],
+							"path": [
+								"mqtt",
+								"presignedurls",
+								"downloads"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "demo-facade",
+			"item": [
+				{
+					"name": "whitelist",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+								"type": "text/javascript",
+								"exec": [
+									"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+									"postman.setEnvironmentVariable('selector_encoded', encoded);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{media_type_version}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{cognito_id_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "whitelist",
+									"type": "file",
+									"src": ""
+								},
+								{
+									"key": "supplierId",
+									"value": "sup123",
+									"type": "text"
+								},
+								{
+									"key": "templateId",
+									"value": "edge",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{facade_base_url}}/whitelist",
+							"host": [
+								"{{facade_base_url}}"
+							],
+							"path": [
+								"whitelist"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "register",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+								"exec": [
+									"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+									"postman.setEnvironmentVariable('selector_encoded', encoded);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{media_type_version}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "{{media_type_version}}"
+							},
+							{
+								"key": "deviceid",
+								"value": "EDSN001"
+							},
+							{
+								"key": "devicecert",
+								"value": "-----BEGIN CERTIFICATE-----\\r\\nMIIDWjCCAkICCQCHBZwUBuqWrTANBgkqhkiG9w0BAQsFADCBiDELMAkGA1UEBhMC\\r\\nVVMxCzAJBgNVBAgMAkNPMQ8wDQYDVQQHDAZEZW52ZXIxEDAOBgNVBAoMB0N1bW1p\\r\\nbnMxEDAOBgNVBAsMB0VuZ2luZXMxFjAUBgNVBAMMDSouY3VtbWlucy5jb20xHzAd\\r\\nBgkqhkiG9w0BCQEWEGluZm9AY3VtbWlucy5jb20wHhcNMTgwNzEyMTU1NjQwWhcN\\r\\nMTkwNzEyMTU1NjQwWjBVMQswCQYDVQQGEwJVUzELMAkGA1UECAwCQ0ExDzANBgNV\\r\\nBAoMBm1hcmluZTESMBAGA1UECwwJZXF1aXBtZW50MRQwEgYDVQQDDAtjdW1taW5z\\r\\nLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANU5kNASl7cFq6u\\/\\r\\nFHALUlR6U77FLc2lQx5DZzXGimDQZXzQ68oBC1kRSv1oxCBzK889r7Awj\\/4xcvVO\\r\\nUPudS9etP6gpMb2af0UinLN5eM0AMjUsdipqBJGbkDMS2RCD+tXsJHKUUVhlp+yO\\r\\ncdQs+dd7s5sWIg8IUMHuMPSHl6hkOYStlkx7+WdPTliS2\\/OjClHjcWi0G0BtCgu6\\r\\nwV2p7OjVo68741Jl8aQ0N9yEU4mHJiES7JkbsVZWgf46FDUHDCOTeeZHV6EHoJ6R\\r\\n\\/9fLT2eGFtFez8HjWB6KLwA1mRk3DdRHx4iRV5NvoY44JxxTJj1Lc71v4bye0aul\\r\\ni0rdQGkCAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAiOpehqcOU8FVU2dPO8a6+R6u\\r\\n62O27q7djQgtnQ4\\/KudiYz6JrYolEO8waC5m+4xjqZJ+WcnF8RU9jSWsnsdNL3E6\\r\\nfVQ65N8Fx\\/9NRmborrWuVhAOGH0XJzaNHUbhHNThlYazAquF5QpS4TWqnJyl+tTy\\r\\nB7EH24hj7j3ghjccnr3bN4\\/NfKZ9IBtXaDj9CVIcX91K+ZgbkhLo\\/Tn\\/iUHvjvbJ\\r\\nTCz+5rb0BTLzVV8kyp05OuVy21abUrERG3kzx4sHZ419Em9AeVZm+P8EifIBvYrV\\r\\n\\/9pYhgyN0kJTpPu1Bin4y1UqHmDziddDQXbYBzLS5ov0nX3C\\/MeRO1IdsAdorw==\\r\\n-----END CERTIFICATE-----"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"esn\": \"ESN999\",\n\t\"supplierId\": \"demodevicesupplier\",\n\t\"certificate\": \"-----BEGIN CERTIFICATE-----\\r\\nMIIDWjCCAkICCQCHBZwUBuqWrTANBgkqhkiG9w0BAQsFADCBiDELMAkGA1UEBhMC\\r\\nVVMxCzAJBgNVBAgMAkNPMQ8wDQYDVQQHDAZEZW52ZXIxEDAOBgNVBAoMB0N1bW1p\\r\\nbnMxEDAOBgNVBAsMB0VuZ2luZXMxFjAUBgNVBAMMDSouY3VtbWlucy5jb20xHzAd\\r\\nBgkqhkiG9w0BCQEWEGluZm9AY3VtbWlucy5jb20wHhcNMTgwNzEyMTU1NjQwWhcN\\r\\nMTkwNzEyMTU1NjQwWjBVMQswCQYDVQQGEwJVUzELMAkGA1UECAwCQ0ExDzANBgNV\\r\\nBAoMBm1hcmluZTESMBAGA1UECwwJZXF1aXBtZW50MRQwEgYDVQQDDAtjdW1taW5z\\r\\nLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANU5kNASl7cFq6u\\/\\r\\nFHALUlR6U77FLc2lQx5DZzXGimDQZXzQ68oBC1kRSv1oxCBzK889r7Awj\\/4xcvVO\\r\\nUPudS9etP6gpMb2af0UinLN5eM0AMjUsdipqBJGbkDMS2RCD+tXsJHKUUVhlp+yO\\r\\ncdQs+dd7s5sWIg8IUMHuMPSHl6hkOYStlkx7+WdPTliS2\\/OjClHjcWi0G0BtCgu6\\r\\nwV2p7OjVo68741Jl8aQ0N9yEU4mHJiES7JkbsVZWgf46FDUHDCOTeeZHV6EHoJ6R\\r\\n\\/9fLT2eGFtFez8HjWB6KLwA1mRk3DdRHx4iRV5NvoY44JxxTJj1Lc71v4bye0aul\\r\\ni0rdQGkCAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAiOpehqcOU8FVU2dPO8a6+R6u\\r\\n62O27q7djQgtnQ4\\/KudiYz6JrYolEO8waC5m+4xjqZJ+WcnF8RU9jSWsnsdNL3E6\\r\\nfVQ65N8Fx\\/9NRmborrWuVhAOGH0XJzaNHUbhHNThlYazAquF5QpS4TWqnJyl+tTy\\r\\nB7EH24hj7j3ghjccnr3bN4\\/NfKZ9IBtXaDj9CVIcX91K+ZgbkhLo\\/Tn\\/iUHvjvbJ\\r\\nTCz+5rb0BTLzVV8kyp05OuVy21abUrERG3kzx4sHZ419Em9AeVZm+P8EifIBvYrV\\r\\n\\/9pYhgyN0kJTpPu1Bin4y1UqHmDziddDQXbYBzLS5ov0nX3C\\/MeRO1IdsAdorw==\\r\\n-----END CERTIFICATE-----\"\n}\n\t"
+						},
+						"url": {
+							"raw": "{{facade_base_url}}/devices/EDSN001/register",
+							"host": [
+								"{{facade_base_url}}"
+							],
+							"path": [
+								"devices",
+								"EDSN001",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "bulkcertifcatestask",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+								"type": "text/javascript",
+								"exec": [
+									"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+									"postman.setEnvironmentVariable('selector_encoded', encoded);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{media_type_version}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{cognito_id_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "{{media_type_version}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"quantity\": 2,\n\t\"register\": false\n}"
+						},
+						"url": {
+							"raw": "{{facade_base_url}}/bulkcertificatestask",
+							"host": [
+								"{{facade_base_url}}"
+							],
+							"path": [
+								"bulkcertificatestask"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "bulkcertifcatestask",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+								"type": "text/javascript",
+								"exec": [
+									"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+									"postman.setEnvironmentVariable('selector_encoded', encoded);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{media_type_version}}"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{cognito_id_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "{{media_type_version}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{facade_base_url}}/bulkcertificatestask/e92e5b30-968b-11e8-8247-3b6b1f1292c",
+							"host": [
+								"{{facade_base_url}}"
+							],
+							"path": [
+								"bulkcertificatestask",
+								"e92e5b30-968b-11e8-8247-3b6b1f1292c"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "bulkcertifcates",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "8be804da-4838-4d28-a31c-3de386a30da1",
+								"type": "text/javascript",
+								"exec": [
+									"let encoded = encodeURIComponent(pm.environment.get('selector'));",
+									"postman.setEnvironmentVariable('selector_encoded', encoded);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/zip"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{cognito_id_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "{{media_type_version}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{facade_base_url}}/bulkcertificates/e92e5b30-968b-11e8-8247-3b6b1f1292c",
+							"host": [
+								"{{facade_base_url}}"
+							],
+							"path": [
+								"bulkcertificates",
+								"e92e5b30-968b-11e8-8247-3b6b1f1292c"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "demodevicesupplier/assemble",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{media_type_version}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "{{media_type_version}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"templateId\": \"edge\",\n\t\"certificate\": \"-----BEGIN CERTIFICATE-----\\r\\nMIIDWjCCAkICCQCHBZwUBuqWrTANBgkqhkiG9w0BAQsFADCBiDELMAkGA1UEBhMC\\r\\nVVMxCzAJBgNVBAgMAkNPMQ8wDQYDVQQHDAZEZW52ZXIxEDAOBgNVBAoMB0N1bW1p\\r\\nbnMxEDAOBgNVBAsMB0VuZ2luZXMxFjAUBgNVBAMMDSouY3VtbWlucy5jb20xHzAd\\r\\nBgkqhkiG9w0BCQEWEGluZm9AY3VtbWlucy5jb20wHhcNMTgwNzEyMTU1NjQwWhcN\\r\\nMTkwNzEyMTU1NjQwWjBVMQswCQYDVQQGEwJVUzELMAkGA1UECAwCQ0ExDzANBgNV\\r\\nBAoMBm1hcmluZTESMBAGA1UECwwJZXF1aXBtZW50MRQwEgYDVQQDDAtjdW1taW5z\\r\\nLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANU5kNASl7cFq6u\\/\\r\\nFHALUlR6U77FLc2lQx5DZzXGimDQZXzQ68oBC1kRSv1oxCBzK889r7Awj\\/4xcvVO\\r\\nUPudS9etP6gpMb2af0UinLN5eM0AMjUsdipqBJGbkDMS2RCD+tXsJHKUUVhlp+yO\\r\\ncdQs+dd7s5sWIg8IUMHuMPSHl6hkOYStlkx7+WdPTliS2\\/OjClHjcWi0G0BtCgu6\\r\\nwV2p7OjVo68741Jl8aQ0N9yEU4mHJiES7JkbsVZWgf46FDUHDCOTeeZHV6EHoJ6R\\r\\n\\/9fLT2eGFtFez8HjWB6KLwA1mRk3DdRHx4iRV5NvoY44JxxTJj1Lc71v4bye0aul\\r\\ni0rdQGkCAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAiOpehqcOU8FVU2dPO8a6+R6u\\r\\n62O27q7djQgtnQ4\\/KudiYz6JrYolEO8waC5m+4xjqZJ+WcnF8RU9jSWsnsdNL3E6\\r\\nfVQ65N8Fx\\/9NRmborrWuVhAOGH0XJzaNHUbhHNThlYazAquF5QpS4TWqnJyl+tTy\\r\\nB7EH24hj7j3ghjccnr3bN4\\/NfKZ9IBtXaDj9CVIcX91K+ZgbkhLo\\/Tn\\/iUHvjvbJ\\r\\nTCz+5rb0BTLzVV8kyp05OuVy21abUrERG3kzx4sHZ419Em9AeVZm+P8EifIBvYrV\\r\\n\\/9pYhgyN0kJTpPu1Bin4y1UqHmDziddDQXbYBzLS5ov0nX3C\\/MeRO1IdsAdorw==\\r\\n-----END CERTIFICATE-----\",\n\t\"attributes\": {\n\t\t\"serial\": \"abc123\",\n\t\t\"imei\": \"1239120asddkjdsf\",\n\t\t\"plantCode\": \"CD-1J\",\n\t\t\"variant\": \"2.x.a.d\",\n\t\t\"hardwareVersion\": \"1.0.11\",\n\t\t\"softwareVersion\": \"2.3.2\",\n\t\t\"firmwareVersion\": \"4.2.11\",\n\t\t\"manufacturerInfo\": \"blue badge stripe edition\",\n\t\t\"manufacturerCustomerCode\": \"C12302\",\n\t\t\"manufacturingDate\": \"2018-11-10\",\n\t\t\"softwarePackageVersion\": \"2.3.1\"\n\t}\n}"
+						},
+						"url": {
+							"raw": "{{facade_base_url}}/suppliers/demodevicesupplier/devices/cdfdemo032/assemble",
+							"host": [
+								"{{facade_base_url}}"
+							],
+							"path": [
+								"suppliers",
+								"demodevicesupplier",
+								"devices",
+								"cdfdemo032",
+								"assemble"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "demodevicesupplier/register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{media_type_version}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "{{media_type_version}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"esn\": \"engine032\",\n\t\"engineAttributes\": {\n\t\t\"make\": \"CDF Demo Make\",\n\t\t\"model\": \"6BTA\",\n\t\t\"sourceAddress\": \"123 Downing St\"\n\t},\n\t\"deviceAttributes\": {\n\t\t\"hardwareVersion\": \"8.0.11\",\n\t\t\"softwareVersion\": \"8.3.2\",\n\t\t\"firmwareVersion\": \"8.2.11\"\n\t}\n}"
+						},
+						"url": {
+							"raw": "{{facade_base_url}}/suppliers/demodevicesupplier/devices/cdfdemo032/register",
+							"host": [
+								"{{facade_base_url}}"
+							],
+							"path": [
+								"suppliers",
+								"demodevicesupplier",
+								"devices",
+								"cdfdemo032",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "activate",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{media_type_version}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "{{media_type_version}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"customerId\": \"PurpleApplesCo032\",\n\t\"vin\": \"abc123_032\",\n\t\"ecmCodes\": \"hello_world\",\n\t\"esn\": \"engine032\"\n}"
+						},
+						"url": {
+							"raw": "{{facade_base_url}}/devices/cdfdemo032/activate",
+							"host": [
+								"{{facade_base_url}}"
+							],
+							"path": [
+								"devices",
+								"cdfdemo032",
+								"activate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "activate (no vehicle)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "{{media_type_version}}"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "{{media_type_version}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"customerId\": \"PurpleApplesCo031\",\n\t\"vin\": \"\",\n\t\"ecmCodes\": \"hello_world\",\n\t\"esn\": \"engine031\"\n}"
+						},
+						"url": {
+							"raw": "{{facade_base_url}}/devices/cdfdemo031/activate",
+							"host": [
+								"{{facade_base_url}}"
+							],
+							"path": [
+								"devices",
+								"cdfdemo031",
+								"activate"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "walkthrough",
+			"item": [
+				{
+					"name": "CDF provisioning",
+					"item": [
+						{
+							"name": "1 demodevicesupplier/assemble",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"templateId\": \"edge\",\n\t\"certificate\": \"-----BEGIN CERTIFICATE-----\\r\\nMIIDWjCCAkICCQCHBZwUBuqWrTANBgkqhkiG9w0BAQsFADCBiDELMAkGA1UEBhMC\\r\\nVVMxCzAJBgNVBAgMAkNPMQ8wDQYDVQQHDAZEZW52ZXIxEDAOBgNVBAoMB0N1bW1p\\r\\nbnMxEDAOBgNVBAsMB0VuZ2luZXMxFjAUBgNVBAMMDSouY3VtbWlucy5jb20xHzAd\\r\\nBgkqhkiG9w0BCQEWEGluZm9AY3VtbWlucy5jb20wHhcNMTgwNzEyMTU1NjQwWhcN\\r\\nMTkwNzEyMTU1NjQwWjBVMQswCQYDVQQGEwJVUzELMAkGA1UECAwCQ0ExDzANBgNV\\r\\nBAoMBm1hcmluZTESMBAGA1UECwwJZXF1aXBtZW50MRQwEgYDVQQDDAtjdW1taW5z\\r\\nLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANU5kNASl7cFq6u\\/\\r\\nFHALUlR6U77FLc2lQx5DZzXGimDQZXzQ68oBC1kRSv1oxCBzK889r7Awj\\/4xcvVO\\r\\nUPudS9etP6gpMb2af0UinLN5eM0AMjUsdipqBJGbkDMS2RCD+tXsJHKUUVhlp+yO\\r\\ncdQs+dd7s5sWIg8IUMHuMPSHl6hkOYStlkx7+WdPTliS2\\/OjClHjcWi0G0BtCgu6\\r\\nwV2p7OjVo68741Jl8aQ0N9yEU4mHJiES7JkbsVZWgf46FDUHDCOTeeZHV6EHoJ6R\\r\\n\\/9fLT2eGFtFez8HjWB6KLwA1mRk3DdRHx4iRV5NvoY44JxxTJj1Lc71v4bye0aul\\r\\ni0rdQGkCAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAiOpehqcOU8FVU2dPO8a6+R6u\\r\\n62O27q7djQgtnQ4\\/KudiYz6JrYolEO8waC5m+4xjqZJ+WcnF8RU9jSWsnsdNL3E6\\r\\nfVQ65N8Fx\\/9NRmborrWuVhAOGH0XJzaNHUbhHNThlYazAquF5QpS4TWqnJyl+tTy\\r\\nB7EH24hj7j3ghjccnr3bN4\\/NfKZ9IBtXaDj9CVIcX91K+ZgbkhLo\\/Tn\\/iUHvjvbJ\\r\\nTCz+5rb0BTLzVV8kyp05OuVy21abUrERG3kzx4sHZ419Em9AeVZm+P8EifIBvYrV\\r\\n\\/9pYhgyN0kJTpPu1Bin4y1UqHmDziddDQXbYBzLS5ov0nX3C\\/MeRO1IdsAdorw==\\r\\n-----END CERTIFICATE-----\",\n\t\"attributes\": {\n\t\t\"serial\": \"abc123\",\n\t\t\"imei\": \"1239120asddkjdsf\",\n\t\t\"plantCode\": \"CD-1J\",\n\t\t\"variant\": \"2.x.a.d\",\n\t\t\"hardwareVersion\": \"1.0.11\",\n\t\t\"softwareVersion\": \"2.3.2\",\n\t\t\"firmwareVersion\": \"4.2.11\",\n\t\t\"manufacturerInfo\": \"blue badge stripe edition\",\n\t\t\"manufacturerCustomerCode\": \"C12302\",\n\t\t\"manufacturingDate\": \"2018-11-10\",\n\t\t\"softwarePackageVersion\": \"2.3.1\"\n\t}\n}\n\t"
+								},
+								"url": {
+									"raw": "{{facade_base_url}}/suppliers/demodevicesupplier/devices/cdfdemo023/assemble",
+									"host": [
+										"{{facade_base_url}}"
+									],
+									"path": [
+										"suppliers",
+										"demodevicesupplier",
+										"devices",
+										"cdfdemo023",
+										"assemble"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2 demodevicesupplier/register",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"esn\": \"engine023\",\n\t\"make\": \"CDF Demo Make\",\n\t\"model\": \"6BTA\",\n\t\"sourceAddress\": \"123 Downing St\"\n}"
+								},
+								"url": {
+									"raw": "{{facade_base_url}}/suppliers/demodevicesupplier/devices/cdfdemo023/register",
+									"host": [
+										"{{facade_base_url}}"
+									],
+									"path": [
+										"suppliers",
+										"demodevicesupplier",
+										"devices",
+										"cdfdemo023",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3 activate",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{media_type_version}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "{{media_type_version}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"customerId\": \"PurpleApplesCo022\",\n\t\"vin\": \"abc123_022\",\n\t\"ecmCodes\": \"hello_world\",\n\t\"esn\": \"engine022\"\n}"
+								},
+								"url": {
+									"raw": "{{facade_base_url}}/devices/cdfdemo022/activate",
+									"host": [
+										"{{facade_base_url}}"
+									],
+									"path": [
+										"devices",
+										"cdfdemo022",
+										"activate"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "gate access",
+					"item": [
+						{
+							"name": "1 create templates",
+							"item": [
+								{
+									"name": "create group template: building",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "{{media_type_version}}"
+											},
+											{
+												"key": "Content-Type",
+												"value": "{{media_type_version}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"properties\": {\n    \t\"name\": { \"type\": \"string\" },\n    \t\"full_address\": { \"type\": \"string\" }\n    },\n    \"required\": []\n}"
+										},
+										"url": {
+											"raw": "{{assetlibrary_base_url}}/templates/group/building",
+											"host": [
+												"{{assetlibrary_base_url}}"
+											],
+											"path": [
+												"templates",
+												"group",
+												"building"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "check group template (draft)",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "{{media_type_version}}"
+											},
+											{
+												"key": "Content-Type",
+												"value": "{{media_type_version}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{assetlibrary_base_url}}/templates/group/building?status=draft",
+											"host": [
+												"{{assetlibrary_base_url}}"
+											],
+											"path": [
+												"templates",
+												"group",
+												"building"
+											],
+											"query": [
+												{
+													"key": "status",
+													"value": "draft"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "publish group template",
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "{{media_type_version}}"
+											},
+											{
+												"key": "Authorization",
+												"value": "{{cognito_id_token}}"
+											},
+											{
+												"key": "Content-Type",
+												"value": "{{media_type_version}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{assetlibrary_base_url}}/templates/group/building/publish",
+											"host": [
+												"{{assetlibrary_base_url}}"
+											],
+											"path": [
+												"templates",
+												"group",
+												"building",
+												"publish"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "check group template (published)",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "{{media_type_version}}"
+											},
+											{
+												"key": "Authorization",
+												"value": "{{cognito_id_token}}"
+											},
+											{
+												"key": "Content-Type",
+												"value": "{{media_type_version}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{assetlibrary_base_url}}/templates/group/building?status=published",
+											"host": [
+												"{{assetlibrary_base_url}}"
+											],
+											"path": [
+												"templates",
+												"group",
+												"building"
+											],
+											"query": [
+												{
+													"key": "status",
+													"value": "published"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "create device template: gate",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "{{media_type_version}}"
+											},
+											{
+												"key": "Content-Type",
+												"value": "{{media_type_version}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"properties\": {\n        \"serialNumber\": {\"type\": \"string\"},\n        \"firmware\": {\"type\": \"string\"},\n        \"status\": {\"type\": \"string\"}\n    },\n    \"required\": [\"serialNumber\"],\n    \"relations\": {\n    \t\"out\": {\n    \t\t\"installed_in\": [\"building\"],\n    \t}\n    },\n    \"components\": []\n}"
+										},
+										"url": {
+											"raw": "{{assetlibrary_base_url}}/templates/device/gate",
+											"host": [
+												"{{assetlibrary_base_url}}"
+											],
+											"path": [
+												"templates",
+												"device",
+												"gate"
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"_postman_isSubFolder": true
+						},
+						{
+							"name": "2 create instances",
+							"item": [],
+							"_postman_isSubFolder": true
+						},
+						{
+							"name": "3 explore relationships",
+							"item": [],
+							"_postman_isSubFolder": true
+						}
+					],
+					"_postman_isSubFolder": true
+				}
+			]
+		}
+	]
+}

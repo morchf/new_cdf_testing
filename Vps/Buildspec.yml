@@ -1,0 +1,38 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      python: 3.8
+  pre_build:
+    commands:
+      - curl https://packages.microsoft.com/keys/microsoft.asc |  apt-key add -
+      - curl https://packages.microsoft.com/config/ubuntu/18.04/prod.list | tee /etc/apt/sources.list.d/msprod.list
+      - apt update -qq
+      - env ACCEPT_EULA=Y apt-get install msodbcsql17 -y -qq
+      - apt install -y -qq
+        jq
+        libodbc1
+        unixodbc
+        unixodbc-dev
+        ruby-full
+      - gem install cfn-nag -qq
+      - pip3 install -qq
+        boto3
+        requests
+        pyodbc
+        pytest
+        cfn-lint
+        aws-sam-cli
+        git-remote-codecommit
+        awscli
+      - sam --version
+
+  build:
+    commands:
+      - sam validate # validates the default sam template i.e, template.yml|yaml
+      - cfn-lint -t template.yml # validates the linting (check for unused parameters,unwanted dependancies etc...)
+      - cfn_nag -i template.yml --output-format json | jq '.[].file_results.failure_count'| grep  -q '0' # fail if there are any security flaws or open  iam  permissions
+      - sam package --region us-east-1 --template-file template.yml --s3-bucket "${S3}" --output-template-file deploy.yml    > /dev/null 2>&1
+      - aws cloudformation validate-template --template-body file://deploy.yml
+      - sam deploy --region us-east-1 --template-file deploy.yml --stack-name VPS-DEPLOYMENTS --capabilities CAPABILITY_NAMED_IAM --parameter-overrides S3BUCKETNAME="${BACKUPFOLDERNAME}" --no-fail-on-empty-changeset
+      - pytest Pytest/test_PostDeploy.py -s -v

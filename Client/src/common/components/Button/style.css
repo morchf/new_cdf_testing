@@ -1,0 +1,147 @@
+.btn {
+  background-color: #ffffff;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  color: #000000;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5715;
+  padding: 4px 15px;
+  margin: 0px 0px 0px 15px;
+  text-align: center;
+  touch-action: manipulation;
+  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+  white-space: nowrap;
+}
+
+.btn:active {
+  outline: none;
+}
+
+.btn-sm {
+  height: 24px;
+  padding: 0 7px;
+  font-size: 12px;
+}
+
+.btn-md {
+  height: 32px;
+  padding: 4px 15px;
+  font-size: 14px;
+}
+
+.btn-lg {
+  height: 40px;
+  padding: 6.4px 15px;
+  font-size: 16px;
+}
+
+.btn-primary {
+  background-color: #1890ff;
+  color: #ffffff;
+  border-color: #1890ff;
+}
+
+.btn-primary:focus,
+.btn-primary:hover {
+  background-color: #2ea5db;
+  border-color: #2ea5db;
+}
+
+.btn-primary:active {
+  background-color: #0274a8;
+  border-color: #0274a8;
+}
+
+.btn-secondary {
+  background-color: #ffffff;
+  border-color: #d9d9d9;
+}
+
+.btn-secondary:focus,
+.btn-secondary:hover {
+  background-color: #ffffff;
+  border: 1px solid #2ea5db;
+  color: #2ea5db;
+}
+
+.btn-secondary:active {
+  background-color: #ffffff;
+  border: 1px solid #2ea5db;
+  color: #0274a8;
+}
+
+.btn-warning {
+  background-color: #f3b03b;
+  border-color: #d9d9d9;
+  color: #ffffff;
+}
+
+.btn-warning:focus,
+.btn-warning:hover {
+  background-color: #f5bf63;
+  border-color: #f5bf63;
+  color: #ffffff;
+}
+
+.btn-danger {
+  background-color: #f44336;
+  color: #ffffff;
+  border-color: #d9d9d9;
+}
+
+.btn-danger:focus,
+.btn-danger:hover {
+  background-color: #f56359;
+  border-color: #f56359;
+}
+
+.btn-success {
+  background-color: #4caf50;
+  color: #ffffff;
+  border-color: #d9d9d9;
+}
+
+.btn-success:focus,
+.btn-success:hover {
+  background-color: #64b967;
+  border-color: #64b967;
+}
+
+.btn-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.btn-left {
+  float: left;
+}
+
+.btn-right {
+  float: right;
+}
+
+.btn-center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.btn-login {
+  background-color: #0290d4;
+  color: #ffffff;
+  width: 300px;
+}
+
+.btn-login:focus,
+.btn-login:hover {
+  background-color: #2ea5db;
+  border-color: #2ea5db;
+}
+
+.btn-login:active {
+  background-color: #0274a8;
+  border-color: #0274a8;
+}

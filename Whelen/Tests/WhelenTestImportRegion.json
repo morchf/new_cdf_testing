@@ -1,0 +1,11 @@
+{
+    "attributes": {
+        "caCertId": "NULL_CERT",
+        "regionGUID": "WhelenTestImportRegion"
+    },
+    "category": "group",
+    "templateId": "region",
+    "parentPath": "/",
+    "name": "WhelenTestImportRegion",
+    "groupPath": "/WhelenTestImportRegion"
+}

@@ -1,0 +1,76 @@
+.device-assignment-modal .h2-centered {
+  text-align: center;
+  margin: 0px;
+}
+
+.device-assignment-modal .ant-modal-footer {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  margin-bottom: 5px;
+}
+
+.vehicle-assignment-modal-form-general .ant-form-item {
+  margin-left: 3%;
+  margin-bottom: 15px;
+}
+
+.vehicle-code-inputs {
+  margin-bottom: 0px !important;
+}
+
+.or {
+  text-align: center; 
+  margin: 0px;
+  margin-top: 2.5%;
+}
+
+.or:after, .or:before{
+  content: '';
+  display: inline-block;
+  vertical-align: middle;
+  margin-top: 0.80em;
+  height: 0;
+  border-top: groove 2px;
+  width: 18%;
+  position: absolute;
+  margin-right: -100%;
+}
+
+.or:before{
+  margin-left: -18%;
+}
+
+.assign-device-button {
+  color: #0290d4;
+  background-color: white;
+  margin-top: 2.5%;
+  margin-left: 28%;
+  margin-right: 28%;
+  width: 44%;
+}
+
+.dot {
+  display: 'inline-block';
+  height: 8px;
+  width: 8px;
+  margin-right: 8px;
+  border-radius: 50%;
+}
+
+.preemption-switch {
+  display: flex;
+  flex-direction: row !important;
+}
+
+.preemption-switch .ant-col.ant-form-item-label {
+  display: flex;
+  justify-content: center;
+  padding: 0px;
+  margin: 0px;
+  font-weight: bold;
+}
+
+.preemption-switch .ant-col.ant-form-item-label p {
+  margin: 0px;
+}

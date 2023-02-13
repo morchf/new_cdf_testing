@@ -1,0 +1,8 @@
+boto3==1.22.6
+redis==4.2.2
+requests==2.27.1
+pydantic==1.9.1
+requests_aws_sign==0.1.6
+smart-city-platform/CDFAndIoT/Service/FeaturePersistence
+smart-city-platform/CDFAndIoT/Service/AssetLibrary
+smart-city-platform/CDFAndIoT/DataModel/RTRadioMessage

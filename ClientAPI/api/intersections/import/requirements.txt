@@ -1,0 +1,3 @@
+../../../../CDFAndIoT/API
+../../../../CDFAndIoT/Service/AssetLibrary
+pandas==1.5.1

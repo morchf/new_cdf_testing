@@ -1,0 +1,58 @@
+[
+  {
+    "time": "2021-08-04",
+    "route": "1",
+    "direction": "inbound",
+    "earlyPercentage": "0.45",
+    "latePercentage": "0.323",
+    "onTimePercentage": "0.227"
+  },
+  {
+    "time": "2021-08-05",
+    "route": "1",
+    "direction": "inbound",
+    "earlyPercentage": "0.358",
+    "latePercentage": "0.218",
+    "onTimePercentage": "0.424"
+  },
+  {
+    "time": "2021-08-06",
+    "route": "1",
+    "direction": "inbound",
+    "earlyPercentage": "0.412",
+    "latePercentage": "0.501",
+    "onTimePercentage": "0.087"
+  },
+  {
+    "time": "2021-08-07",
+    "route": "1",
+    "direction": "inbound",
+    "earlyPercentage": "0.295",
+    "latePercentage": "0.16",
+    "onTimePercentage": "0.545"
+  },
+  {
+    "time": "2021-08-08",
+    "route": "1",
+    "direction": "inbound",
+    "earlyPercentage": "0.42",
+    "latePercentage": "0.358",
+    "onTimePercentage": "0.222"
+  },
+  {
+    "time": "2021-08-09",
+    "route": "1",
+    "direction": "inbound",
+    "earlyPercentage": "0.145",
+    "latePercentage": "0.389",
+    "onTimePercentage": "0.466"
+  },
+  {
+    "time": "2021-08-10",
+    "route": "1",
+    "direction": "inbound",
+    "earlyPercentage": "0.226",
+    "latePercentage": "0.323",
+    "onTimePercentage": "0.451"
+  }
+]

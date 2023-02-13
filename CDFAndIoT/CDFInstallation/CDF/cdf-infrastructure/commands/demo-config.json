@@ -1,0 +1,21 @@
+{
+  "aws": {
+    "s3": {
+      "bucket": "cdf-957905153352-us-west-2",
+      "prefix": "commands/"
+    },
+    "iot": {
+      "endpoint": ""
+    }
+  },
+  "tmpdir": "/tmp",
+  "cors": {
+    "origin": "*"
+  },
+  "assetLibrary": {
+    "apiFunctionName": ""
+  },
+  "provisioning": {
+    "apiFunctionName": ""
+  }
+}

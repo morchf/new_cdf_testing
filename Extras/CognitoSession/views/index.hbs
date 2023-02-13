@@ -1,0 +1,14 @@
+<h1>Welcome!</h1>
+
+{{#if loggedIn}}
+
+<p>You are signed in. <a href="/logout">Sign out.</a></p>
+<p>View your <a href="/user">user profile.</a></p>
+<p>You can still navigate to <a href="/public">public pages.</a></p>
+
+{{else}}
+
+<p>You are not signed in. <a href="/login">Sign in.</a></p>
+<p>You can still navigate to <a href="/public">public pages.</a></p>
+
+{{/if}}

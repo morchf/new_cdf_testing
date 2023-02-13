@@ -1,0 +1,14 @@
+.user-menu__item {
+  text-align: center;
+}
+
+.user-menu__title {
+  text-transform: capitalize;
+  margin-bottom: 0em;
+  margin-right: 0.5em;
+}
+
+a.user-menu__dropdown {
+  max-height: 30px;
+  z-index: 1000;
+}

@@ -1,0 +1,45 @@
+{
+  "messageId": "00000",
+  "siteId": "CEI_EtE_TestRegion",
+  "agencyId": "CEI_EtE_CEIAgencyTwo",
+  "unitTypeBROKENKEY": [
+    "UnitType.One",
+    "UnitType.Two"
+  ],
+  "unitIDBROKENKEY": [
+    "Unit.One",
+    "Unit.Two",
+    "Unit.Three",
+    "Unit.Four",
+    "Unit.Five",
+    "Unit.Six",
+    "Unit.Seven",
+    "Unit.Eight",
+    "Unit.Nine",
+    "Unit.Ten"
+  ],
+  "incidentTypeBROKENKEY": [
+    "UnitType.One",
+    "UnitType.Two",
+    "UnitType.Three",
+    "UnitType.Four",
+    "UnitType.Five",
+    "UnitType.Six"
+  ],
+  "incidentStatusBROKENKEY": [
+    "Incident.Pending",
+    "Incident.Open",
+    "Incident.Closed"
+  ],
+  "incidentPriorityBROKENKEY": [
+    "Critical",
+    "High",
+    "Medium",
+    "Low"
+  ],
+  "unitStatusBROKENKEY": [
+    "Unit.Driving",
+    "Unit.Exploded",
+    "Unit.AAAAARGH!!!"
+  ]
+}

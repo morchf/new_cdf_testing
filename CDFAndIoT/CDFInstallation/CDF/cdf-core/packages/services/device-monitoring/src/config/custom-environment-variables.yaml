@@ -1,0 +1,10 @@
+aws:
+  accountId: AWS_ACCOUNT_ID
+  region: AWS_REGION
+
+assetLibrary:
+  mode: lambda
+  apiFunctionName:  DEVICE_MONITORING_ASSETLIBRARY_APIFUNCTIONNAME
+
+logging:
+  level: DEVICE_MONITORING_LOGGING_LEVEL

@@ -1,0 +1,27 @@
+{
+  "attributes": {
+    "city": "CEI_EtE_Testing",
+    "state": "None",
+    "timezone": "Central",
+    "agencyCode": 111,
+    "agencyGUID": "null",
+    "agencyID": "23",
+    "caCertId": "null",
+    "priority": "High",
+    "CEISiteIDGuid": "CEI_EtE_TestRegion",
+    "CEIAgencyName": "CEI_EtE_CEIAgency",
+    "CEIEVPTimeoutSecs": 300,
+    "CEIEVPConditional": "(((('EN' == determine['attributes']['CEIUnitStatus'])) and (('1' == determine['attributes']['CEIIncidentPriority']) or ('2' == determine['attributes']['CEIIncidentPriority']))))",
+    "CEIUnitTypeConfig": "",
+    "CEIUnitIDConfig": "",
+    "CEIIncidentTypeConfig": "",
+    "CEIIncidentStatusConfig": "",
+    "CEIIncidentPriorityConfig": "",
+    "CEIUnitStatusConfig": ""
+  },
+  "category": "group",
+  "templateId": "ceiagency",
+  "parentPath": "/CEI_EtE_TestRegion",
+  "name": "CEI_EtE_CEIAgency",
+  "groupPath": "/CEI_EtE_TestRegion/CEI_EtE_CEIAgency"
+}

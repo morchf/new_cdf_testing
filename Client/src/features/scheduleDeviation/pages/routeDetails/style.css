@@ -1,0 +1,20 @@
+.schedule-deviation-route-details {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+main {
+  background-color: #f5f5fa;
+  padding: 24px 30px 160px 24px;
+}
+
+.map-container {
+  position: relative;
+  border-radius: 5px;
+}
+
+.map-container .map-settings {
+  position: absolute;
+  z-index: 999;
+}

@@ -1,0 +1,27 @@
+{
+  "attributes": {
+    "city": "CEI_RTR_CEIAgency",
+    "state": "MN",
+    "timezone": "Central",
+    "agencyCode": 23,
+    "agencyGUID": "null",
+    "agencyID": "23",
+    "caCertId": "null",
+    "priority": "High",
+    "CEISiteIDGuid": "CEI_RTR_CEIAgency",
+    "CEIAgencyName": "CEI_RTR_CEIAgency",
+    "CEIEVPTimeoutSecs": 300,
+    "CEIEVPConditional": "(((('EN' == determine['attributes']['CEIUnitStatus'])) and (('1' == determine['attributes']['CEIIncidentPriority']) or ('2' == determine['attributes']['CEIIncidentPriority']))))",
+    "CEIUnitTypeConfig": "",
+    "CEIUnitIDConfig": "",
+    "CEIIncidentTypeConfig": "",
+    "CEIIncidentStatusConfig": "",
+    "CEIIncidentPriorityConfig": "",
+    "CEIUnitStatusConfig": ""
+  },
+  "category": "group",
+  "templateId": "ceiagency",
+  "parentPath": "/CEI_RTR_Region",
+  "name": "CEI_RTR_CEIAgency",
+  "groupPath": "/CEI_RTR_Region/CEI_RTR_CEIAgency"
+}

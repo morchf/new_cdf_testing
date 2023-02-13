@@ -1,0 +1,997 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Description: AWS SAM template with API defined in an external Swagger file along with Lambda integrations to deploy VPS infrastructure(Should be executed once per account)
+Metadata:
+  cfn-lint:
+    config:
+      ignore_checks:
+      - I3042
+      - I3011
+Parameters:
+  S3BUCKETNAME:
+    Type: String
+    Description: S3 folder to take backups of the efs filesystem
+  MACCODE:
+    Type: String
+    Default: "CC:69:B0:00:00:00"
+    Description: Starting mac address
+  DOCKERREPONAME:
+    Type: String
+    Default: smartcity
+    Description: VPS Docker Image repo name of smartcity platform
+  DynamoTableNameMAC:
+    Type: String
+    Default: globalMacVps
+    Description: Dynamo table to hold all the global mac and vps serial numbers
+  DynamoTableNameCodeBuild:
+    Type: String
+    Default: codeBuildDeploy
+    Description: Dynamo table to hold all the agency vpc details
+  EC2PROFILENAME:
+    Type: String
+    Default: GTTVPSINSTANCEPROFILE
+    Description: IAM role for ec2 servers
+  ROOTINSTANCENAME:
+    Type: String
+    Default: ROOT-GTT-INSTANCE-ROLE
+    Description: IAM instance role for the EC2 servers
+  VPSSNSFAIL:
+    Type: String
+    Default: VPS-CREATE-FAILED
+    Description: SNS topic to send failed notification
+  CODEREPONAME:
+    Type: String
+    Default: GTTVPSDEPLOYMENT
+    Description: Repository name for the code commit project
+  CODEBUILDNAME:
+    Type: String
+    Default: CODECOMMITPROJECT
+    Description: code build name for the code commit project
+Resources:
+  AWSCloudWatchRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - apigateway.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs
+  AWSAPIAccount:
+    Type: AWS::ApiGateway::Account
+    Properties:
+      CloudWatchRoleArn: !GetAtt AWSCloudWatchRole.Arn
+  ApiGatewayApi:
+    Type: AWS::Serverless::Api
+    DependsOn: PREDEPLOYFUNCTIONINVOKE
+    Properties:
+      BinaryMediaTypes:
+        - application/csv
+      MethodSettings:
+        - DataTraceEnabled: true
+          HttpMethod: "*"
+          LoggingLevel: ERROR
+          ResourcePath: /*
+          MetricsEnabled: true
+      StageName: Prod
+      Cors:
+        AllowMethods: "'*'"
+        AllowHeaders: "'*'"
+        AllowOrigin: "'*'"
+      DefinitionBody:
+        openapi: 3.0.1
+        info:
+          title: VPSAUTOMATIONS
+        x-amazon-apigateway-binary-media-types:
+          - application/csv
+        paths:
+          /cms/devices/deviceConfig:
+            post:
+              summary: Import csv file and perform import utility function
+              requestBody:
+                description: A JSON object contains dockerStatus and VPSname
+                required: true
+                content:
+                  application/csv:
+                    schema:
+                      $ref: "#/components/schemas/VPSIMPORTUTILITY"
+              responses:
+                "200":
+                  description: Import success
+                "400":
+                  description: Another Import in progress
+                "500":
+                  description: Resource unavailable
+              x-amazon-apigateway-integration:
+                uri: !Sub
+                  - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${FunctionName}/invocations
+                  - FunctionName: !GetAtt IMPORTCSVVALIDATE.Arn
+                passthroughBehavior: when_no_match
+                requestParameters:
+                  integration.request.header.X-Amz-Invocation-Type: "'RequestResponse'"
+                httpMethod: POST
+                type: aws_proxy
+          /vps:
+            put:
+              summary: Reset VPS device status
+              requestBody:
+                description: A JSON object contains dockerStatus and VPSname
+                required: true
+                content:
+                  application/json:
+                    schema:
+                      $ref: "#/components/schemas/VPSUPDATEMODEL"
+              responses:
+                "200":
+                  description: Request Successful
+                  headers:
+                    Access-Control-Allow-Headers:
+                      schema:
+                        type: string
+                        default: "*"
+                    Access-Control-Allow-Methods:
+                      schema:
+                        type: string
+                        default: "*"
+                    Access-Control-Allow-Origin:
+                      schema:
+                        type: string
+                        default: "*"
+                "400":
+                  description: Invalid input parameters
+                "404":
+                  description: Resource not found
+              x-amazon-apigateway-integration:
+                uri: !Sub
+                  - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${FunctionName}/invocations
+                  - FunctionName: !GetAtt VPSUPDATE.Arn
+                responses:
+                  default:
+                    statusCode: "200"
+                requestParameters:
+                  integration.request.header.X-Amz-Invocation-Type: "'RequestResponse'"
+                passthroughBehavior: when_no_match
+                httpMethod: POST
+                contentHandling: CONVERT_TO_TEXT
+                type: aws_proxy
+            post:
+              summary: Creates mac address and device names for new  VPS
+              requestBody:
+                description: A JSON object contains customer name and vps count
+                required: true
+                content:
+                  application/json:
+                    schema:
+                      $ref: "#/components/schemas/VPSCREATEMODEL"
+              responses:
+                "200":
+                  description: Request Successful
+                  headers:
+                    Access-Control-Allow-Headers:
+                      schema:
+                        type: string
+                        default: "*"
+                    Access-Control-Allow-Methods:
+                      schema:
+                        type: string
+                        default: "*"
+                    Access-Control-Allow-Origin:
+                      schema:
+                        type: string
+                        default: "*"
+                "400":
+                  description: Invalid input parameters
+                "404":
+                  description: Resource not found
+                "429":
+                  description: Too many requests of VPS or Crossed the biweekly threshold (9900)
+              x-amazon-apigateway-integration:
+                uri: !Sub
+                  - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${FunctionName}/invocations
+                  - FunctionName: !GetAtt VPSCREATE.Arn
+                responses:
+                  default:
+                    statusCode: "200"
+                requestParameters:
+                  integration.request.header.X-Amz-Invocation-Type: "'RequestResponse'"
+                passthroughBehavior: when_no_match
+                httpMethod: POST
+                contentHandling: CONVERT_TO_TEXT
+                type: aws_proxy
+            get:
+              summary: Reads all the records that belongs to a particular customerName
+              parameters:
+                - name: customerName
+                  in: query
+                  required: true
+                  schema:
+                    type: string
+              responses:
+                "200":
+                  description: Request Successful
+                  headers:
+                    Access-Control-Allow-Headers:
+                      schema:
+                        type: string
+                        default: "*"
+                    Access-Control-Allow-Methods:
+                      schema:
+                        type: string
+                        default: "*"
+                    Access-Control-Allow-Origin:
+                      schema:
+                        type: string
+                        default: "*"
+                  content:
+                    application/json:
+                      schema:
+                        $ref: "#/components/schemas/get200Response"
+                "400":
+                  description: Invalid input parameters
+                "404":
+                  description: Resource not available
+              x-amazon-apigateway-integration:
+                uri: !Sub
+                  - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${FunctionName}/invocations
+                  - FunctionName: !GetAtt VPSREAD.Arn
+                responses:
+                  default:
+                    statusCode: "200"
+                requestParameters:
+                  integration.request.header.X-Amz-Invocation-Type: "'RequestResponse'"
+                passthroughBehavior: when_no_match
+                httpMethod: POST
+                contentHandling: CONVERT_TO_TEXT
+                type: aws_proxy
+        components:
+          schemas:
+            VPSUPDATEMODEL:
+              properties:
+                VPSName:
+                  type: string
+                  description: VPS device name
+                dockerStatus:
+                  type: string
+                  enum:
+                    - YES
+                    - NO
+                    - ACTIVE
+                    - INACTIVE
+                    - RESTART
+                  description: "ACTIVE:- Keep VPS/Docker in running state , INACTIVE:- Keep VPS/Docker in stop state or RESTART:-VPS/Docker to restart, YES:- Delete Docker"
+              required:
+                - VPSName
+                - dockerStatus
+            VPSCREATEMODEL:
+              properties:
+                customer:
+                  type: string
+                  description: Agency name of the customer requesting for new VPS (aka DOCKERS)
+                number:
+                  type: number
+                  description: Number of dockers that needs to be provisioned
+                deviceprefix:
+                  type: string
+                  description: "VPS prefix that should be created ex V764,2100,..."
+              required:
+                - customer
+                - number
+                - deviceprefix
+            VPSIMPORTUTILITY:
+              properties:
+                files:
+                  type: string
+                  format: binary
+            get200Response:
+              type: array
+              items:
+                type: object
+                properties:
+                  primaryKey:
+                    type: number
+                    description: Number format of the hexcode
+                  VPS:
+                    type: string
+                    description: Device serial name
+                  GTTmac:
+                    type: string
+                    description: unique mac code for the serial numbers
+                  customerName:
+                    type: string
+                    description: Agency Name
+                  deviceStatus:
+                    type: string
+                    enum:
+                      - ACTIVE
+                      - INACTIVE
+                      - RESTART
+                    description: "ACTIVE docker in running status, INACTIVE docker to stopped , RESTART docker to restarted"
+                  dockerFinished:
+                    type: string
+                    description: Last time when the docker stopped (time is in string format because the dynamodb does not supports the time format)
+                  dockerIP:
+                    type: string
+                    description: IP address of the docker host
+                  dockerPort:
+                    type: number
+                    description: Port number of the docker
+                    minimum: 2000
+                  dockerStart:
+                    type: string
+                    description: Docker starting time (time is in string format because the dynamodb does not supports the time format)
+                  dockerStatus:
+                    type: string
+                    description: Docker status update from docker api
+                  lastCheck:
+                    type: string
+                    description: Time of last status check of docker (time is in string format because the dynamodb does not supports the time format)
+                  servername:
+                    type: string
+                    description: AWS EC2 server name
+                  vpsAvailability:
+                    type: string
+                    enum:
+                      - AVAILABLE
+                      - INUSE
+                    description: "AVAILABLE docker has not been updated with VPS location details, INUSE VPS location details has been updated"
+                  macCode:
+                    type: number
+                    description: Place holder for the next primary key
+  DynamoTable:
+    Type: AWS::DynamoDB::Table
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: primaryKey
+          AttributeType: "N"
+        - AttributeName: vpsAvailability
+          AttributeType: S
+        - AttributeName: customerName
+          AttributeType: S
+        - AttributeName: VPS
+          AttributeType: S
+      KeySchema:
+        - AttributeName: primaryKey
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 50
+        WriteCapacityUnits: 70
+      TableName: !Ref DynamoTableNameMAC
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      GlobalSecondaryIndexes:
+        - IndexName: vpsAvailabilityGSI
+          KeySchema:
+            - AttributeName: customerName
+              KeyType: HASH
+            - AttributeName: vpsAvailability
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 10
+            WriteCapacityUnits: 10
+        - IndexName: vpsSearch
+          KeySchema:
+          - AttributeName: VPS
+            KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 10
+            WriteCapacityUnits: 10
+      Tags:
+        - Key: DynamoDBKey
+          Value: DynamoDBValue
+  codeBuildDynamoTable:
+    Type: AWS::DynamoDB::Table
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: customerName
+          AttributeType: S
+      KeySchema:
+        - AttributeName: customerName
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      TableName: !Ref DynamoTableNameCodeBuild
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: DynamoDBKey
+          Value: DynamoDBValue
+  CFNPREDEPLOY:
+    Type: AWS::Lambda::Function
+    DependsOn: RootInstanceProfile
+    Properties:
+      Code:
+        ZipFile: |
+          # ---use the below command to delete the resources created using the customResources
+          # import boto3
+          # [boto3.resource('s3').Bucket(x.name).delete() for x in boto3.resource('s3').buckets.all() if "gtt-deploy-vps" in x.name ]
+          # regToDeploy=list(filter(lambda x: x[:2] in ['us'] , boto3.session.Session().get_available_regions('logs')))
+          # NametoDEl='GTT-VPS-FAILS'
+          # backupvltN="dynamoProd"
+          # x= boto3.client('backup').list_recovery_points_by_backup_vault(BackupVaultName=backupvltN)['RecoveryPoints']
+          # for item in x:
+          #     boto3.client('backup').delete_recovery_point(
+          #                 BackupVaultName=backupvltN,
+          #                 RecoveryPointArn=item['RecoveryPointArn']
+          #             )
+          # for itemRGN in regToDeploy:
+          #   try:
+          #       boto3.client('logs',region_name=itemRGN).delete_log_group(logGroupName=NametoDEl)
+          #   except:
+          #       pass
+          #   try:
+          #       boto3.client('sns',region_name=itemRGN).delete_topic(TopicArn="arn:aws:sns:"+itemRGN+':'+boto3.client('sts').get_caller_identity().get('Account')+':'+NametoDEl)
+          #   except:
+          #       pass
+          #   try:
+          #       boto3.client('ssm',region_name=itemRGN).delete_parameter(Name="github_test_read")
+          #   except:
+          #     pass
+          import boto3
+          import os
+          import uuid
+          import json
+          import cfnresponse
+          def lambda_handler(event, context):
+              def createPredeploy(regionName,s3Filename):
+                  if regionName=='us-east-1': boto3.resource('s3').create_bucket(Bucket=s3Filename)
+                  else: boto3.resource('s3',region_name=regionName).create_bucket(Bucket=s3Filename, CreateBucketConfiguration={'LocationConstraint': regionName})
+                  boto3.client('logs',region_name=regionName).create_log_group(logGroupName='GTT-VPS-FAILS')
+                  boto3.client('sns',region_name=regionName).create_topic(Name='GTT-VPS-FAILS')
+              try:
+                  regToDeploy= list(filter(lambda x: x[:2] in ['us'] , boto3.session.Session().get_available_regions('s3')))
+                  resources=[(x,'gtt-deploy-vps-'+x+'-'+uuid.uuid4().hex[:5]+uuid.uuid4().hex[-4:]) for x in regToDeploy]
+                  for x in resources: createPredeploy(x[0],x[1])
+                  boto3.resource('dynamodb',region_name='us-east-1').Table('codeBuildDeploy').put_item(Item={'customerName':'GTT','S3Location':[str(x[0]+'##'+x[1]) for x in resources],'IamName':os.environ['EC2ROOTPROFILE'],'S3BACKUPFOLDER':os.environ['S3BACKUPFOLDER']})
+                  responseData = {}
+                  responseData['Data'] = "SUCCESS"
+                  cfnresponse.send(event, context, cfnresponse.SUCCESS, responseData, "CustomResourcePhysicalID")
+              except BaseException as error :
+                  responseData = {}
+                  responseData['Data'] = "ERROR"
+                  cfnresponse.send(event, context, cfnresponse.FAILED, responseData, "CustomResourcePhysicalID")
+      FunctionName: gttvpscfnpredeploy
+      Handler: index.lambda_handler
+      Runtime: python3.7
+      Timeout: 60
+      Role: !GetAtt LambdaRole.Arn
+      Environment:
+        Variables:
+          EC2ROOTPROFILE: !Ref ROOTINSTANCENAME
+          S3BACKUPFOLDER: !Ref S3BUCKETNAME
+  PREDEPLOYFUNCTIONINVOKE:
+    Type: AWS::CloudFormation::CustomResource
+    Version: "1.0"
+    Properties:
+      ServiceToken: !GetAtt CFNPREDEPLOY.Arn
+  APILogGroup:
+    Type: AWS::Logs::LogGroup
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+    Properties:
+      LogGroupName: API-VPS-LOGS
+      RetentionInDays: 60
+  LambdaPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: F5
+            reason: Allowing to view Secrets manager
+    Properties:
+      Path: /
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Resource: "*"
+            Action:
+              - secretsmanager:Describe*
+              - secretsmanager:Get*
+              - secretsmanager:List*
+          - Effect: Allow
+            Action: dynamodb:*
+            Resource: !Sub
+              - arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${TableName}
+              - TableName: !Ref DynamoTableNameMAC
+          - Effect: Allow
+            Action: dynamodb:*
+            Resource: !Sub
+              - arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${TableName}
+              - TableName: !Ref codeBuildDynamoTable
+          - Effect: Allow
+            Action: dynamodb:*
+            Resource: !Sub
+              - arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${TableName}/index/*
+              - TableName: !Ref DynamoTableNameMAC
+          - Effect: Allow
+            Action:
+              - s3:CreateBucket
+              - logs:CreateLogGroup
+              - sns:CreateTopic
+            Resource: "*"
+          - Effect: Allow
+            Action: codebuild:*
+            Resource: !Sub
+              - arn:aws:codebuild:${AWS::Region}:${AWS::AccountId}:project/${projectName}
+              - projectName: !Ref CODEBUILDNAME
+          - Effect: Allow
+            Action: codecommit:*
+            Resource: !Sub
+              - arn:aws:codecommit:${AWS::Region}:${AWS::AccountId}:${repoName}
+              - repoName: !Ref CODEREPONAME
+          - Effect: Allow
+            Action: ec2:Describe*
+            Resource: "*"
+          - Effect: Allow
+            Action: ssm:ListCommands
+            Resource: !Sub arn:aws:ssm:*:${AWS::AccountId}:*
+          - Effect: Allow
+            Action:
+              - iam:GetRole
+              - iam:PassRole
+            Resource: !Sub
+              - arn:aws:iam::${AWS::AccountId}:role/${ec2Role}
+              - ec2Role: !Ref EC2PROFILENAME
+          - Effect: Allow
+            Action: ssm:SendCommand
+            Resource: arn:aws:ssm:*:*:document/AWS-RunShellScript
+          - Effect: Allow
+            Action: ssm:SendCommand
+            Resource: arn:aws:ec2:*:*:instance/*
+          - Effect: Allow
+            Action: sns:Publish
+            Resource: !Ref VPSSNSFailedTopic
+          - Effect: Allow
+            Action: ssm:PutParameter
+            Resource: "*"
+          - Effect: Allow
+            Action: secretsmanager:GetSecretValue
+            Resource: "*"
+          - Effect: Allow
+            Action: states:*
+            Resource: "*"
+            Condition:
+              StringEquals:
+                aws:ResourceTag/stepFunTag: GTTVPS
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: GTTVPSLAMBDAROLE
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+                - apigateway.amazonaws.com
+                - ssm.amazonaws.com
+                - ec2.amazonaws.com
+                - codebuild.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - !Ref LambdaPolicy
+        - arn:aws:iam::aws:policy/IAMReadOnlyAccess
+        - arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM
+  GTTVPSAGENCYREGISTER:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: VpsAgencyRegister/
+      Handler: App.lambda_handler
+      Runtime: python3.7
+      Timeout: 3
+      FunctionName: "gttvpsagencyregister"
+      Role: !GetAtt LambdaRole.Arn
+  VPSDEPLOY:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: VpsDeploy/
+      FunctionName: gttvpsdeploy
+      Handler: App.lambda_handler
+      Runtime: python3.7
+      Timeout: 60
+      Role: !GetAtt LambdaRole.Arn
+  VPSLOCATIOUPDATE:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: VpsLocationUpdate/
+      FunctionName: gttvpslocationupdate
+      Handler: App.lambda_handler
+      Runtime: python3.7
+      Timeout: 60
+      Role: !GetAtt LambdaRole.Arn
+  VPSREAD:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: VpsRead/
+      Handler: App.lambda_handler
+      Runtime: python3.7
+      Timeout: 150
+      FunctionName: gttvpsread
+      Role: !GetAtt LambdaRole.Arn
+      Events:
+        ProxyApiRoot:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGatewayApi
+            Path: /vps
+            Method: get
+  VPSUPDATE:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: VpsUpdate/
+      Handler: App.lambda_handler
+      Runtime: python3.7
+      Timeout: 60
+      Role: !GetAtt LambdaRole.Arn
+      FunctionName: gttvpsupdate
+      Events:
+        ProxyApiRoot:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGatewayApi
+            Path: /vps
+            Method: put
+  VPSCREATE:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: VpsCreate/
+      Handler: App.lambda_handler
+      Runtime: python3.7
+      Timeout: 180
+      Environment:
+        Variables:
+          CODE_BUILD_PROJECT: !Ref CODEBUILDNAME
+      FunctionName: gttvpscreate
+      Role: !GetAtt LambdaRole.Arn
+      Events:
+        ProxyApiRoot:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGatewayApi
+            Path: /vps
+            Method: post
+  PYODBCLAYER:
+    Properties:
+      CompatibleRuntimes:
+        - python3.7
+      ContentUri: VpsPythonLayers/pyodbc-layer.zip
+      RetentionPolicy: Delete
+    Type: AWS::Serverless::LayerVersion
+  CFNRESPONSELAYER:
+    Properties:
+      CompatibleRuntimes:
+        - python3.7
+      ContentUri: VpsPythonLayers/cfnresponse-layer.zip
+      RetentionPolicy: Delete
+    Type: AWS::Serverless::LayerVersion
+  CODECOPY:
+    DependsOn:
+      - CODECOMMIT
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: CodeCommitCopy/
+      FunctionName: gttcodecopy
+      Handler: App.lambda_handler
+      Runtime: python3.7
+      Timeout: 60
+      Role: !GetAtt LambdaRole.Arn
+      Environment:
+        Variables:
+          REPONAME: !Ref CODEREPONAME
+          MACCODE: !Ref MACCODE
+      Layers:
+        - !Ref CFNRESPONSELAYER
+  CODECOPYFUNCTIONINVOKE:
+    Type: AWS::CloudFormation::CustomResource
+    Version: "1.0"
+    Properties:
+      ServiceToken: !GetAtt CODECOPY.Arn
+  IMPORTCSVVALIDATE:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: importvalidatecsv
+      CodeUri: ImportCsvValidate/
+      Handler: App.lambda_handler
+      Environment:
+        Variables:
+          CodeDeployTable: !Ref DynamoTableNameCodeBuild
+          VpsTable: !Ref DynamoTableNameMAC
+          ImportUtilityStepFunctionArn: !Ref StepFunctionExecute
+      Layers:
+        - !Ref PYODBCLAYER
+      Role: !GetAtt LambdaRole.Arn
+      Runtime: python3.7
+      Timeout: 20
+      Events:
+        ProxyApiRoot:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGatewayApi
+            Path: /cms/devices/deviceConfig
+            Method: post
+  CMSSQLWRITE:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: cmssqlwrite
+      CodeUri: VpsSqlWrite/
+      Handler: App.lambda_handler
+      Environment:
+        Variables:
+          CodeDeployTable: !Ref DynamoTableNameCodeBuild
+          VpsTable: !Ref DynamoTableNameMAC
+      Layers:
+        - !Ref PYODBCLAYER
+      Role: !GetAtt LambdaRole.Arn
+      Runtime: python3.7
+      Timeout: 300
+  VPSSNSFailedTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Ref VPSSNSFAIL
+  CodeBuildFailRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: CodeBuildFailNotify
+      EventPattern:
+        source:
+          - aws.codebuild
+        detail-type:
+          - CodeBuild Build State Change
+        detail:
+          build-status:
+            - FAILED
+          project-name:
+            - !Ref CODEBUILDNAME
+      State: ENABLED
+      Targets:
+        - Arn: !Ref VPSSNSFailedTopic
+          Id: FailedBuilds
+  StepFunctionVPSPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: F5
+            reason: Suppressing the error message because the policy permission allow to execute the state machines only with the tag attachment
+    Properties:
+      Path: /
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - lambda:InvokeAsync
+              - lambda:InvokeFunction
+            Resource: !GetAtt CMSSQLWRITE.Arn
+          - Effect: Allow
+            Action:
+              - lambda:InvokeAsync
+              - lambda:InvokeFunction
+            Resource: !GetAtt VPSLOCATIOUPDATE.Arn
+          - Effect: Allow
+            Action: sns:Publish
+            Resource: !Ref VPSSNSFailedTopic
+          - Effect: Allow
+            Action: states:*
+            Resource: "*"
+            Condition:
+              StringEquals:
+                aws:ResourceTag/stepFunTag: GTTVPS
+  StepFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - states.amazonaws.com
+                - events.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - !Ref StepFunctionVPSPolicy
+  StepFunctionExecute:
+    Type: AWS::StepFunctions::StateMachine
+    Properties:
+      StateMachineName: GTT-VPS-IMPORT-CSV
+      RoleArn: !GetAtt StepFunctionRole.Arn
+      Tags:
+        - Key: stepFunTag
+          Value: GTTVPS
+      DefinitionString: !Sub
+        - |-
+          {
+          "StartAt": "writeSQL",
+          "States": {
+              "writeSQL": {
+                  "Type": "Task",
+                  "Resource":  "${sqlwrite}",
+                  "Catch": [{
+                      "ErrorEquals": ["States.ALL"],
+                      "Next": "notify_task"
+                  }],
+                  "Next": "updateLocation"
+              },
+              "updateLocation": {
+                  "Type": "Task",
+                  "Resource": "${vpsLocUpdate}",
+                  "Catch": [{
+                      "ErrorEquals": ["States.ALL"],
+                      "Next": "notify_task"
+                  }],
+                  "End": true
+              },
+              "notify_task": {
+                  "Type": "Task",
+                  "Resource": "arn:aws:states:::sns:publish",
+                  "Parameters": {
+                      "Message": "step function failed job",
+                      "TopicArn": "${vpsFails}"
+                  },
+                  "End": true
+                }
+              }
+          }
+        - sqlwrite: !GetAtt CMSSQLWRITE.Arn
+          vpsLocUpdate: !GetAtt VPSLOCATIOUPDATE.Arn
+          vpsFails: !Sub
+            - arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:${vpssns}
+            - vpssns: !Ref VPSSNSFAIL
+  CODECOMMIT:
+    Type: AWS::CodeCommit::Repository
+    Properties:
+      RepositoryName: !Ref CODEREPONAME
+      RepositoryDescription: VPS DELPLOYMENTS
+  CODEPROJECT:
+    DependsOn: CODECOMMIT
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Ref CODEBUILDNAME
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/standard:4.0
+        Type: LINUX_CONTAINER
+      Source:
+        Type: CODECOMMIT
+        Location: !Sub
+          - https://git-codecommit.${AWS::Region}.amazonaws.com/v1/repos/${reponame}
+          - reponame: !Ref CODEREPONAME
+        BuildSpec: Buildspec.yml
+      ServiceRole: !Ref CodeBuildRole
+      Artifacts:
+        Type: NO_ARTIFACTS
+  CodeBuildRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - codebuild.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AdministratorAccess
+  SsmPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: F5
+            reason: "creating logs , accessing ecr and decscribing ec2 states are essential on all the resources"
+    Properties:
+      Path: /
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: dynamodb:*
+            Resource: !Sub
+              - arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${TableName}
+              - TableName: !Ref DynamoTableNameMAC
+          - Effect: Allow
+            Action: dynamodb:*
+            Resource: !Sub
+              - arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${TableName}
+              - TableName: !Ref codeBuildDynamoTable
+          - Effect: Allow
+            Action: sns:Publish
+            Resource: arn:aws:sns:*:*:GTT-VPS-FAILS
+          - Effect: Allow
+            Action: s3:*
+            Resource: !Sub
+              - arn:aws:s3:::${s3Name}
+              - s3Name: !Ref S3BUCKETNAME
+          - Effect: Allow
+            Action: s3:*
+            Resource: !Sub
+              - arn:aws:s3:::${s3Name}/*
+              - s3Name: !Ref S3BUCKETNAME
+          - Effect: Allow
+            Action: ecr:*
+            Resource: !Sub
+              - arn:aws:ecr:${AWS::Region}:${AWS::AccountId}:repository/${RepoName}
+              - RepoName: !Ref DOCKERREPONAME
+          - Effect: Allow
+            Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:DescribeLogStreams
+              - logs:PutLogEvents
+            Resource: "*"
+          - Effect: Allow
+            Action:
+              - ec2:DescribeInstances
+              - ec2:DescribeImages
+              - ec2:DescribeTags
+            Resource: "*"
+          - Effect: Allow
+            Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:DescribeLogStreams
+              - logs:PutLogEvents
+            Resource: "*"
+          - Effect: Allow
+            Action: ssm:GetParameters
+            Resource: "*"
+            Condition:
+              StringEquals:
+                aws:ResourceTag/secret: VPS
+          - Effect: Allow
+            Action:
+              - "codecommit:GitPull"
+            Resource: !Sub "arn:aws:codecommit:${AWS::Region}:${AWS::AccountId}:GTTVPSDEPLOYMENT"
+          - Effect: Allow
+            Action:
+              - iot:DescribeEndpoint
+            Resource: "*"
+  SsmRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Ref EC2PROFILENAME
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ssm.amazonaws.com
+                - ec2.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - !Ref SsmPolicy
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+        - arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role
+  RootInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      InstanceProfileName: !Ref ROOTINSTANCENAME
+      Path: /
+      Roles:
+        - !Ref SsmRole

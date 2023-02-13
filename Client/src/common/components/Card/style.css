@@ -1,0 +1,23 @@
+.card {
+  padding: none;
+
+  border-radius: 0.5rem;
+  background-color: var(--fg);
+  box-shadow: var(--card-shadow);
+  border-radius: var(--card-radius);
+  overflow: hidden;
+}
+
+/** paddingSize */
+
+.card--padding-small {
+  padding: 0.5rem;
+}
+
+.card--padding-medium {
+  padding: 1rem;
+}
+
+.card--padding-large {
+  padding: 1.5rem;
+}

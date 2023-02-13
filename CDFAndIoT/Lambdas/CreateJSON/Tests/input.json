@@ -1,0 +1,110 @@
+{
+    "name": "create-json-modified",
+    "input": {
+      "version": "0",
+      "id": "14e2e059-7274-aa01-d736-eeae60b91aa3",
+      "detail-type": "AWS API Call via CloudTrail",
+      "source": "aws.s3",
+      "account": "083011521439",
+      "time": "2020-07-10T17:39:48Z",
+      "region": "us-west-2",
+      "resources": [],
+      "detail": {
+        "eventVersion": "1.07",
+        "userIdentity": {
+          "type": "IAMUser",
+          "principalId": "AIDARGU67JOP5STLNRGR4",
+          "arn": "arn:aws:iam::083011521439:user/ryan.kinnucan",
+          "accountId": "083011521439",
+          "accessKeyId": "ASIARGU67JOPQMS2BF6Z",
+          "userName": "ryan.kinnucan",
+          "sessionContext": {
+            "attributes": {
+              "creationDate": "2020-07-10T12:32:15Z",
+              "mfaAuthenticated": "false"
+            }
+          }
+        },
+        "eventTime": "2020-07-10T17:39:48Z",
+        "eventSource": "s3.amazonaws.com",
+        "eventName": "PutObject",
+        "awsRegion": "us-west-2",
+        "sourceIPAddress": "165.225.0.81",
+        "userAgent": "[Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36 Edge/18.18363]",
+        "requestParameters": {
+          "X-Amz-Date": "20200710T173947Z",
+          "bucketName": "gtt-csv-bucket-contractor",
+          "X-Amz-Algorithm": "AWS4-HMAC-SHA256",
+          "x-amz-acl": "private",
+          "X-Amz-SignedHeaders": "content-md5;content-type;host;x-amz-acl;x-amz-storage-class",
+          "Host": "gtt-csv-bucket-contractor.s3.us-west-2.amazonaws.com",
+          "X-Amz-Expires": "300",
+          "key": "CreateCDFEntitiesTest5.csv",
+          "x-amz-storage-class": "STANDARD"
+        },
+        "responseElements": null,
+        "additionalEventData": {
+          "SignatureVersion": "SigV4",
+          "CipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
+          "bytesTransferredIn": 733,
+          "AuthenticationMethod": "QueryString",
+          "x-amz-id-2": "rnigQRCWecs37a2kkJdnkB2CVKLQGazG1JwJxSe426bjqgJ+B4YKQzMa7zxPkzQj82lP2WeEWio=",
+          "bytesTransferredOut": 0
+        },
+        "requestID": "E50336B53C7DE3B9",
+        "eventID": "28b281a7-982e-41b9-b8c8-36df9399c41e",
+        "readOnly": false,
+        "resources": [
+          {
+            "type": "AWS::S3::Object",
+            "ARN": "arn:aws:s3:::gtt-csv-bucket-contractor/CreateCDFEntitiesTest5.csv"
+          },
+          {
+            "accountId": "083011521439",
+            "type": "AWS::S3::Bucket",
+            "ARN": "arn:aws:s3:::gtt-csv-bucket-contractor"
+          }
+        ],
+        "eventType": "AwsApiCall",
+        "managementEvent": false,
+        "recipientAccountId": "083011521439",
+        "eventCategory": "Data"
+      },
+      "taskResult-consume-csv": {
+        "row_type": "content",
+        "row_count": 3,
+        "header_row_number": 1,
+        "header": [
+          "region",
+          "name",
+          "description",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ],
+        "row_content": [
+          "region",
+          "regtest3",
+          "test region",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      }
+    },
+    "inputDetails": null
+  }

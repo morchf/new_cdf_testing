@@ -1,0 +1,110 @@
+version: 0.2
+
+# Checking automatic GitHub hook. This comment can be deleted.
+
+env:
+  exported-variables:
+    - Env
+    - UIDomain
+    - CognitoDomain
+    - CDFIoTCertificatesS3
+    - CertARN
+    - CDFAPIARN
+    - HostedZoneName
+    - CallbackURL
+    - LogoutURL
+
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.8
+    commands:
+      - n 16.6.2
+      - npm update
+
+  pre_build:
+    commands:
+      # Updating packages on container, installing AWSCLI and PyTest, and checking home path and python version for logging purposes.
+      - ls -l
+      - pwd=`pwd`
+      - echo $pwd
+      - yum -y update --skip-broken
+      - python -V
+      - python3 -V
+      - pip -V
+      - pip3 -V
+      - python3 -m pip -V
+      - pip3 install --upgrade pip
+      - npm -v
+      - node -v
+      - yum install -y sudo
+      - pip3 install pyopenssl
+      - pip3 install pytest
+      - pip3 install pytest-cov
+
+
+  build:
+    commands:
+
+      # Setting UI Base Domain and ARN of the certificate required for the CDN as per the Env
+      - echo $Env
+      - if [ "$Env" = "production" ]; then echo "Foo2" && echo "Foo2.2"; fi
+      - |
+        if [ "$Env" = "production" ]; then
+          UIDomain=www.opticom.cloud
+          CognitoDomain=opticom-cloud
+          CertARN=arn:aws:acm:us-east-1:933020280538:certificate/1de29f0c-95b5-4e90-92a8-f4ff47bd3168
+          HostedZoneName=opticom.cloud.
+          CallbackURL=https://www.opticom.cloud/callback
+          LogoutURL=https://www.opticom.cloud/login
+        else
+          UIDomain=cdfmanager.${Env}gtt.com
+          CognitoDomain=cdfmanager-${Env}
+          CertARN=`aws acm list-certificates --query "CertificateSummaryList[?starts_with(DomainName,'cdfmanager')].CertificateArn" --output text`
+          HostedZoneName=${Env}gtt.com.
+          if [ "$Env" = "develop" ]; then
+            CallbackURL=https://cdfmanager.${Env}gtt.com/callback,http://localhost:3000/callback 
+            LogoutURL=https://cdfmanager.${Env}gtt.com/login,http://localhost:3000/login
+          else
+            CallbackURL=https://cdfmanager.${Env}gtt.com/callback
+            LogoutURL=https://cdfmanager.${Env}gtt.com/login
+          fi
+        fi
+
+      - echo $UIDomain
+      - echo $CognitoDomain
+      - echo $CertARN
+      - echo $HostedZoneName
+      - echo $CallbackURL
+      - echo $LogoutURL
+      
+      # S3 bucket for storing pipeline artifacts
+      - PipelineArtifactsS3=pipeline-artifacts-$Env
+
+      # S3 bucket for storing IoT and CDF certificates
+      - CDFIoTCertificatesS3=cdf-cert-store-$Env
+            
+      # CDF Asset Library API endpoint required by the UI
+      - CDFAPIID=`aws apigateway get-rest-apis --query "items[?name=='cdf-assetlibrary-stage'].id" --output text`
+      - CDFAPIARN=https://$CDFAPIID.execute-api.us-east-1.amazonaws.com/Prod
+
+      # UI Lambdas
+      - for file in services config_mqtt.py phaseselector.py status.py location.py Constants.json agency.py policy.py thing.py OpenSSLCommands.txt asset_lib.py iot_core.py region.py ui.py Policy.templ aws_cert_auth.py misc.py remove-entities.py vehicle.py ROOTCA_openssl.conf certs.py mqtt_client.py requests_aws_sign.py SUBCA_openssl.conf communicator.py rootCA.pem config_asset_lib.py serial ui_helper.py; do cp -r CDFAndIoT/CDFBackend/$file CDFAndIoT/Lambdas/CreateCDFEntitiesAPI/LambdaCode/; done
+      - for file in phaseselector.py status.py location.py agency.py policy.py thing.py asset_lib.py iot_core.py region.py ui.py Policy.templ aws_cert_auth.py misc.py remove-entities.py vehicle.py ROOTCA_openssl.conf certs.py requests_aws_sign.py SUBCA_openssl.conf communicator.py rootCA.pem config_asset_lib.py; do cp CDFAndIoT/CDFBackend/$file CDFAndIoT/Lambdas/DeleteCDFEntitiesAPI/LambdaCode/; done
+      - for file in config_mqtt.py phaseselector.py status.py location.py Constants.json agency.py policy.py thing.py OpenSSLCommands.txt asset_lib.py iot_core.py region.py ui.py Policy.templ aws_cert_auth.py misc.py remove-entities.py vehicle.py ROOTCA_openssl.conf certs.py mqtt_client.py requests_aws_sign.py SUBCA_openssl.conf communicator.py rootCA.pem config_asset_lib.py serial ui_helper.py; do cp CDFAndIoT/CDFBackend/$file CDFAndIoT/Lambdas/UpdateCDFEntitiesAPI/LambdaCode/; done
+      - for file in config_asset_lib.py requests_aws_sign.py; do cp CDFAndIoT/CDFBackend/$file CDFAndIoT/Lambdas/GetCDFEntitiesAPI/LambdaCode/; done
+
+      # UI Lambdas Batch
+      - for file in services; do cp -r CDFAndIoT/CDFBackend/$file CDFAndIoT/Lambdas/CreateCDFEntitiesBatchAPI/LambdaCode/; done
+
+      # Executing SAM template
+      - aws cloudformation package --template-file Deployment/UIPipeline/UIDeploymentSAM.yml --s3-bucket $PipelineArtifactsS3 --s3-prefix UIDeployment --output-template-file Deployment/UIPipeline/UIDeploymentSAMOutput.yml
+
+      # Confirming deployable artifacts files
+      - ls -l CDFAndIoT/Lambdas/CreateCDFEntitiesAPI/LambdaCode CDFAndIoT/Lambdas/DeleteCDFEntitiesAPI/LambdaCode CDFAndIoT/Lambdas/UpdateCDFEntitiesAPI/LambdaCode CDFAndIoT/Lambdas/GetCDFEntitiesAPI/LambdaCode
+
+artifacts:
+  files:
+    - '**/*'
+  base-directory: .

@@ -1,0 +1,67 @@
+version: 0.2
+
+env:
+  secrets-manager:
+    cypress_launchUrl: "cypress_secret:cypress_launchUrl"
+    cypress_cognitoUrl: "cypress_secret:cypress_cognitoUrl"
+    cypress_agencySignInUsername: "cypress_secret:cypress_agencySignInUsername"
+    cypress_agencySignInUserPassword: "cypress_secret:cypress_agencySignInUserPassword"
+    cypress_adminSignInUsername: "cypress_secret:cypress_adminSignInUsername"
+    cypress_adminSignInUserPassword: "cypress_secret:cypress_adminSignInUserPassword"
+    cypress_environment: "cypress_secret:cypress_environment"
+  exported-variables:
+    - Env
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: latest
+    commands:
+      - ls -l
+      - cd Client
+      - pwd=`pwd`
+      - echo $pwd
+      - n 14.18.3
+      - npm -v
+      - node -v
+      - npm ci
+
+  build:
+    commands:
+      - echo $Env
+      - |
+        if [ "$Env" = "test" ]; then
+         npx cypress run --env grepTags="Test"
+         echo "Test execution completed in the Test environment."
+        elif [ "$Env" = "pilot" ]; then
+         npx cypress run --env grepTags="Pilot" 
+         echo "Test execution completed in the Pilot environment."
+        elif [ "$Env" = "production" ]; then
+         npx cypress run --env grepTags="Prod" 
+         echo "Test execution completed in the Prod environment."
+        else
+          echo "Value of Env is not set or is incorrect"
+        fi  
+      - ls -l
+
+reports:
+  UnitTests:
+    files:
+      - Client/junit.xml
+    file-format: JUNITXML
+
+  CoverageTests:
+    files:
+      - Client/coverage/clover.xml
+    file-format: CLOVERXML
+
+  FunctionalTests:
+    files:
+      - Client/cypress/reports/junit/*
+    file-format: JUNITXML
+
+artifacts:
+  files:
+    - cypress/reports/html/index.html
+    - cypress/screenshots/**/*
+  base-directory: Client

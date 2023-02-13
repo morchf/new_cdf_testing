@@ -1,0 +1,25 @@
+{
+  "assetLibrary": {
+    "apiFunctionName": "",
+    "baseUrl": "https://j5lnu4vby5.execute-api.us-east-1.amazonaws.com/Prod"
+  },
+  "provisioning": {
+    "apiFunctionName": "",
+    "baseUrl": "https://6t7b6ulu95.execute-api.us-east-1.amazonaws.com/Prod"
+  },
+  "commands": {
+    "apiFunctionName": "",
+    "baseUrl": "https://g7jengpah0.execute-api.us-east-1.amazonaws.com/Prod"
+  },
+  "cors": {
+    "origin": "*"
+  },
+  "supplierRootCa": {
+    "demodevicesupplier": "b5a1c0945714bee68c13a7ddce2a5aecfd8c250f44577d658186c380177ec789"
+  },
+  "events": {
+    "facadeToProv": {
+      "topic": ""
+    }
+  }
+}

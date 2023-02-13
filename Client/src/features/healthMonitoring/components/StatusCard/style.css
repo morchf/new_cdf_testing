@@ -1,0 +1,41 @@
+.IntersectionPage .data-card-container .status-row {
+  position: absolute;
+  top: 47px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+.IntersectionPage .ant-col {
+  text-align: center;
+}
+
+.IntersectionPage p {
+  color: #8c8c8c;
+  font-style: normal;
+  font-weight: 500;
+  margin-bottom: 0;
+}
+
+.IntersectionPage .warning-col > p {
+  color: var(--warning);
+}
+
+.IntersectionPage .error-col > p {
+  color: var(--error);
+}
+
+.IntersectionPage .p1 {
+  font-size: 20px;
+  line-height: 28px;
+}
+
+.IntersectionPage .p2 {
+  font-size: 38px;
+  line-height: 46px;
+}
+
+.IntersectionPage .p3 {
+  font-size: 16px;
+  font-weight: normal;
+  line-height: 24px;
+}

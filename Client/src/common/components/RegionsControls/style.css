@@ -1,0 +1,32 @@
+.regions-controls {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 1rem;
+  background-color: white;
+}
+
+.regions-controls__search-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.regions-controls__search {
+  max-width: 20rem;
+}
+
+.regions-controls__buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.regions-controls__button {
+  justify-self: end;
+}
+
+.regions-controls__controls {
+  padding: 1rem;
+}

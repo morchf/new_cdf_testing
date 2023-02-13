@@ -1,0 +1,54 @@
+.map-legend {
+  --width: 355px;
+  width: var(--width);
+  height: 7.5%;
+  display: flex;
+  position: absolute;
+  bottom: 3.5%;
+  background-color: #FFFFFF;
+  margin-left: calc(50% - var(--width) / 2);
+  margin-right: calc(50% - var(--width) / 2);
+  padding: 10px;
+  box-shadow: var(--card-shadow);
+  border-radius: var(--card-radius);
+}
+
+.map-legend * {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.map-legend h3 {
+  font-weight: bolder;
+}
+
+.map-legend p {
+  font-weight: 600;
+}
+
+/* Signal Delay */
+.map-legend-signal-delay p {
+  margin-left: 7%;
+  margin-right: 3%;
+}
+
+/* Dwell Time */
+.map-legend-dwell-time {
+  width: 320px !important;
+}
+
+.map-legend-dwell-time p {
+  margin-left: 10%;
+  margin-right: 3%;
+}
+
+/* Drive Time */
+.map-legend-drive-time {
+  --width: 165px !important;
+}
+
+.map-legend-drive-time p {
+  font-weight: 600;
+  margin-left: 20%;
+  margin-right: 5%;
+}

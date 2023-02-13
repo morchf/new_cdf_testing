@@ -1,0 +1,28 @@
+.Barchart body {
+    margin: 0px;
+  }
+  
+.Barchart rect {
+  fill: steelblue;
+}
+
+
+.Barchart text {
+  font-size: 1em;
+  font-family: sans-serif;
+}
+
+.Barchart .tick text {
+  font-size: 1em;
+  fill: #635F5D;
+}
+
+.Barchart .tick line {
+  stroke: #C0C0BB;
+}
+
+.Barchart .axis-label {
+  font-size: 1em;
+  fill: #8E8883;
+}
+

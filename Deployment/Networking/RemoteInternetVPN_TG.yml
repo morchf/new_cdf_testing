@@ -1,0 +1,525 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: Remote internet access via Site-to-Site VPN and Transit Gateway
+
+###
+### =========================================================================
+###
+
+Metadata:
+
+  'AWS::CloudFormation::Interface':
+    ParameterGroups:
+      - Label:
+          default: Remote VPC Configuration
+        Parameters:
+          - RemoteVpnGatewayAmi
+          - RemoteVpcCidr
+          - RemotePrivateSubnetCidr
+          - RemotePublicSubnetCidr
+      - Label:
+          default: Egress VPC Configuration
+        Parameters:
+          - EgressVpcCidr
+          - EgressPrivateSubnetCidr
+          - EgressPublicSubnetCidr
+    ParameterLabels:
+      RemoteVpnGatewayAmi:
+        default: AMI to use for the VPN Gateway instance (default is fresh Ubuntu 18.04)
+      RemoteVpcCidr:
+        default: The CIDR of the Remote VPC
+      RemotePrivateSubnetCidr:
+        default: The CIDR of the private subnet in the Remote VPC
+      RemotePublicSubnetCidr:
+        default: The CIDR of the public subnet in the Remote VPC
+      EgressVpcCidr:
+        default: The CIDR of the Egress VPC
+      EgressPrivateSubnetCidr:
+        default: The CIDR of the private subnet in the Egress VPC
+      EgressPublicSubnetCidr:
+        default: The CIDR of the public subnet in the Egress VPC
+
+###
+### =========================================================================
+###
+
+Parameters:
+
+  RemoteVpnGatewayAmi:
+    Type: AWS::EC2::Image::Id
+    Default: ami-04b9e92b5572fa0d1
+
+  RemoteVpcCidr:
+    Type: String
+
+  RemotePrivateSubnetCidr:
+    Type: String
+
+  RemotePublicSubnetCidr:
+    Type: String
+
+  EgressVpcCidr:
+    Type: String
+
+  EgressPrivateSubnetCidr:
+    Type: String
+
+  EgressPublicSubnetCidr:
+    Type: String
+
+###
+### =========================================================================
+###
+
+Resources:
+
+  SsmManagedInstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+
+  SsmManagedInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref SsmManagedInstanceRole
+
+  ###
+  ### Remote VPC
+  ###
+
+  RemoteVpc:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref RemoteVpcCidr
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: Remote
+
+  RemoteInternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: Remote Internet Gateway
+
+  RemoteInternetGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref RemoteVpc
+      InternetGatewayId: !Ref RemoteInternetGateway
+
+  RemoteCustomerGateway:
+    Type: AWS::EC2::CustomerGateway
+    Properties:
+      BgpAsn: 65000
+      IpAddress: !Ref RemoteVpnGatewayEip
+      Type: ipsec.1
+      Tags:
+        - Key: Name
+          Value: Remote Customer Gateway
+
+  RemoteBaseSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allows pinging
+      SecurityGroupIngress:
+        - IpProtocol: icmp
+          Description: All ICMP
+          FromPort: -1
+          ToPort: -1
+          CidrIp: !Ref RemoteVpcCidr
+        - IpProtocol: icmp
+          Description: All ICMP
+          FromPort: -1
+          ToPort: -1
+          CidrIp: !Ref EgressVpcCidr
+      VpcId: !Ref RemoteVpc
+
+  ### Remote VPC -> Private Subnet ###
+
+  RemotePrivateSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Select [0, !GetAZs '']
+      CidrBlock: !Ref RemotePrivateSubnetCidr
+      VpcId: !Ref RemoteVpc
+      Tags:
+        - Key: Name
+          Value: Remote Private Subnet
+
+  RemotePrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref RemoteVpc
+      Tags:
+        - Key: Name
+          Value: Remote Private Subnet Route Table
+
+  RemotePrivateRouteToGateway:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref RemotePrivateRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      NetworkInterfaceId: !Ref RemoteVpnGatewayInstanceNetworkInterface
+
+  RemotePrivateSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref RemotePrivateRouteTable
+      SubnetId: !Ref RemotePrivateSubnet
+
+  ### Remote VPC -> Private Subnet -> Client Instance ###
+
+  RemoteClientInstance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      BlockDeviceMappings:
+        - DeviceName: /dev/xvda
+          Ebs:
+            VolumeSize: 8
+            VolumeType: gp2
+      ImageId: ami-00eb20669e0990cb4
+      InstanceType: t2.micro
+      IamInstanceProfile: !Ref SsmManagedInstanceProfile
+      NetworkInterfaces:
+        - DeviceIndex: '0'
+          NetworkInterfaceId: !Ref RemoteClientInstanceNetworkInterface
+      Tags:
+        - Key: Name
+          Value: Remote Client
+
+  RemoteClientInstanceNetworkInterface:
+    Type: AWS::EC2::NetworkInterface
+    Properties:
+      GroupSet:
+        - !GetAtt RemoteBaseSecurityGroup.GroupId
+      SubnetId: !Ref RemotePrivateSubnet
+      Tags:
+        - Key: Name
+          Value: Remote Client Network Interface
+
+  ### Remote VPC -> Public Subnet ###
+
+  RemotePublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Select [0, !GetAZs '']
+      CidrBlock: !Ref RemotePublicSubnetCidr
+      VpcId: !Ref RemoteVpc
+      Tags:
+        - Key: Name
+          Value: Remote Public Subnet
+
+  RemotePublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref RemoteVpc
+      Tags:
+        - Key: Name
+          Value: Remote Public Subnet Route Table
+
+  RemotePublicRouteToInternet:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref RemotePublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref RemoteInternetGateway
+
+  RemotePublicSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref RemotePublicRouteTable
+      SubnetId: !Ref RemotePublicSubnet
+
+  ### Remote VPC -> Public Subnet -> Gateway Instance ###
+
+  RemoteVpnGatewayInstance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      BlockDeviceMappings:
+        - DeviceName: /dev/xvda
+          Ebs:
+            VolumeSize: 8
+            VolumeType: gp2
+      ImageId: !Ref RemoteVpnGatewayAmi
+      InstanceType: t2.micro
+      IamInstanceProfile: !Ref SsmManagedInstanceProfile
+      NetworkInterfaces:
+        - DeviceIndex: '0'
+          NetworkInterfaceId: !Ref RemoteVpnGatewayInstanceNetworkInterface
+      Tags:
+        - Key: Name
+          Value: Remote VPN Gateway
+
+  RemoteVpnGatewayInstanceNetworkInterface:
+    Type: AWS::EC2::NetworkInterface
+    Properties:
+      GroupSet:
+        - !GetAtt RemoteBaseSecurityGroup.GroupId
+      SubnetId: !Ref RemotePublicSubnet
+      Tags:
+        - Key: Name
+          Value: Remote VPN Gateway Network Interface
+
+  RemoteVpnGatewayEip:
+    Type: AWS::EC2::EIP
+    Properties:
+      InstanceId: !Ref RemoteVpnGatewayInstance
+      Tags:
+        - Key: Name
+          Value: Remote VPN Gateway EIP
+
+  ###
+  ### Egress VPC
+  ###
+
+  EgressVpc:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref EgressVpcCidr
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: Egress
+
+  EgressInternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: Egress Internet Gateway
+
+  EgressInternetGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref EgressVpc
+      InternetGatewayId: !Ref EgressInternetGateway
+
+  EgressBaseSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allows pinging
+      SecurityGroupIngress:
+        - IpProtocol: icmp
+          Description: All ICMP
+          FromPort: -1
+          ToPort: -1
+          CidrIp: !Ref RemoteVpcCidr
+        - IpProtocol: icmp
+          Description: All ICMP
+          FromPort: -1
+          ToPort: -1
+          CidrIp: !Ref EgressVpcCidr
+      VpcId: !Ref EgressVpc
+
+  ### Egress VPC -> Private Subnet ###
+
+  EgressPrivateSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Select [0, !GetAZs '']
+      CidrBlock: !Ref EgressPrivateSubnetCidr
+      VpcId: !Ref EgressVpc
+      Tags:
+        - Key: Name
+          Value: Egress Private Subnet
+
+  EgressPrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref EgressVpc
+      Tags:
+        - Key: Name
+          Value: Egress Private Subnet Route Table
+
+  EgressPrivateRouteToGateway:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref EgressPrivateRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref EgressNatGateway
+
+  EgressPrivateSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref EgressPrivateRouteTable
+      SubnetId: !Ref EgressPrivateSubnet
+
+  ### Egress VPC -> Private Subnet -> Signpost Instance ###
+
+  # EgressSignpostInstance:
+  #   Type: 'AWS::EC2::Instance'
+  #   Properties:
+  #     BlockDeviceMappings:
+  #       - DeviceName: /dev/xvda
+  #         Ebs:
+  #           VolumeSize: 8
+  #           VolumeType: gp2
+  #     ImageId: ami-00eb20669e0990cb4
+  #     InstanceType: t2.micro
+  #     IamInstanceProfile: !Ref SsmManagedInstanceProfile
+  #     NetworkInterfaces:
+  #       - DeviceIndex: '0'
+  #         NetworkInterfaceId: !Ref EgressSignpostInstanceNetworkInterface
+  #     Tags:
+  #       - Key: Name
+  #         Value: Egress Signpost
+
+  # EgressSignpostInstanceNetworkInterface:
+  #   Type: AWS::EC2::NetworkInterface
+  #   Properties:
+  #     GroupSet:
+  #       - !GetAtt EgressBaseSecurityGroup.GroupId
+  #     SubnetId: !Ref EgressPrivateSubnet
+  #     Tags:
+  #       - Key: Name
+  #         Value: Egress Signpost Network Interface
+
+  ### Remote VPC -> Public Subnet ###
+
+  EgressPublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Select [0, !GetAZs '']
+      CidrBlock: !Ref EgressPublicSubnetCidr
+      VpcId: !Ref EgressVpc
+      Tags:
+        - Key: Name
+          Value: Egress Public Subnet
+
+  EgressPublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref EgressVpc
+      Tags:
+        - Key: Name
+          Value: Egress Public Subnet Route Table
+
+  EgressPublicRouteToInternet:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref EgressPublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref EgressInternetGateway
+
+  # EgressPublicRouteToRemote:
+  #   Type: AWS::EC2::Route
+  #   Properties:
+  #     RouteTableId: !Ref EgressPublicRouteTable
+  #     DestinationCidrBlock: !Ref RemoteVpcCidr
+  #     TransitGatewayId: !Ref TransitGateway
+
+  EgressPublicSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref EgressPublicRouteTable
+      SubnetId: !Ref EgressPublicSubnet
+
+  EgressNatGatewayEip:
+    Type: AWS::EC2::EIP
+    Properties:
+      Tags:
+        - Key: Name
+          Value: Egress NAT Gateway EIP
+
+  EgressNatGateway:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt EgressNatGatewayEip.AllocationId
+      SubnetId: !Ref EgressPublicSubnet
+
+  ###
+  ### Transit Gateway
+  ###
+
+  TransitGateway:
+    Type: AWS::EC2::TransitGateway
+    Properties:
+      AutoAcceptSharedAttachments: disable
+      DefaultRouteTableAssociation: disable
+      DefaultRouteTablePropagation: disable
+      DnsSupport: enable
+      VpnEcmpSupport: disable
+      Tags:
+        - Key: Name
+          Value: VPN Transit Gateway
+
+  RemoteVpnConnectionToTransitGateway:
+    Type: AWS::EC2::VPNConnection
+    Properties:
+      CustomerGatewayId: !Ref RemoteCustomerGateway
+      StaticRoutesOnly: true
+      TransitGatewayId: !Ref TransitGateway
+      Type: ipsec.1
+      Tags:
+        - Key: Name
+          Value: VPN Connection to Remote
+
+  EgressTransitGatewayAttachment:
+    Type: AWS::EC2::TransitGatewayAttachment
+    Properties:
+      SubnetIds:
+        - !Ref EgressPrivateSubnet
+      TransitGatewayId: !Ref TransitGateway
+      VpcId:  !Ref EgressVpc
+      Tags:
+        - Key: Name
+          Value: Attachment to Egress
+
+  ### Transit Gateway -> Route Tables
+
+  RemoteTransitGatewayRouteTable:
+    Type: AWS::EC2::TransitGatewayRouteTable
+    Properties:
+      TransitGatewayId: !Ref TransitGateway
+      Tags:
+        - Key: Name
+          Value: Remote Route Table
+
+  # RemoteTransitGatewayRouteToEgress:
+  #   Type: AWS::EC2::TransitGatewayRoute
+  #   Properties:
+  #     Blackhole: false
+  #     DestinationCidrBlock: 0.0.0.0/0
+  #     TransitGatewayAttachmentId: !Ref EgressTransitGatewayAttachment
+  #     TransitGatewayRouteTableId: !Ref RemoteTransitGatewayRouteTable
+
+  # RemoteTransitGatewayRouteTableAssociation:
+  #   Type: AWS::EC2::TransitGatewayRouteTableAssociation
+  #   Properties:
+  #     TransitGatewayAttachmentId: !Ref RemoteVpnConnectionToTransitGateway
+  #     TransitGatewayRouteTableId: !Ref RemoteTransitGatewayRouteTable
+
+  EgressTransitGatewayRouteTable:
+    Type: AWS::EC2::TransitGatewayRouteTable
+    Properties:
+      TransitGatewayId: !Ref TransitGateway
+      Tags:
+        - Key: Name
+          Value: Egress Route Table
+
+  # EgressTransitGatewayRouteToRemote:
+  #   Type: AWS::EC2::TransitGatewayRoute
+  #   Properties:
+  #     Blackhole: false
+  #     DestinationCidrBlock: !Ref RemoteVpcCidr
+  #     TransitGatewayAttachmentId: !Ref RemoteVpnConnectionToTransitGateway
+  #     TransitGatewayRouteTableId: !Ref EgressTransitGatewayRouteTable
+
+  # EgressTransitGatewayRouteTableAssociation:
+  #   Type: AWS::EC2::TransitGatewayRouteTableAssociation
+  #   Properties:
+  #     TransitGatewayAttachmentId: !Ref EgressTransitGatewayAttachment
+  #     TransitGatewayRouteTableId: !Ref EgressTransitGatewayRouteTable

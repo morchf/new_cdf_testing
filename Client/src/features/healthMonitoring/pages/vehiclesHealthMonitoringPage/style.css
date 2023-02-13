@@ -1,0 +1,27 @@
+.vehicles-health-monitoring-content {
+  margin-top: 2%;
+}
+
+.vehicles-health-monitoring-metrics {
+  margin-left: 4%;
+  display: flex;
+  column-gap: 1.5rem;
+}
+
+.vehicles-health-monitoring-metrics h2 {
+  margin-bottom: 0px;
+}
+
+.vehicles-health-monitoring-metrics .vehicles-health-monitoring-metrics-num {
+  font-weight: 600;
+  font-size: 35px;
+  margin-bottom: 0px;
+}
+
+.vehicles-health-monitoring-metrics-in-system {
+  color: DimGrey;
+}
+
+.vehicles-health-monitoring-table-expanded {
+  margin-bottom: 0px;
+}

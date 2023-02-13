@@ -1,0 +1,13 @@
+{
+    "TableName": "codeBuildDeploy",
+    "KeySchema": [
+        { "AttributeName": "customerName", "KeyType": "HASH" }
+    ],
+    "AttributeDefinitions": [
+        { "AttributeName": "customerName", "AttributeType": "S" }
+    ],
+    "ProvisionedThroughput": {
+        "ReadCapacityUnits": 50,
+        "WriteCapacityUnits": 50
+    }
+}

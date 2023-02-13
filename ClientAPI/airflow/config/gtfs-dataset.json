@@ -1,0 +1,9 @@
+{
+    "OpenmobilitydataOrg": {
+        "start_date": "2017-12-01",
+        "start_urls": [
+            "https://openmobilitydata.org/p/sfmta/60"
+        ]
+    },
+    "schedule_interval": "@daily"
+}

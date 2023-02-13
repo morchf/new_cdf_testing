@@ -1,0 +1,401 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: 'AWS::Serverless-2016-10-31'
+Description: This template creates resources for Analytics
+
+# ! Temporarily ignore some checks due to outdated cfn-lint version
+Metadata:
+  cfn-lint:
+    config:
+      ignore_checks:
+      # Resources/DataAggregationFargateTaskDefinition/Properties/RuntimePlatform
+      # Resources/DataAggregationScheduledTask/Properties/Targets/0/EcsParameters/EnableExecuteCommand
+      - E3002
+
+Parameters:
+  AnalyticsCoreName:
+    Type: String
+    Description: Base name for Analytics resources
+    Default: analytics
+
+  VPCCIDR:
+    Type: String
+    Description: CIDR range for VPC creation
+
+  PublicSubnetCIDR:
+    Type: String
+    Description: IP range (CIDR notation) for public subnet
+
+  PrivateSubnetCIDR:
+    Type: String
+    Description: IP range (CIDR notation) for private subnet
+
+  Env:
+    Type: String
+    AllowedValues:
+      - develop
+      - test
+      - production
+      - pilot
+    Description: "Environment in which the deployment is happening. Allowed values: develop, test, production, or pilot"
+
+  ECRRepository:
+    Description: The ECR repository name
+    Type: String
+    Default: gtt/data-aggregation
+
+  DataAggregationImageTag:
+    Description: Tag for DataAggregation image
+    Type: String
+    Default: latest
+
+  RateSchedule:
+    Type: String
+    Description: This defines the Schedule at which to run the DataAggregation task. Rate Expressions - http://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html#RateExpressions
+    Default: "rate(1 day)"
+
+  CDFAPIARN:
+    Type: String
+    Description: CDF Asset Library API endpoint required by ECS
+
+  RuntimeDeviceMessageBucketARN:
+    Type: String
+    Description: S3 bucket(managed by CDFDeployment pipeline) for runtime EVP device message
+
+Resources:
+  # Networking##########################################
+  ##############################
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref VPCCIDR
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${AnalyticsCoreName}-${Env}-VPC
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+
+  VPCGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+
+  PublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      # AvailabilityZone: !Select [ 0, !GetAZs '' ]
+      CidrBlock: !Ref PublicSubnetCIDR
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${AnalyticsCoreName}-${Env}-PublicSubnet
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+
+  PublicRoute:
+    Type: AWS::EC2::Route
+    # DependsOn: VPCGatewayAttachment
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      # Internal route needed?
+      GatewayId: !Ref InternetGateway
+
+  PublicSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet
+
+  PrivateSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      # AvailabilityZone: !Select [ 0, !GetAZs '' ]
+      CidrBlock: !Ref PrivateSubnetCIDR
+      Tags:
+        - Key: Name
+          Value: !Sub ${AnalyticsCoreName}-${Env}-PrivateSubnet
+
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+
+  PrivateRoute:
+    Type: AWS::EC2::Route
+    # DependsOn: VPCGatewayAttachment
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGateway
+
+  PrivateSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      SubnetId: !Ref PrivateSubnet
+
+  NatGateway:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt NatGatewayEIP.AllocationId
+      SubnetId: !Ref PublicSubnet
+
+  NatGatewayEIP:
+    Type: AWS::EC2::EIP
+    # DependsOn: VPCGatewayAttachment
+    Properties:
+      Domain: vpc
+
+  # # ! This bucket should already exist, created by upstream source pipeline
+  # RuntimeDeviceMessageBucket:
+  #   Type: AWS::S3::Bucket
+  #   Properties:
+  #     BucketName: !Sub runtime-device-message-${Env}
+  #     BucketEncryption:
+  #       ServerSideEncryptionConfiguration:
+  #         - ServerSideEncryptionByDefault:
+  #             SSEAlgorithm: AES256
+  #     PublicAccessBlockConfiguration:
+  #       BlockPublicAcls: True
+  #       BlockPublicPolicy: True
+  #       IgnorePublicAcls: True
+  #       RestrictPublicBuckets: True
+
+  RTRadioMessageBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub rt-radio-message-${Env}
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: True
+        BlockPublicPolicy: True
+        IgnorePublicAcls: True
+        RestrictPublicBuckets: True
+
+  # IAM Policies
+  AllowCDFAPIAccess:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      ManagedPolicyName: !Sub AllowCDFAPIAccess-${AnalyticsCoreName}
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'execute-api:Invoke'
+              - 'execute-api:ManageConnections'
+            Resource: !Sub 'arn:${AWS::Partition}:execute-api:us-east-1:${AWS::AccountId}:*'
+
+  AllowCDFAPIInvoke:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      ManagedPolicyName: !Sub AllowCDFAPIInvoke-${AnalyticsCoreName}
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'lambda:InvokeFunction'
+            Resource: !Sub 'arn:${AWS::Partition}:lambda:us-east-1:${AWS::AccountId}:function:cdf-assetlibrary-stage-LambdaFunction*'
+
+  AllowS3Access:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      ManagedPolicyName: !Sub AllowS3Access-${AnalyticsCoreName}
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              # ToDo: limit to only the necessary actions bucket.creation_date was not working
+              - 's3:*'
+            Resource:
+              - !Sub ${RuntimeDeviceMessageBucketARN}
+              - !GetAtt RTRadioMessageBucket.Arn
+
+  AllowCloudwatchLogConfiguration:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      ManagedPolicyName: !Sub AllowCloudwatchLogConfiguration-${AnalyticsCoreName}
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'logs:PutLogEvents'
+              - 'logs:DescribeLogStreams'
+              - 'logs:CreateLogStream'
+            Resource:
+              - !GetAtt FargateLogGroup.Arn
+
+  #! This permission allows remote connections to containers, ok for prod?
+  AllowSSMAgentForECSExec:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      ManagedPolicyName: !Sub AllowSSMAgentForECSExec-${AnalyticsCoreName}
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - ssmmessages:CreateControlChannel
+              - ssmmessages:CreateDataChannel
+              - ssmmessages:OpenControlChannel
+              - ssmmessages:OpenDataChannel
+            Resource: "*"
+
+  # Roles
+  FargateEventRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub FargateEventRole-${AnalyticsCoreName}
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - events.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: !Sub FargateEventRole-PassRole-${AnalyticsCoreName}
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action: iam:PassRole
+                Resource:
+                  - !GetAtt FargateTaskExecutionRole.Arn
+                  - !GetAtt DataAggregationRole.Arn
+        - PolicyName: !Sub FargateEventRole-RunTask-${AnalyticsCoreName}
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action: ecs:RunTask
+                Resource:
+                  - !Ref DataAggregationFargateTaskDefinition
+                  # - !Ref DataAggregationFargateTaskDefinition
+                  # to - do
+
+  FargateTaskExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub FargateTaskExecutionRole-${AnalyticsCoreName}
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ecs-tasks.amazonaws.com
+            Action: sts:AssumeRole
+      Description: "Role to be assumed by Fargate tasks when executing"
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+
+  DataAggregationRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub DataAggregationRole-${AnalyticsCoreName}
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ecs-tasks.amazonaws.com
+            Action: sts:AssumeRole
+      Description: "Role to be assumed by DataAggregation task when executing"
+      ManagedPolicyArns:
+        - !Ref AllowCDFAPIAccess
+        - !Ref AllowCDFAPIInvoke
+        - !Ref AllowS3Access
+        - !Ref AllowSSMAgentForECSExec
+        - !Ref AllowCloudwatchLogConfiguration
+
+  # Fargate base configuration
+  FargateLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub ${AnalyticsCoreName}/data-aggregation
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+
+  FargateCluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: !Sub Cluster-${AnalyticsCoreName}
+
+  # Fargate Task Definitions
+  DataAggregationFargateTaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Cpu: "1024"
+      Memory: "8192"
+      ExecutionRoleArn: !GetAtt FargateTaskExecutionRole.Arn
+      Family: !Sub TaskDefinition-${AnalyticsCoreName}
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      RuntimePlatform:
+        CpuArchitecture: X86_64
+        OperatingSystemFamily: LINUX
+      TaskRoleArn: !GetAtt DataAggregationRole.Arn
+      ContainerDefinitions:
+        - Name: !Sub Container-${AnalyticsCoreName}
+          Cpu: 1024
+          Memory: 8192
+          Image: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.${AWS::URLSuffix}/${ECRRepository}:${DataAggregationImageTag}
+          Essential: true
+          #! This permission allows remote connections to containers, ok for prod?
+          LinuxParameters:
+            InitProcessEnabled: true
+          Environment:
+            - Name: CDF_URL
+              Value: !Ref CDFAPIARN
+            - Name: INCOMING_BUCKET_NAME
+              Value: !Sub ${RuntimeDeviceMessageBucketARN}
+            - Name: OUTGOING_BUCKET_NAME
+              Value: !Ref RTRadioMessageBucket
+            - Name: CLOUDWATCH_LOG_GROUP
+              Value: !Ref FargateLogGroup
+          Command:
+            - ./start-aggregation-jobs.sh
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref FargateLogGroup
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: data-aggregation
+
+  # Fargate Scheduled Tasks
+  DataAggregationScheduledTask:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: Run the given task definition periodically
+      ScheduleExpression: !Ref RateSchedule
+      State: ENABLED
+      Targets:
+        - Arn: !GetAtt FargateCluster.Arn
+          Id: !Sub ScheduledTask-${AnalyticsCoreName}
+          RoleArn: !GetAtt FargateEventRole.Arn
+          EcsParameters:
+            TaskCount: 1
+            TaskDefinitionArn: !Ref DataAggregationFargateTaskDefinition
+            #! This permission allows remote connections to containers, ok for prod?
+            EnableExecuteCommand: true
+            LaunchType: FARGATE
+            NetworkConfiguration:
+              AwsVpcConfiguration:
+                Subnets:
+                  - !Ref PublicSubnet

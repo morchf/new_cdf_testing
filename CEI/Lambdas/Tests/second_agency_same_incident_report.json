@@ -1,0 +1,36 @@
+{
+    "messageId": "RANDOMIZEGUID",
+    "siteId": "CEI_EtE_TestRegion",
+    "agencyId": "CEI_EtE_CEIAgencyTwo",
+    "incidents": [
+      {
+        "id": "test_SecondAgencyReporting",
+        "action": "CREATE",
+        "actionDateTime": "2020-03-17T11:39:32.143Z",
+        "status": "DISPATCHED",
+        "statusDateTime": "2020-03-17T11:39:32.143Z",
+        "type": "CRASH",
+        "priority": "1",
+        "location": {
+          "name": "Chili's",
+          "address": {
+            "crossStreet": "E H ST/PASEO DEL REY",
+            "street1": "800 PASEO DEL REY",
+            "street2": "Test Street",
+            "city": "CHULA VISTA",
+            "state": "CA",
+            "county": "",
+            "zip": "99999",
+            "directions": ""
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -117.028666,
+              32.63668
+            ]
+          }
+        }
+      }
+    ]
+  }

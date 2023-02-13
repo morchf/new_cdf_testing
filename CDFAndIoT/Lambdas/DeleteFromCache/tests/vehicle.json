@@ -1,0 +1,17 @@
+{
+    "attributes": {
+        "VID": 1,
+        "name": "DallasMP70Test",
+        "priority": "High",
+        "type": "Ambulance",
+        "class": 1,
+        "uniqueId": "1132693C-7FA4-11EC-A0FB-4E640F6C5A82"
+    },
+    "groups": {"out": {"ownedby": ["/oregon/mp70testagencydallas"]}},
+    "devices": {"out": {"installedat": ["mp70testdevicedallas"]}},
+    "category": "device",
+    "templateId": "vehiclev2",
+    "description": "Testing out MP70 and cache delete",
+    "state": "active",
+    "deviceId": "mp70testvehicledallas"
+}

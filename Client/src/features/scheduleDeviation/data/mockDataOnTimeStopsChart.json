@@ -1,0 +1,66 @@
+[
+  {
+    "stopname": "1st & 5th",
+    "route": "1",
+    "direction": "inbound",
+    "earlyPercentage": "0.16",
+    "latePercentage": "0.263",
+    "onTimePercentage": "0.577"
+  },
+  {
+    "stopname": "1st & 9th",
+    "route": "1",
+    "direction": "inbound",
+    "earlyPercentage": "0.45",
+    "latePercentage": "0.323",
+    "onTimePercentage": "0.227"
+  },
+  {
+    "stopname": "1st & 12th",
+    "route": "1",
+    "direction": "inbound",
+    "earlyPercentage": "0.358",
+    "latePercentage": "0.218",
+    "onTimePercentage": "0.424"
+  },
+  {
+    "stopname": "Well St",
+    "route": "1",
+    "direction": "inbound",
+    "earlyPercentage": "0.412",
+    "latePercentage": "0.501",
+    "onTimePercentage": "0.087"
+  },
+  {
+    "stopname": "Broadway",
+    "route": "1",
+    "direction": "inbound",
+    "earlyPercentage": "0.295",
+    "latePercentage": "0.16",
+    "onTimePercentage": "0.545"
+  },
+  {
+    "stopname": "Thames Ave",
+    "route": "1",
+    "direction": "inbound",
+    "earlyPercentage": "0.42",
+    "latePercentage": "0.358",
+    "onTimePercentage": "0.222"
+  },
+  {
+    "stopname": "City Centers Extra Long Text for Diagnosing Graph Issues",
+    "route": "1",
+    "direction": "inbound",
+    "earlyPercentage": "0.145",
+    "latePercentage": "0.389",
+    "onTimePercentage": "0.466"
+  },
+  {
+    "stopname": "35th",
+    "route": "1",
+    "direction": "inbound",
+    "earlyPercentage": "0.226",
+    "latePercentage": "0.323",
+    "onTimePercentage": "0.451"
+  }
+]

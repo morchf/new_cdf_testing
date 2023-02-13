@@ -1,0 +1,12 @@
+{
+  "attributes": {
+    "caCertId": "NULL_CA",
+    "regionGUID": "NULL_GUID"
+  },
+  "category": "group",
+  "templateId": "region",
+  "description": "",
+  "parentPath": "/",
+  "name": "",
+  "groupPath": ""
+}

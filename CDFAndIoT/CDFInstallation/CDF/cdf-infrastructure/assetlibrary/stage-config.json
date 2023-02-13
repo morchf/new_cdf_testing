@@ -1,0 +1,12 @@
+{
+  "neptuneUrl": "wss://neptunedbcluster-immyeitqagrm.cluster-csq0nuf0pwoe.us-west-1.neptune.amazonaws.com:8182/gremlin",
+  "aws": {
+    "iot": {
+      "endpoint": "a1gvce2632u6tc-ats.iot.us-west-1.amazonaws.com"
+    }
+  },
+  "cors": {
+    "origin": "*"
+  },
+  "mode": "full"
+}

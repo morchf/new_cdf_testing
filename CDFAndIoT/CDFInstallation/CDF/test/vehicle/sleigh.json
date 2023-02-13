@@ -1,0 +1,22 @@
+{
+    "deviceId": "sleigh",
+    "templateId": "vehicle",
+    "state": "active",
+    "attributes": {
+        "agency": "gttdot",
+        "fieldSerial": "123456",
+        "numberGTT": "99",
+        "serial": "abcdefg",
+        "numberMACLocal": "01:01:01:01:01:01",
+        "IP": "10.1.1.0/32", 
+        "addressIP": "10.1.1.20",
+        "addressIMEI": "9234adsf-1231251",
+        "auxiliary_io": "",
+        "dev_cert_id": ""
+    },
+    "groups": {
+        "in": {
+            "owns": ["/agency/gttdot"]
+        }
+    }
+}

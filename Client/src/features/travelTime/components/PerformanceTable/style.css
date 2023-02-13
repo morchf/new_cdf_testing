@@ -1,0 +1,55 @@
+.performance-table__skeleton {
+  height: 130px;
+  min-width: 200px;
+}
+
+.performance-table__time-notes {
+  margin: 1rem 0.5rem 0 0.5rem;
+  color: var(--text-secondary);
+}
+
+.performance-table__diff {
+  color: var(--border);
+}
+
+.performance-table__time-note {
+  float: right;
+}
+
+/* Table styling */
+
+.performance-table .ant-table-cell {
+  height: 1.5rem !important;
+  padding: 0 0.5rem !important;
+}
+
+.performance-table th.ant-table-cell {
+  background-color: var(--fg) !important;
+}
+
+.performance-table th.ant-table-cell::before {
+  display: none;
+}
+
+/* Styling for 'Total' column, taken from Ant Design column separator */
+.performance-table th.ant-table-cell:nth-child(5) {
+  font-weight: 700;
+}
+
+.performance-table th.ant-table-cell:nth-child(4)::before,
+.performance-table td.ant-table-cell:nth-of-type(4)::before {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: 1px;
+  height: 100% !important;
+  background-color: rgba(0, 0, 0, 0.06);
+  transform: translateY(-50%);
+  transition: background-color 0.3s;
+  content: '';
+  display: block;
+}
+
+.performance-table tr:nth-child(2n) td {
+  background-color: #fafafa;
+}

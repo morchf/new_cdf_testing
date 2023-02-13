@@ -1,0 +1,10 @@
+{
+    "aggTravelTimePerPeriodEndpoint": {
+        "start_date": "2021-11-29",
+        "end_date": "2021-12-29",
+        "period": "month",
+        "route": "E",
+        "agency": "demo",
+        "region": "demoregion"
+    }
+}

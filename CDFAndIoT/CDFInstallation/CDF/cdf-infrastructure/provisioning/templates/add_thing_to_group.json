@@ -1,0 +1,28 @@
+{
+    "Parameters": {
+      "ThingName": {
+        "Type": "String"
+      },
+      "ThingGroupName": {
+        "Type": "String"
+      }
+    },
+    "Resources": {
+      "thing": {
+        "Type": "AWS::IoT::Thing",
+        "Properties": {
+          "ThingName": {
+            "Ref": "ThingName"
+          },
+          "ThingGroups": [
+            {
+              "Ref": "ThingGroupName"
+            }
+          ]
+        },
+        "OverrideSettings": {
+          "ThingGroups": "MERGE"
+        }
+      }
+    }
+  }

@@ -1,0 +1,18 @@
+{
+    "attributes": {
+        "description": "uniqueness test agency",
+        "city": "Orlando",
+        "state": "FL",
+        "timezone": "Central",
+        "agencyCode": 92,
+        "agencyID": "NULL_GUID",
+        "caCertId": "NULL_CA",
+        "vpsCertId": "NULL_CERT",
+        "priority": "High"
+    },
+    "category": "group",
+    "templateId": "agency",
+    "parentPath": "/ulyss1",
+    "name": "ulyss_agency3s",
+    "groupPath": "/ulyss1/ulyss_agency3"
+}

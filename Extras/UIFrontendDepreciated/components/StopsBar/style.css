@@ -1,0 +1,62 @@
+.stops-bar {
+  --chart-height: 11rem;
+  --tabs-height: 3rem;
+
+  height: var(--chart-height) !important;
+  position: relative;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.stops-bar__skeleton {
+  height: 100%;
+}
+
+.stops-bar--tabs {
+  height: calc(var(--chart-height) + var(--tabs-height)) !important;
+}
+
+.stops-bar--tabs canvas {
+  transform: translateY(calc(-1 * var(--tabs-height)));
+}
+
+/* Position the chart */
+
+.stops-bar__chart {
+  position: absolute !important;
+  bottom: 0;
+}
+
+.stops-bar__chart > div {
+  position: absolute !important;
+  bottom: 0;
+}
+
+.stops-bar__chart canvas {
+  position: absolute;
+  bottom: 0;
+}
+
+/* Chart styling */
+
+/* Hide the axis line */
+.stops-bar #-axis-line {
+  opacity: 0;
+}
+
+/* Move the tick lines down */
+.stops-bar g > path {
+  transform: translateY(2%);
+}
+
+/* Position marker */
+.stops-bar__chart .g2-html-annotation {
+  top: 0px !important;
+  transform: translate(-7px, -3.25rem);
+}
+
+.stops-bar__chart .marker {
+  position: absolute;
+  top: calc(-1 * var(--tabs-height)) !important;
+  transition: 0.15s ease-in-out;
+}

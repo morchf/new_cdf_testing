@@ -1,0 +1,87 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: Configures Cognito for use with the cognito-session example code.
+
+###
+### =========================================================================
+###
+
+Metadata:
+
+  AWS::CloudFormation::Interface:
+
+    ParameterGroups:
+      - Label:
+          default: Domain configuration
+        Parameters:
+          - DomainName
+    ParameterLabels:
+      DomainName:
+        default: The prefix to use for the OAuth domain (e.g. <prefix>.auth.<region>.amazoncognito.com)
+
+###
+### =========================================================================
+###
+
+Parameters:
+
+  DomainName:
+    Type: String
+    # If this domain is already taken, stack deployment will fail.
+    Default: example-auth
+
+###
+### =========================================================================
+###
+
+Resources:
+
+  UserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      AccountRecoverySetting:
+        RecoveryMechanisms:
+          - Name: verified_email
+            Priority: 1
+      AdminCreateUserConfig:
+        AllowAdminCreateUserOnly: true
+      UsernameAttributes:
+        - email
+
+  UserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      UserPoolId: !Ref UserPool
+      Domain: !Ref DomainName
+
+  UserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      AllowedOAuthFlows:
+        - code
+      AllowedOAuthFlowsUserPoolClient: true
+      AllowedOAuthScopes:
+        - openid
+        - aws.cognito.signin.user.admin
+      CallbackURLs:
+        - http://localhost:3000/login # Only for testing locally
+      GenerateSecret: true
+      PreventUserExistenceErrors: ENABLED
+      SupportedIdentityProviders:
+        - COGNITO
+      UserPoolId: !Ref UserPool
+
+###
+### =========================================================================
+###
+
+Outputs:
+
+  UserPool:
+    Description: Cognito User Pool
+    Value: !Ref UserPool
+
+  # CloudFormation can't output most of the properties that are required to
+  # configure the example application. In particular, the app client ID/secret
+  # or the authZ/token/callback URLs. Inspect the created resources in the
+  # Cognito console to find these values.

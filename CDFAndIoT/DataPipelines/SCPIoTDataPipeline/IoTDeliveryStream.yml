@@ -1,0 +1,113 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+##################################################################################################
+# GTT SCP Vehicle Message Pipeline
+Parameters:
+
+  SQLCommand:
+    Type: 'String'
+    Default: 'SELECT * FROM #'
+    Description: 'SQL Command for IoT Rule to pull message data'
+
+  S3Bucket:
+    Type: 'String'
+    Description: 'Arn of bucket to store data in'
+
+  Prefix:
+    Type: 'String'
+    Description: 'Prefix path to store data in the S3 Bucket'
+
+##################################################################################################
+
+Resources:
+  # IoT ROLE AND RULES
+  IoTRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect : 'Allow'
+            Principal:
+              Service :
+                - 'iot.amazonaws.com'
+            Action:
+                - 'sts:AssumeRole'
+      Path: '/'
+      Policies:
+        - PolicyName: 
+            Fn::Sub: "${AWS::StackName}-IoT-Policy"
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: "Allow"
+                Action: "firehose:PutRecord"
+                Resource:
+                  - Fn::GetAtt: [ DeliveryStream , "Arn" ]
+  
+  IoTRule:
+    Type: AWS::IoT::TopicRule
+    Properties:
+      TopicRulePayload:
+          RuleDisabled: false
+          AwsIotSqlVersion: "2016-03-23"
+          Sql: 
+            Fn::Sub: "${SQLCommand}"
+          Actions:
+              - Firehose:
+                  DeliveryStreamName: 
+                    Fn::Sub: "${AWS::StackName}-Firehose"
+                  RoleArn: 
+                    Fn::GetAtt: [ IoTRole , "Arn" ]
+                  Separator: "\n"
+
+
+  # FIREHOSE KINESIS ROLE AND STREAMS
+  DeliveryRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: firehose.amazonaws.com
+            Action: 'sts:AssumeRole'
+            Condition:
+              StringEquals:
+                'sts:ExternalId': 
+                  Ref: 'AWS::AccountId'
+      Policies:
+        - PolicyName: 
+            Fn::Sub: "${AWS::StackName}-Firehose-Policy"
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - 's3:AbortMultipartUpload'
+                  - 's3:GetBucketLocation'
+                  - 's3:GetObject'
+                  - 's3:ListBucket'
+                  - 's3:ListBucketMultipartUploads'
+                  - 's3:PutObject'
+                Resource:
+                  - Fn::Sub: '${S3Bucket}'
+                  - Fn::Sub: '${S3Bucket}*'
+
+  DeliveryStream:
+    Type: AWS::KinesisFirehose::DeliveryStream
+    Properties:
+      DeliveryStreamName: 
+        Fn::Sub: "${AWS::StackName}-Firehose"
+      ExtendedS3DestinationConfiguration:
+        BucketARN: 
+          Fn::Sub: '${S3Bucket}'
+        BufferingHints:
+          IntervalInSeconds: 600
+          SizeInMBs: 20
+        CompressionFormat: UNCOMPRESSED
+        Prefix:  
+          Fn::Sub: "${Prefix}"
+        RoleARN: 
+          Fn::GetAtt: [ DeliveryRole , "Arn" ]

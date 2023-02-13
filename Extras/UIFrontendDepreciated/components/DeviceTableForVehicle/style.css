@@ -1,0 +1,15 @@
+.DissociateDeviceToVehicle {
+  padding: 60px 0;
+}
+
+.DissociateDeviceToVehicle h5 {
+  font-size: medium;
+}
+
+.DissociateDeviceToVehicle .DeviceTable {
+  margin-bottom: 1.5%;
+}
+
+.DissociateDeviceToVehicle .DeviceTableForVehicle__ActionButton {
+  min-width: fit-content;
+}

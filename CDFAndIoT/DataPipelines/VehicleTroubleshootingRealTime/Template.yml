@@ -1,0 +1,409 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+
+###########################################################################
+# GTT SCP Vehicle Message Pipeline
+Parameters:
+  DeploymentEnvironment:
+    Type: String
+    AllowedValues:
+      - contractor
+      - act
+      - dev
+      - test
+      - production
+      - pilot
+    Description: "Provide the name of the deployment environment (Choose one of: contractor, act, or production)"
+  QuicksightDatasetName:
+    Type: String
+    Description: "The name of the quicksight dataset for this architecture"
+  QuicksightDashboardName:
+    Type: String
+    Description: "The name of the quicksight dashboard that this architecture will use"
+  QuicksightUserArn:
+    Type: String
+    Description: "The arn of the user to use when retreiving dashboards"
+  DataVizBucket:
+    Type: String
+    Description: "The name of the S3 bucket which will be used in the data vizualization architecture"
+  CDFEndpoint:
+    Type: String
+    Description: "The CDF Asset Library Endpoint"
+###########################################################################
+
+Resources:
+  LambdaApiGateway:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name:
+        Fn::Sub: ${AWS::StackName}-API-${DeploymentEnvironment}
+      FailOnWarnings: true
+
+  ApiGatewayLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:invokeFunction
+      FunctionName:
+        Fn::GetAtt: [LambdaApi, Arn]
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Join:
+          - ""
+          - - "arn:aws:execute-api:"
+            - Ref: AWS::Region
+            - ":"
+            - Ref: AWS::AccountId
+            - ":"
+            - Ref: LambdaApiGateway
+            - "/*"
+
+  ApiGatewayCloudWatchLogsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: apigateway.amazonaws.com
+          Action: sts:AssumeRole
+      Policies:
+        - PolicyName:
+            Fn::Sub: ${AWS::StackName}-ApiGatewayLogsPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              Effect: Allow
+              Action:
+                - logs:CreateLogGroup
+                - logs:CreateLogStream
+                - logs:DescribeLogGroups
+                - logs:DescribeLogStreams
+                - logs:PutLogEvents
+                - logs:GetLogEvents
+                - logs:FilterLogEvents
+              Resource: "*"
+
+  DataVizApiStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      DeploymentId:
+        Ref: ApiDeployment
+      MethodSettings:
+        - DataTraceEnabled: true
+          HttpMethod: "*"
+          LoggingLevel: INFO
+          ResourcePath: /*
+      RestApiId:
+        Ref: LambdaApiGateway
+      StageName:
+        Fn::Sub: ${AWS::StackName}-API-${DeploymentEnvironment}
+
+  ApiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn: DataVizRequest
+    Properties:
+      RestApiId:
+        Ref: LambdaApiGateway
+      StageName:
+        Fn::Sub: ${AWS::StackName}-Snapshot-${DeploymentEnvironment}
+
+  DataVizResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId:
+        Ref: LambdaApiGateway
+      ParentId:
+        Fn::GetAtt: [LambdaApiGateway, RootResourceId]
+      PathPart: TroubleshootVehicles
+
+  DataVizRequest:
+    DependsOn: ApiGatewayLambdaPermission
+    Type: AWS::ApiGateway::Method
+    Properties:
+      # AuthorizationType: AWS_IAM
+      AuthorizationType: NONE
+      HttpMethod: GET
+      RequestParameters:
+        method.request.querystring.gttSerialNumber: false
+        method.request.querystring.serialNumber: false
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri:
+          Fn::Join:
+            - ""
+            - - "arn:aws:apigateway:"
+              - Ref: AWS::Region
+              - ":lambda:path/2015-03-31/functions/"
+              - Fn::GetAtt: [LambdaApi, Arn]
+              - "/invocations"
+        RequestTemplates:
+          application/json:
+            Fn::Join:
+              - ""
+              - - "{"
+                - '  "name": "$input.params(''name'')"'
+                - "}"
+      ResourceId:
+        Ref: DataVizResource
+      RestApiId:
+        Ref: LambdaApiGateway
+      MethodResponses:
+        - ResponseParameters:
+            method.response.header.Content-Type: true
+            method.response.header.Location: true
+          StatusCode: "302"
+
+  # LAMBDA
+  LambdaApi:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: LambdaCode/
+      Handler: App.lambda_handler
+      Role:
+        Fn::GetAtt:
+          - LambdaRole
+          - Arn
+      Runtime: python3.7
+      Timeout: 25
+      Environment:
+        Variables:
+          StackName:
+            Fn::Sub: ${AWS::StackName}
+          S3DataVizBucket:
+            Fn::Sub: ${DataVizBucket}
+          DatasetName:
+            Fn::Sub: ${QuicksightDatasetName}
+          DashboardName:
+            Fn::Sub: ${QuicksightDashboardName}
+          QuicksightUserArn:
+            Fn::Sub: ${QuicksightUserArn}
+          CDFEndpoint:
+            Fn::Sub: ${CDFEndpoint}
+
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+      Policies:
+        - PolicyName:
+            Fn::Sub: ${AWS::StackName}-LambdaPolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: "quicksight:*"
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                  - iot:Connect
+                  - iot:Subscribe
+                  - iot:Receive
+                  - iot:DescribeEndpoint
+                Resource: "*"
+              - Effect: Allow
+                Action: "ssm:DescribeParameters"
+                Resource: "*"
+              - Effect: Allow
+                Action: ssm:GetParameters
+                Resource:
+                  Fn::Sub: arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${AWS::StackName}*
+              - Effect: Allow
+                Action: "s3:*"
+                Resource:
+                  - Fn::Sub: arn:aws:s3:::${DataVizBucket}
+                  - Fn::Sub: arn:aws:s3:::${DataVizBucket}/*
+              - Effect: Allow
+                Action:
+                  - "execute-api:Invoke"
+                  - "execute-api:ManageConnections"
+                Resource: "*"
+              - Effect: Allow
+                Action: "lambda:InvokeFunction"
+                Resource:
+                  Fn::Sub: arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:cdf-assetlibrary-stage-LambdaFunction*
+
+  # Lambda Custom Resource
+  StoreCertificatesLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      InlineCode: |
+        import json
+        import logging
+        import signal
+        import boto3
+        import os
+        import uuid
+        import cfnresponse
+
+        LOGGER = logging.getLogger()
+        LOGGER.setLevel(logging.INFO)
+
+        def send_response(event, context, response_status, response_data, physicalResourceId=None):
+            cfnresponse.send(
+                event,
+                context,
+                response_status,
+                response_data,
+                physicalResourceId
+            )
+
+        def createCerts(region_name):
+            iot = boto3.client('iot', region_name=region_name)
+            result = iot.create_keys_and_certificate(setAsActive=True)
+            certarn = result.get('certificateArn')
+            certid = result.get('certificateId')
+            certpem = result['certificatePem']
+            certpublic = result['keyPair']['PublicKey']
+            certprivate = result['keyPair']['PrivateKey']
+            policy_name = f'{os.environ["StackName"]}-{uuid.uuid4()}'
+            iot.create_policy(
+                policyName = policy_name,
+                policyDocument = json.dumps({
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "iot:Subscribe",
+                                "iot:Connect",
+                                "iot:Receive"
+                            ],
+                            "Resource": "*"
+                        }
+                    ]
+                })
+            )
+            iot.attach_policy(policyName=policy_name, target=certarn)
+            return certpem, certprivate, policy_name
+
+        def storeCerts(region_name, certpem, certkey):
+            ssm = boto3.client('ssm', region_name=region_name)
+            ssm.put_parameter(
+                Name = f'{os.environ["StackName"]}-cert.pem',
+                Value = certpem,
+                Type = 'SecureString'
+            )
+            ssm.put_parameter(
+                Name = f'{os.environ["StackName"]}-key.key',
+                Value = certkey,
+                Type = 'SecureString'
+            )
+
+        def createAndStoreCerts(region_name):
+            certpem, certkey, policy_name = createCerts(region_name)
+            storeCerts(region_name, certpem, certkey)
+            return policy_name
+
+        def deleteCerts(region_name, policyName):
+            ssm = boto3.client('ssm', region_name=region_name)
+            iot = boto3.client('iot', region_name=region_name)
+
+            ssm.delete_parameter(
+                Name=f'{os.environ["StackName"]}-cert.pem'
+            )
+            ssm.delete_parameter(
+                Name=f'{os.environ["StackName"]}-key.key'
+            )
+
+            certarn = iot.list_targets_for_policy(
+                policyName=policyName
+            )['targets'][0]
+            iot.detach_policy(
+                policyName=policyName,
+                target=certarn
+            )
+            iot.delete_policy(
+                policyName=policyName
+            )
+
+            iot.update_certificate(
+                certificateId=certarn.split('/')[-1],
+                newStatus='INACTIVE'
+            )
+            iot.delete_certificate(
+                certificateId=certarn.split('/')[-1],
+                forceDelete=True
+            )
+
+
+        def lambda_handler(event, context):
+            try:
+                if event['RequestType'] == 'Create':
+                    policy_name = createAndStoreCerts(event['ResourceProperties']['ServiceToken'].split(':')[3])
+                    send_response(event, context, cfnresponse.SUCCESS, {'Message': "Resource creation successful"}, policy_name)
+                    return
+                elif event['RequestType'] == 'Delete':
+                    deleteCerts(event['ResourceProperties']['ServiceToken'].split(':')[3], event['PhysicalResourceId'])
+                    send_response(event, context, cfnresponse.SUCCESS, {'Message': "Resource deletion successful"})
+                    return
+            except:
+                send_response(event, context, cfnresponse.FAILED, {'Message': f"Failed to Create Custom Stored Certificates: {e}"})
+                return
+            
+            send_response(event, context, cfnresponse.SUCCESS, {'Message': "All other operations are passed through on this resource"})
+
+        def timeout_handler(_signal, _frame):
+            raise Exception('Time exceeded')
+
+        signal.signal(signal.SIGALRM, timeout_handler)
+      Handler: index.lambda_handler
+      Runtime: python3.7
+      Role:
+        Fn::GetAtt:
+          - CustomLambdaRole
+          - Arn
+      Timeout: 30
+      Environment:
+        Variables:
+          StackName:
+            Fn::Sub: ${AWS::StackName}
+
+  CustomLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+      Policies:
+        - PolicyName:
+            Fn::Sub: ${AWS::StackName}-CustomLambdaPolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: "iot:*"
+                Resource: "*"
+              - Effect: Allow
+                Action: "ssm:DescribeParameters"
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                  - ssm:DeleteParameter
+                  - ssm:PutParameter
+                Resource:
+                  Fn::Sub: arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${AWS::StackName}*
+
+  StoredCertificates:
+    Type: "Custom::StoredCertificates"
+    Version: "1.0"
+    Properties:
+      ServiceToken:
+        Fn::GetAtt:
+          - StoreCertificatesLambda
+          - Arn

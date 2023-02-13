@@ -1,0 +1,13 @@
+{
+    "attributes": {
+        "caCertId": "430b03602c5949f3424b604e68f501d732876e20e819cb0d9f993b31ce9fb822",
+        "regionGUID": "88A8CE28-10C5-11EC-807B-BEA319F928E1",
+        "displayName": "CacheDeleteTest"
+    },
+    "category": "group",
+    "templateId": "region",
+    "name": "CacheDeleteTest",
+    "groupPath": "/cachedeletetest",
+    "parentPath": "/",
+    "description": "Adding description"
+}

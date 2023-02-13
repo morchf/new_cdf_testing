@@ -1,0 +1,141 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "array",
+    "items": [
+      {
+        "type": "object",
+        "properties": {
+          "total_trips": {
+            "type": "integer"
+          },
+          "period": {
+            "type": "string"
+          },
+          "drivetime": {
+            "type": "object",
+            "properties": {
+              "change": {
+                "type": "number"
+              },
+              "isBetter": {
+                "type": "boolean"
+              },
+              "secs": {
+                "type": "number"
+              },
+              "percentage": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "change",
+              "isBetter",
+              "secs",
+              "percentage"
+            ]
+          },
+          "dwelltime": {
+            "type": "object",
+            "properties": {
+              "change": {
+                "type": "number"
+              },
+              "isBetter": {
+                "type": "boolean"
+              },
+              "secs": {
+                "type": "number"
+              },
+              "percentage": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "change",
+              "isBetter",
+              "secs",
+              "percentage"
+            ]
+          },
+          "signaldelay": {
+            "type": "object",
+            "properties": {
+              "change": {
+                "type": "number"
+              },
+              "isBetter": {
+                "type": "boolean"
+              },
+              "secs": {
+                "type": "number"
+              },
+              "percentage": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "change",
+              "isBetter",
+              "secs",
+              "percentage"
+            ]
+          },
+          "traveltime": {
+            "type": "object",
+            "properties": {
+              "change": {
+                "type": "number"
+              },
+              "isBetter": {
+                "type": "boolean"
+              },
+              "secs": {
+                "type": "number"
+              },
+              "percentage": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "change",
+              "isBetter",
+              "secs",
+              "percentage"
+            ]
+          },
+          "tspsavings": {
+            "type": "object",
+            "properties": {
+              "change": {
+                "type": "number"
+              },
+              "isBetter": {
+                "type": "boolean"
+              },
+              "secs": {
+                "type": "number"
+              },
+              "percentage": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "change",
+              "isBetter",
+              "secs",
+              "percentage"
+            ]
+          }
+        },
+        "required": [
+          "total_trips",
+          "period",
+          "drivetime",
+          "dwelltime",
+          "signaldelay",
+          "traveltime",
+          "tspsavings"
+        ]
+      }
+    ]
+  }

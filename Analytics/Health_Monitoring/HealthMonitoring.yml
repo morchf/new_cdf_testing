@@ -1,0 +1,397 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: "AWS::Serverless-2016-10-31"
+Description: Cloudformation Template to implement an API Gateway for Intersection Health Monitoring and Intersection History
+Metadata:
+  cfn-lint:
+    config:
+      ignore_checks:
+        - I3042
+        - I1022
+
+Parameters:
+  CDFIoTCertificatesS3:
+    Type: String
+    Description: S3 bucket for storing IoT and CDF certificates
+
+  CDFAPIARN:
+    Type: String
+    Description: CDF Asset Library API endpoint required by the UI
+
+Resources:
+  ApiGatewayRestApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      ApiKeySourceType: HEADER
+      Description: test api
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+      Name: IntersectionMonitoringApi
+  
+  LambdaIamRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: 'Allow'
+            Principal:
+              Service:
+                - 'lambda.amazonaws.com'
+            Action:
+              - 'sts:AssumeRole'
+      Path: '/'
+
+  
+  ApiGatewayIamRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Sid: ''
+            Effect: 'Allow'
+            Principal:
+              Service:
+                - 'apigateway.amazonaws.com'
+            Action:
+              - 'sts:AssumeRole'
+      Path: '/'
+      Policies:
+        - PolicyName: LambdaAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: 'Allow'
+                Action: 'lambda:*'
+                Resource: [!GetAtt IntersectionsFunction.Arn, !GetAtt IntersectionStatusCountFunction.Arn, !GetAtt TspCountFunction.Arn, !GetAtt FirmwareInfoFunction.Arn, !GetAtt TSPIntersectionHistoryFunction.Arn]
+
+  ApiGatewayModel:
+    Type: AWS::ApiGateway::Model
+    Properties:
+      Name: "OutputModel"
+      ContentType: "application/json" 
+      RestApiId: !Ref ApiGatewayRestApi
+      Schema: {}
+  
+  #/analytics
+  AnalyticsResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi
+      ParentId: !GetAtt ApiGatewayRestApi.RootResourceId
+      PathPart: analytics
+
+  #/analytics/intersection_info
+  IntersectionsResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi
+      ParentId: !Ref AnalyticsResource
+      PathPart: intersection_info  
+    
+  IntersectionsGET:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      ApiKeyRequired: false
+      AuthorizationType: NONE
+      HttpMethod: GET
+      Integration:
+        Credentials: !GetAtt ApiGatewayIamRole.Arn
+        IntegrationHttpMethod: POST
+        PassthroughBehavior: WHEN_NO_MATCH
+        Type: AWS 
+        Uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${IntersectionsFunction.Arn}/invocations'
+        IntegrationResponses:
+          - StatusCode: '200'
+        RequestTemplates:
+          "application/json": !Join
+            - ""
+            - - "{"
+              - "\"name\": \"$input.params('name')\""
+              - "}"
+      MethodResponses:
+        - ResponseModels:
+            application/json: !Ref ApiGatewayModel
+          StatusCode: '200'
+        - ResponseModels:
+            application/json: !Ref ApiGatewayModel
+          StatusCode: '500'
+      ResourceId: !Ref IntersectionsResource
+      RestApiId: !Ref ApiGatewayRestApi
+
+  IntersectionsDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn: IntersectionsGET
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi
+      StageName: dummyStage
+
+  IntersectionsFunction:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      FunctionName: intersection_info
+      Handler: IntersectionInfo.get_intersection_info
+      Runtime: python3.8
+      CodeUri: ./../../Analytics/Health_Monitoring/IntersectionInfo.zip #Replace IntersectionInfo.zip s3 URI to test
+      Description: "retrieves and returns intersection info"
+      MemorySize: 128
+      Timeout: 30
+      Role: !GetAtt LambdaIamRole.Arn
+      Layers:
+        - !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer:CDF_layer:4
+      Environment:
+        Variables:
+          CDF_URL: !Ref CDFAPIARN
+          CERT_BKT: !Ref CDFIoTCertificatesS3
+
+  #/analytics/intersection_status_count
+  IntersectionStatusCountResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi
+      ParentId: !Ref AnalyticsResource
+      PathPart: intersection_status_count  
+    
+  IntersectionStatusCountGET:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      ApiKeyRequired: false
+      AuthorizationType: NONE
+      HttpMethod: GET
+      Integration:
+        Credentials: !GetAtt ApiGatewayIamRole.Arn
+        IntegrationHttpMethod: POST
+        PassthroughBehavior: WHEN_NO_MATCH
+        Type: AWS 
+        Uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${IntersectionStatusCountFunction.Arn}/invocations'
+        IntegrationResponses:
+          - StatusCode: '200'
+        RequestTemplates:
+          "application/json": !Join
+            - ""
+            - - "{"
+              - "\"name\": \"$input.params('name')\""
+              - "}"
+      MethodResponses:
+        - ResponseModels:
+            application/json: !Ref ApiGatewayModel
+          StatusCode: '200'
+        - ResponseModels:
+            application/json: !Ref ApiGatewayModel
+          StatusCode: '500'
+      ResourceId: !Ref IntersectionStatusCountResource
+      RestApiId: !Ref ApiGatewayRestApi
+
+  IntersectionStatusCountDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn: IntersectionStatusCountGET
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi
+      StageName: dummyStage
+
+  IntersectionStatusCountFunction:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      FunctionName: status_count
+      Handler: IntersectionHealthCount.get_status_data
+      Runtime: python3.8
+      CodeUri: ./../../Analytics/Health_Monitoring/IntersectionHealthCount.zip #Replace IntersectionHealthCount.zip s3 URI to test
+      Description: "retrieves and returns intersection status count info"
+      MemorySize: 128
+      Timeout: 30
+      Role: !GetAtt LambdaIamRole.Arn
+      Layers:
+        - !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer:CDF_layer:4
+      Environment:
+        Variables:
+          CDF_URL: !Ref CDFAPIARN
+          CERT_BKT: !Ref CDFIoTCertificatesS3
+  
+  #/analytics/tsp_count
+  TspCountResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi
+      ParentId: !Ref AnalyticsResource
+      PathPart: tsp_count 
+    
+  TspCountGET:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      ApiKeyRequired: false
+      AuthorizationType: NONE
+      HttpMethod: GET
+      Integration:
+        Credentials: !GetAtt ApiGatewayIamRole.Arn
+        IntegrationHttpMethod: POST
+        PassthroughBehavior: WHEN_NO_MATCH
+        Type: AWS 
+        Uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${TspCountFunction.Arn}/invocations'
+        IntegrationResponses:
+          - StatusCode: '200'
+        RequestTemplates:
+          "application/json": !Join
+            - ""
+            - - "{"
+              - "\"name\": \"$input.params('name')\""
+              - "}"
+      MethodResponses:
+        - ResponseModels:
+            application/json: !Ref ApiGatewayModel
+          StatusCode: '200'
+        - ResponseModels:
+            application/json: !Ref ApiGatewayModel
+          StatusCode: '500'
+      ResourceId: !Ref TspCountResource
+      RestApiId: !Ref ApiGatewayRestApi
+
+  TspCountDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn: TspCountGET
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi
+      StageName: dummyStage
+
+  TspCountFunction:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      FunctionName: tsp_count
+      Handler: TspCount.get_tsp_count
+      Runtime: python3.8
+      CodeUri: ./../../Analytics/Health_Monitoring/TspCount.zip #Replace TspCount.zip s3 URI to test
+      Description: "retrieves and returns intersection TSP Request count"
+      MemorySize: 128
+      Timeout: 30
+      Role: !GetAtt LambdaIamRole.Arn
+      Layers:
+        - !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer:CDF_layer:4
+      Environment:
+        Variables:
+          CDF_URL: !Ref CDFAPIARN
+          CERT_BKT: !Ref CDFIoTCertificatesS3
+  
+  #/analytics/firmware_info
+  FirmwareInfoResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi
+      ParentId: !Ref AnalyticsResource
+      PathPart: firmware_info 
+    
+  FirmwareInfoGET:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      ApiKeyRequired: false
+      AuthorizationType: NONE
+      HttpMethod: GET
+      Integration:
+        Credentials: !GetAtt ApiGatewayIamRole.Arn
+        IntegrationHttpMethod: POST
+        PassthroughBehavior: WHEN_NO_MATCH
+        Type: AWS 
+        Uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${FirmwareInfoFunction.Arn}/invocations'
+        IntegrationResponses:
+          - StatusCode: '200'
+        RequestTemplates:
+          "application/json": !Join
+            - ""
+            - - "{"
+              - "\"name\": \"$input.params('name')\""
+              - "}"
+      MethodResponses:
+        - ResponseModels:
+            application/json: !Ref ApiGatewayModel
+          StatusCode: '200'
+        - ResponseModels:
+            application/json: !Ref ApiGatewayModel
+          StatusCode: '500'
+      ResourceId: !Ref FirmwareInfoResource
+      RestApiId: !Ref ApiGatewayRestApi
+
+  FirmwareInfoDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn: FirmwareInfoGET
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi
+      StageName: dummyStage
+
+  FirmwareInfoFunction:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      FunctionName: firmware_info
+      Handler: FirmwareInfo.get_firmware_info
+      Runtime: python3.8
+      CodeUri: ./../../Analytics/Health_Monitoring/FirmwareInfo.zip #Replace FirmwareInfo.zip s3 URI to test
+      Description: "retrieves and returns intersection Firmware Info"
+      MemorySize: 128
+      Timeout: 30
+      Role: !GetAtt LambdaIamRole.Arn
+      Layers:
+        - !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer:CDF_layer:4
+      Environment:
+        Variables:
+          CDF_URL: !Ref CDFAPIARN
+          CERT_BKT: !Ref CDFIoTCertificatesS3
+
+  #/analytics/tsp_intersection_history
+  TSPIntersectionsResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi
+      ParentId: !Ref AnalyticsResource
+      PathPart: tsp_intersection_history  
+    
+  TSPIntersectionsGET:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      ApiKeyRequired: false
+      AuthorizationType: NONE
+      HttpMethod: GET
+      Integration:
+        Credentials: !GetAtt ApiGatewayIamRole.Arn
+        IntegrationHttpMethod: POST
+        PassthroughBehavior: WHEN_NO_MATCH
+        Type: AWS 
+        Uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${TSPIntersectionHistoryFunction.Arn}/invocations'
+        IntegrationResponses:
+          - StatusCode: '200'
+        RequestTemplates:
+          "application/json": !Join
+            - ""
+            - - "{"
+              - "\"name\": \"$input.params('name')\""
+              - "}"
+      MethodResponses:
+        - ResponseModels:
+            application/json: !Ref ApiGatewayModel
+          StatusCode: '200'
+        - ResponseModels:
+            application/json: !Ref ApiGatewayModel
+          StatusCode: '500'
+      ResourceId: !Ref TSPIntersectionsResource
+      RestApiId: !Ref ApiGatewayRestApi
+
+  IntersectionsTSPHistoryDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn: TSPIntersectionsGET
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi
+      StageName: dummyStage
+
+  TSPIntersectionHistoryFunction:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      FunctionName: tsp_intersection_history
+      Handler: TSPIntersectionHistory.get_tsp_intersection_history
+      Runtime: python3.8
+      CodeUri: ./../../Analytics/Health_Monitoring/TSPIntersectionHistory.zip #Replace TSPIntersectionHistory.zip s3 URI to test
+      Description: "retrieves and returns TSP intersection history"
+      MemorySize: 128
+      Timeout: 30
+      Role: !GetAtt LambdaIamRole.Arn
+      Layers:
+        - !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:layer:CDF_layer:4
+      Environment:
+        Variables:
+          CDF_URL: !Ref CDFAPIARN
+          CERT_BKT: !Ref CDFIoTCertificatesS3

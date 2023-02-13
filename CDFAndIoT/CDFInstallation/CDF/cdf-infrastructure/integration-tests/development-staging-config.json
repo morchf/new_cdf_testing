@@ -1,0 +1,29 @@
+{
+  "aws": {
+    "region": "us-west-2"
+  },
+  "assetLibrary": {
+    "baseUrl": "https://9ie5mee6gh.execute-api.us-west-2.amazonaws.com/Prod"
+  },
+  "assetLibraryHistory": {
+    "baseUrl": "https://53n4iqmnkd.execute-api.us-west-2.amazonaws.com/Prod"
+  },
+  "commands": {
+    "baseUrl": " https://6wugbdo2qg.execute-api.us-west-2.amazonaws.com/Prod"
+  },
+  "provisioning": {
+    "baseUrl": "https://di4mi0lkxd.execute-api.us-west-2.amazonaws.com/Prod",
+    "templates": {
+      "bucket": "cdf-157731826412-us-west-2",
+      "prefix": "provisioning/templates/",
+      "suffix": ".json"
+    }
+  },
+  "bulkCerts": {
+    "baseUrl": "https://6di44xyl4g.execute-api.us-west-2.amazonaws.com/Prod"
+  },
+  "thing": {
+    "name": "cdf_integration_test",
+    "arn": "arn:aws:iot:us-west-2:157731826412:thing/cdf_integration_test"
+  }
+}

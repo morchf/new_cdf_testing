@@ -1,0 +1,466 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Glue crawlers for DAGs and Client API
+Metadata:
+  cfn-lint:
+    config:
+      ignore_checks:
+        - I3042 # Hardcoded Partition in ARN or incorrectly placed Pseudo Parameters
+        - W3005 # Dependency already enforced
+
+Parameters:
+  Environment:
+    Description: An environment name that is suffixed to resource names
+    Type: String
+    Default: develop
+    AllowedValues:
+      - develop
+      - production
+      - test
+      - pilot
+  ShouldCreateS3Bucket:
+    Description: Should create new S3 bucket for deployment
+    Type: String
+    Default: "true"
+    AllowedValues:
+      - "true"
+      - "false"
+  EtlS3BucketPrefix:
+    Description: DAGs / requirements / plugins bucket prefix
+    Type: String
+    Default: client-api-etl
+
+Conditions:
+  CreateS3Bucket: !Equals [!Ref ShouldCreateS3Bucket, "true"]
+
+Resources:
+  EtlBucket:
+    Condition: CreateS3Bucket
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "${EtlS3BucketPrefix}-${Environment}"
+
+  GtfsCrawlerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "GtfsCrawlerRole-${Environment}"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "glue.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole"
+      Path: "/service-role/"
+      Policies:
+        - PolicyName: !Sub "GtfsCrawlerPolicy-${Environment}"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "s3:GetObject"
+                  - "s3:PutObject"
+                Resource: !Sub "arn:aws:s3:::${EtlS3BucketPrefix}-${Environment}/gtfs/*"
+
+  TspDatasetCrawlerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "TspDatasetCrawlerRole-${Environment}"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "glue.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole"
+      Path: "/service-role/"
+      Policies:
+        - PolicyName: !Sub "TspDatasetCrawlerPolicy-${Environment}"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "s3:GetObject"
+                  - "s3:PutObject"
+                Resource:
+                  - !Sub "arn:aws:s3:::${EtlS3BucketPrefix}-${Environment}/tsp_source_data/tsp_dataset/vehicle_logs/*"
+                  - !Sub "arn:aws:s3:::${EtlS3BucketPrefix}-${Environment}/tsp_source_data/tsp_dataset/vehicle_events/*"
+                  - !Sub "arn:aws:s3:::${EtlS3BucketPrefix}-${Environment}/tsp_source_data/tsp_dataset/trips/*"
+                  - !Sub "arn:aws:s3:::${EtlS3BucketPrefix}-${Environment}/tsp_source_data/tsp_dataset/stop_events/*"
+                  - !Sub "arn:aws:s3:::${EtlS3BucketPrefix}-${Environment}/tsp_source_data/tsp_dataset/opticom_device_log/*"
+                  - !Sub "arn:aws:s3:::${EtlS3BucketPrefix}-${Environment}/tsp_source_data/tsp_dataset/device_configuration/*"
+                  - !Sub "arn:aws:s3:::${EtlS3BucketPrefix}-${Environment}/tsp_source_data/tsp_dataset/intersection_status_report/*"
+
+  TspMetricsCrawlerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "TspMetricsCrawlerRole-${Environment}"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "glue.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole"
+      Path: "/service-role/"
+      Policies:
+        - PolicyName: !Sub "TspMetricsCrawlerPolicy-${Environment}"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "s3:GetObject"
+                  - "s3:PutObject"
+                Resource:
+                  - !Sub "arn:aws:s3:::${EtlS3BucketPrefix}-${Environment}/lateness/*"
+                  - !Sub "arn:aws:s3:::${EtlS3BucketPrefix}-${Environment}/travel_time/*"
+                  - !Sub "arn:aws:s3:::${EtlS3BucketPrefix}-${Environment}/signal_delay/*"
+                  - !Sub "arn:aws:s3:::${EtlS3BucketPrefix}-${Environment}/route_to_intersection/*"
+
+  AnalyticsDatabase:
+    Type: AWS::Glue::Database
+    Properties:
+      CatalogId: !Ref AWS::AccountId
+      DatabaseInput:
+        Name: !Sub "client_api_analytics_${Environment}"
+        Description: "Analytics database"
+
+  EvpDatabase:
+    Type: AWS::Glue::Database
+    Properties:
+      CatalogId: !Ref AWS::AccountId
+      DatabaseInput:
+        Name: !Sub "client_api_evp_${Environment}"
+        Description: "EVP database"
+
+  TspDatabase:
+    Type: AWS::Glue::Database
+    Properties:
+      CatalogId: !Ref AWS::AccountId
+      DatabaseInput:
+        Name: !Sub "client_api_tsp_${Environment}"
+        Description: "TSP database"
+
+  GtfsDatabase:
+    Type: AWS::Glue::Database
+    Properties:
+      CatalogId: !Ref AWS::AccountId
+      DatabaseInput:
+        Name: !Sub "client_api_gtfs_${Environment}"
+        Description: "Static GTFS database"
+
+  TspDatasetCrawler:
+    Type: AWS::Glue::Crawler
+    DependsOn:
+      - TspDatasetCrawlerRole
+      - TspDatabase
+    Properties:
+      Name: !Sub "client_api-tsp-${Environment}"
+      Role: !GetAtt TspDatasetCrawlerRole.Arn
+      DatabaseName: !Ref TspDatabase
+      Targets:
+        S3Targets:
+          - Path: !Sub "${EtlS3BucketPrefix}-${Environment}/tsp_source_data/tsp_dataset/vehicle_logs/"
+          - Path: !Sub "${EtlS3BucketPrefix}-${Environment}/tsp_source_data/tsp_dataset/vehicle_events/"
+          - Path: !Sub "${EtlS3BucketPrefix}-${Environment}/tsp_source_data/tsp_dataset/trips/"
+          - Path: !Sub "${EtlS3BucketPrefix}-${Environment}/tsp_source_data/tsp_dataset/stop_events/"
+          - Path: !Sub "${EtlS3BucketPrefix}-${Environment}/tsp_source_data/tsp_dataset/opticom_device_log/"
+          - Path: !Sub "${EtlS3BucketPrefix}-${Environment}/tsp_source_data/tsp_dataset/device_configuration/"
+          - Path: !Sub "${EtlS3BucketPrefix}-${Environment}/tsp_source_data/tsp_dataset/intersection_status_report/"
+      SchemaChangePolicy:
+        UpdateBehavior: "UPDATE_IN_DATABASE"
+        DeleteBehavior: "LOG"
+
+  TspMetricsLatenessSourceDataTable:
+    Type: AWS::Glue::Table
+    Properties:
+      CatalogId: !Sub "${AWS::AccountId}"
+      DatabaseName: !Ref TspDatabase
+      TableInput:
+        Name: lateness_source_data
+        TableType: EXTERNAL_TABLE
+        PartitionKeys:
+          - Name: agency
+            Type: string
+          - Name: date
+            Type: string
+        StorageDescriptor:
+          Columns:
+            - Name: route
+              Type: string
+            - Name: direction
+              Type: string
+            - Name: stopstart
+              Type: string
+            - Name: stopstarttime
+              Type: timestamp
+            - Name: stopstartlateness
+              Type: int
+            - Name: stopstartlatitude
+              Type: double
+            - Name: stopstartlongitude
+              Type: double
+            - Name: stopend
+              Type: string
+            - Name: stopendtime
+              Type: timestamp
+            - Name: stopendlateness
+              Type: int
+            - Name: stopendlatitude
+              Type: double
+            - Name: stopendlongitude
+              Type: double
+            - Name: numintersections
+              Type: bigint
+            - Name: vehiclepassthrough
+              Type: int
+            - Name: numrequests
+              Type: bigint
+            - Name: latenessreduction
+              Type: int
+            - Name: gtt_trip_id
+              Type: string
+            - Name: stopstartid
+              Type: string
+            - Name: stopendid
+              Type: string
+          Location: !Sub "s3://${EtlS3BucketPrefix}-${Environment}/lateness/lateness_source_data/"
+          StoredAsSubDirectories: false
+          InputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat
+          OutputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat
+          Compressed: false
+          NumberOfBuckets: -1
+          SerdeInfo:
+            SerializationLibrary: org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe
+            Parameters:
+              serialization.format: '1'
+          BucketColumns: []
+          SortColumns: []
+
+  TspMetricsTravelTimeSourceDataTable:
+    Type: AWS::Glue::Table
+    Properties:
+      CatalogId: !Sub "${AWS::AccountId}"
+      DatabaseName: !Ref TspDatabase
+      TableInput:
+        Name: travel_time_source_data
+        TableType: EXTERNAL_TABLE
+        PartitionKeys:
+          - Name: agency
+            Type: string
+          - Name: date
+            Type: string
+        StorageDescriptor:
+          Columns:
+            - Name: gtt_trip_id
+              Type: string
+            - Name: route
+              Type: string
+            - Name: direction
+              Type: string
+            - Name: stopstart
+              Type: string
+            - Name: stopstartid
+              Type: string
+            - Name: stopstarttime
+              Type: timestamp
+            - Name: stopstartlatitude
+              Type: double
+            - Name: stopstartlongitude
+              Type: double
+            - Name: stopend
+              Type: string
+            - Name: stopendid
+              Type: string
+            - Name: stopendtime
+              Type: timestamp
+            - Name: stopendlatitude
+              Type: double
+            - Name: stopendlongitude
+              Type: double
+            - Name: dwelltime
+              Type: int
+            - Name: traveltime
+              Type: double
+            - Name: drivetime
+              Type: double
+            - Name: signaldelay
+              Type: double
+            - Name: tspsavings
+              Type: double
+          Location: !Sub "s3://${EtlS3BucketPrefix}-${Environment}/travel_time/travel_time_source_data/"
+          StoredAsSubDirectories: false
+          InputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat
+          OutputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat
+          Compressed: false
+          NumberOfBuckets: -1
+          SerdeInfo:
+            SerializationLibrary: org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe
+            Parameters:
+              serialization.format: '1'
+          BucketColumns: []
+          SortColumns: []
+
+  TspMetricsSignalDelaySourceDataTable:
+    Type: AWS::Glue::Table
+    Properties:
+      CatalogId: !Sub "${AWS::AccountId}"
+      DatabaseName: !Ref TspDatabase
+      TableInput:
+        Name: signal_delay_source_data
+        TableType: EXTERNAL_TABLE
+        PartitionKeys:
+          - Name: agency
+            Type: string
+          - Name: date
+            Type: string
+        StorageDescriptor:
+          Columns:
+            - Name: gtt_trip_id
+              Type: string
+            - Name: route
+              Type: string
+            - Name: direction
+              Type: string
+            - Name: signaldelay
+              Type: double
+            - Name: locationid
+              Type: string
+            - Name: locationname
+              Type: string
+            - Name: deviceid
+              Type: string
+            - Name: timestamp
+              Type: timestamp
+          Location: !Sub "s3://${EtlS3BucketPrefix}-${Environment}/signal_delay/signal_delay_source_data/"
+          StoredAsSubDirectories: false
+          InputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat
+          OutputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat
+          Compressed: false
+          NumberOfBuckets: -1
+          SerdeInfo:
+            SerializationLibrary: org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe
+            Parameters:
+              serialization.format: '1'
+          BucketColumns: []
+          SortColumns: []
+
+  TspMetricsRouteToIntersectionMappingTable:
+    Type: AWS::Glue::Table
+    Properties:
+      CatalogId: !Sub "${AWS::AccountId}"
+      DatabaseName: !Ref TspDatabase
+      TableInput:
+        Name: route_to_intersection_mapping
+        TableType: EXTERNAL_TABLE
+        PartitionKeys:
+          - Name: agency
+            Type: string
+          - Name: date
+            Type: string
+        StorageDescriptor:
+          Columns:
+            - Name: route_id
+              Type: string
+            - Name: route_short_name
+              Type: string
+            - Name: direction_id
+              Type: bigint
+            - Name: deviceid
+              Type: string
+            - Name: latitude
+              Type: string
+            - Name: longitude
+              Type: string
+            - Name: sequence
+              Type: bigint
+          Location: !Sub "s3://${EtlS3BucketPrefix}-${Environment}/route_to_intersection/route_to_intersection_mapping/"
+          StoredAsSubDirectories: false
+          InputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat
+          OutputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat
+          Compressed: false
+          NumberOfBuckets: -1
+          SerdeInfo:
+            SerializationLibrary: org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe
+            Parameters:
+              serialization.format: '1'
+          BucketColumns: []
+          SortColumns: []
+
+  TspMetricsCrawler:
+    Type: AWS::Glue::Crawler
+    DependsOn:
+      - TspMetricsCrawlerRole
+      - TspDatabase
+    Properties:
+      Name: !Sub "client_api-tsp_metrics-${Environment}"
+      Role: !GetAtt TspMetricsCrawlerRole.Arn
+      DatabaseName: !Ref TspDatabase
+      Targets:
+        CatalogTargets:
+          - DatabaseName: !Ref TspDatabase
+            Tables:
+              - !Ref TspMetricsLatenessSourceDataTable
+              - !Ref TspMetricsTravelTimeSourceDataTable
+              - !Ref TspMetricsSignalDelaySourceDataTable
+              - !Ref TspMetricsRouteToIntersectionMappingTable
+      SchemaChangePolicy:
+        UpdateBehavior: "LOG"
+        DeleteBehavior: "LOG"
+
+  GtfsCrawler:
+    Type: AWS::Glue::Crawler
+    DependsOn:
+      - GtfsCrawlerRole
+      - GtfsDatabase
+    Properties:
+      Name: !Sub "client_api-gtfs-${Environment}"
+      Role: !GetAtt GtfsCrawlerRole.Arn
+      DatabaseName: !Ref GtfsDatabase
+      Targets:
+        S3Targets:
+          - Path: !Sub "${EtlS3BucketPrefix}-${Environment}/gtfs/agency/"
+          - Path: !Sub "${EtlS3BucketPrefix}-${Environment}/gtfs/routes/"
+          - Path: !Sub "${EtlS3BucketPrefix}-${Environment}/gtfs/shapes/"
+          - Path: !Sub "${EtlS3BucketPrefix}-${Environment}/gtfs/stop_times/"
+          - Path: !Sub "${EtlS3BucketPrefix}-${Environment}/gtfs/stops/"
+          - Path: !Sub "${EtlS3BucketPrefix}-${Environment}/gtfs/trips/"
+      SchemaChangePolicy:
+        UpdateBehavior: "UPDATE_IN_DATABASE"
+        DeleteBehavior: "LOG"
+      Configuration: '{"Version":1.0,"Grouping":{"TableGroupingPolicy":"CombineCompatibleSchemas","TableLevelConfiguration":3}}'
+
+Outputs:
+  GlueAnalyticsDb:
+    Description: Analytics Glue database
+    Value: !Ref AnalyticsDatabase
+
+  GlueEvpDb:
+    Description: EVP Glue database
+    Value: !Ref EvpDatabase
+
+  GlueTspDb:
+    Description: TSP Glue database
+    Value: !Ref TspDatabase
+
+  GlueGtfsDb:
+    Description: GTFS Glue database
+    Value: !Ref GtfsDatabase
+
+  EtlBucketArn:
+    Description: ETL bucket
+    Value: !Sub "arn:aws:s3:::${EtlS3BucketPrefix}-${Environment}"

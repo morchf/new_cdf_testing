@@ -1,0 +1,65 @@
+.filter-tree {
+  width: 27rem;
+  height: 5rem;
+  display: flex;
+  align-items: center;
+}
+
+.filter-tree__filters {
+  max-width: 27rem;
+  min-width: 15rem;
+  font-weight: 600 !important;
+}
+
+/* Handle overflow */
+.filter-tree > .ant-select {
+  width: inherit;
+}
+
+.filter-tree > .ant-select > .ant-select-selector {
+  max-height: 4rem;
+  overflow-y: hidden;
+}
+
+.filter-tree
+  > .ant-delect
+  > .ant-delect-selector
+  > .ant-select-selection-overflow {
+  height: inherit !important;
+  overflow: auto !important;
+}
+
+/* Move dropdown to right side and style node */
+.ant-select-tree-list-holder > div > div > .ant-select-tree-treenode {
+  border-bottom: 2px solid transparent;
+  margin: 0 1rem;
+  padding: 0.5rem 0;
+}
+
+/* Create border on bottom of open nodes */
+.ant-select-tree-list-holder
+  > div
+  > div
+  > .ant-select-tree-treenode-switcher-open {
+  border-bottom-color: var(--border);
+}
+
+/* Disable hover effect */
+.ant-select-tree-treenode .ant-select-tree-node-content-wrapper {
+  pointer-events: none !important;
+}
+
+.ant-select-selection {
+  max-height: 25rem !important;
+  overflow: auto;
+}
+
+/* Remove indent for child nodes */
+div.ant-select-tree-list
+  > div.ant-select-tree-list-holder
+  > div
+  > div
+  > div
+  > span.ant-select-tree-switcher.ant-select-tree-switcher-noop {
+  width: 0rem;
+}

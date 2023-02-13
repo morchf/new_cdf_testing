@@ -1,0 +1,51 @@
+{
+    "Parameters": {
+        "ThingName": {
+            "Type": "String"
+        },
+        "CertificatePem": {
+            "Type": "String"
+        },
+        "CaCertificatePem": {
+            "Type": "String"
+        }
+    },
+    "Resources": {
+        "thing": {
+            "Type": "AWS::IoT::Thing",
+            "Properties": {
+                "ThingName": {
+                    "Ref": "ThingName"
+                }
+            },
+            "OverrideSettings": {
+                "ThingTypeName": "REPLACE"
+            }
+        },
+        "certificate": {
+            "Type": "AWS::IoT::Certificate",
+            "Properties": {
+                "CACertificatePem": {
+                    "Ref": "CaCertificatePem"
+                },
+                "CertificatePem": {
+                    "Ref": "CertificatePem"
+                },
+                "Status": "ACTIVE"
+            },
+            "OverrideSettings": {
+                "Status": "REPLACE"
+            }
+        },
+        "policy": {
+            "Type": "AWS::IoT::Policy",
+            "Properties": {
+                "PolicyName": "CDFGreengrassAwarePolicy"
+            }
+        }
+    },
+    
+    "CDF": {
+        "createDeviceCertificate": true
+    }
+}

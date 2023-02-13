@@ -1,0 +1,15 @@
+{
+    "templateId": "agency",
+    "parentPath": "/agency",
+    "name": "a1",
+    "attributes": {
+        "description": "a1",
+        "city": "Oakdale",
+        "state": "Mn",
+        "timezone": "Central", 
+        "agencyCode": 1,
+        "agencyGuid": "NULL_GUID",
+        "ca_cert_id": "",
+        "priority": "High"
+    }
+}

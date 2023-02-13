@@ -1,0 +1,22 @@
+{
+    "attributes":
+    {
+        "city": "Dallas",
+        "state": "TX",
+        "timezone": "Central",
+        "agencyCode": 42,
+        "agencyID": "AC67708A-10C5-11EC-807B-BEA319F928E1",
+        "vpsCertId": "f530c5c3205a4a369f8645e0d947dc988d96341a963da26b4bbd73637a272eb2",
+        "Cert2100Id": "2102f3d07b51fd80bab6794f0e4d49fbb4fcb3035e0ceed03378145d62530fc9",
+        "priority": "High",
+        "CMSId": "AC67708A-10C5-11EC-807B-BEA319F928E1",
+        "caCertId": "1f1e338de70f1c9ecc5df4930f1af34398767c4f1b3fec1a768b93b85312c01a",
+        "displayName": "RegionTest"
+    },
+    "category": "xsgroup",
+    "templateId": "agency",
+    "name": "RegionTest",
+    "groupPath": "/cachedeletetest/regiontest",
+    "parentPath": "/cachedeletetest",
+    "description": "4:53 Test"
+}

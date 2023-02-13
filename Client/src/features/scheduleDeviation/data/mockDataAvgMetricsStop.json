@@ -1,0 +1,14 @@
+{
+  "onTimePercentage": {
+    "onTimeRate": 0.181615,
+    "earlyRate": 0.132313,
+    "lateRate": 0.691999,
+    "isBetter": true,
+    "change": 2.50345
+  },
+  "scheduleDeviation": {
+    "mins": -2.250356,
+    "isBetter": true,
+    "change": 0.5368
+  }
+}

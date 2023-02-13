@@ -1,0 +1,24 @@
+{
+    "groups": {
+      "ownedby": [
+        "/CEI_EtE_Region/CEI_EtE_AgencyTwo"
+      ]
+    },
+    "attributes": {
+      "description": "Created for CDF Config Proofing",
+      "serial": "2100PR0035",
+      "gttSerial": "2100PR0035",
+      "addressMAC": "22:22:22:22:22:22",
+      "addressLAN": "0.0.0.0",
+      "addressWAN": "0.0.0.0",
+      "IMEI": "None",
+      "devCertId": "None",
+      "make": "GTT",
+      "model": "2100",
+      "uniqueId": "CEI_EtE_Com_Two"
+    },
+    "category": "device",
+    "templateId": "ceicom",
+    "state": "active",
+    "deviceId": "CEI_EtE_Com_Two"
+  }

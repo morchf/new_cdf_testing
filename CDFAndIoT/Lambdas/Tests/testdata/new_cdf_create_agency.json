@@ -1,0 +1,12 @@
+{  
+    "region_id": "24f65442-af2d-476a-9c32-1148f6c7f2d8",
+    "agency_code": "14",
+    "name": "GTT_Test_Automation_Agency001",
+    "description": "Testing the Agency001",
+    "city": "city4",
+    "state": "GA",
+    "timezone":"Pacific",
+    "priority": "High",
+    "cms_id": "AADF835C-D2FD-11EB-BDD4-AE708F0DF867",
+    "country": "canada12"
+}

@@ -1,0 +1,687 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+##################################################################################################
+# GTT SCP Vehicle Message Pipeline
+Parameters:
+
+  S3Bucket:
+    Type: 'String'
+    Default: 'gtt-scp-vehicle-data'
+    Description: 'Production IoT Bucket Name'
+
+  AthenaDatabase:
+    Type: 'String'
+    AllowedPattern: "^[a-z_]+$"
+    Default: 'scp_iot_database'
+    Description: 'Name of the Athena Database to create.  May only contain lowercase letters and _ characters.'
+
+  DeploymentBucket:
+    Type: 'String'
+    Description: 'Name of the s3 bucket where the ETL scripts live.'
+
+##################################################################################################
+
+Resources:
+
+  # S3 BUCKETS
+  IotS3BucketName:
+    Type: AWS::S3::Bucket
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+    Properties:
+      AccelerateConfiguration:
+        AccelerationStatus: Enabled
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+          BlockPublicAcls: true
+          IgnorePublicAcls: false
+          BlockPublicPolicy: true
+          RestrictPublicBuckets: true
+      BucketName:
+        Fn::Sub: '${S3Bucket}'
+
+  ParquetIotS3BucketName:
+    Type: AWS::S3::Bucket
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+    Properties:
+      AccelerateConfiguration:
+        AccelerationStatus: Enabled
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+          BlockPublicAcls: true
+          IgnorePublicAcls: false
+          BlockPublicPolicy: true
+          RestrictPublicBuckets: true
+      BucketName:
+        Fn::Sub: 'parquet-${S3Bucket}'
+
+  ParquetBackupIotS3BucketName:
+    Type: AWS::S3::Bucket
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+    Properties:
+      AccelerateConfiguration:
+        AccelerationStatus: Enabled
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+          BlockPublicAcls: true
+          IgnorePublicAcls: false
+          BlockPublicPolicy: true
+          RestrictPublicBuckets: true
+      BucketName:
+        Fn::Sub: 'backup-parquet-${S3Bucket}'
+
+
+  # FIREHOSE DELIVERY STREAMS
+  MP70DeliveryStream:
+    Type: 'AWS::CloudFormation::Stack'
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+    Properties:
+      TemplateURL: "IoTDeliveryStream.yml"
+      Parameters:
+        S3Bucket:
+          Fn::GetAtt: [ IotS3BucketName , "Arn" ]
+        Prefix:
+          Fn::Sub: "${AWS::StackName}/MP70/"
+        SQLCommand: "SELECT topic() as topic, encode(*, 'base64') as buffer, null as utcTime FROM '+/messages/json'"
+
+  MP70DatabaseTable:
+    Type: 'AWS::Glue::Table'
+    Properties:
+      DatabaseName:
+        Ref: AthenaSCPDatabase
+      CatalogId:
+        Ref: AWS::AccountId
+      TableInput:
+        Name: "mp70"
+        TableType: "EXTERNAL_TABLE"
+        Parameters: {"classification": "parquet", "compressionType": "none"}
+        PartitionKeys:
+          - Name: "utcdate"
+            Type: "string"
+        StorageDescriptor:
+          Location:
+            Fn::Sub: "s3://parquet-${S3Bucket}/${AWS::StackName}/MP70/"
+          InputFormat: "org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat"
+          OutputFormat: "org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat"
+          SerdeInfo:
+            SerializationLibrary: "org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe"
+          Columns:
+            - Name: "vehsn"
+              Type: "string"
+            - Name: "utctime"
+              Type: "timestamp"
+            - Name: "gspd"
+              Type: "int"
+            - Name: "gstt"
+              Type: "int"
+            - Name: "gpi"
+              Type: "int"
+            - Name: "gqal"
+              Type: "int"
+            - Name: "ghed"
+              Type: "int"
+            - Name: "gsat"
+              Type: "int"
+            - Name: "glon"
+              Type: "double"
+            - Name: "glat"
+              Type: "double"
+
+  2100DeliveryStream:
+    Type: 'AWS::CloudFormation::Stack'
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties:
+      TemplateURL: "IoTDeliveryStream.yml"
+      Parameters:
+        S3Bucket:
+          Fn::GetAtt: [ IotS3BucketName , "Arn" ]
+        Prefix:
+          Fn::Sub: "${AWS::StackName}/RTRADIO2100/"
+        SQLCommand: "SELECT topic() as topic, parse_time('YYYY/MM/dd HH:mm:ss', timestamp()) as utcTime, encode(*, 'base64') as buffer FROM 'GTT/+/VEH/EVP/2100/+/RTRADIO'"
+
+  2100DatabaseTable:
+    Type: 'AWS::Glue::Table'
+    Properties:
+      DatabaseName:
+        Ref: AthenaSCPDatabase
+      CatalogId:
+        Ref: AWS::AccountId
+      TableInput:
+        Name: "rtradio2100"
+        TableType: "EXTERNAL_TABLE"
+        Parameters: {"classification": "parquet", "compressionType": "none"}
+        PartitionKeys:
+          - Name: "utcdate"
+            Type: "string"
+        StorageDescriptor:
+          Location:
+            Fn::Sub: "s3://parquet-${S3Bucket}/${AWS::StackName}/RTRADIO2100/"
+          InputFormat: "org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat"
+          OutputFormat: "org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat"
+          SerdeInfo:
+            SerializationLibrary: "org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe"
+          Columns:
+            - Name: "vehsn"
+              Type: "double"
+            - Name: "utctime"
+              Type: "timestamp"
+            - Name: "vehrssi"
+              Type: "double"
+            - Name: "location"
+              Type: "struct<type:string, latitude:double, longitude:double>"
+            - Name: "vehGPSVel_mpsd5"
+              Type: "double"
+            - Name: "vehGPSHdg_deg2"
+              Type: "double"
+            - Name: "vehGPSCStat"
+              Type: "double"
+            - Name: "vehGPSSatellites"
+              Type: "double"
+            - Name: "vehVehID"
+              Type: "double"
+            - Name: "vehCityID"
+              Type: "double"
+            - Name: "vehModeOpTurn"
+              Type: "double"
+            - Name: "vehClass"
+              Type: "double"
+            - Name: "conditionalPriority"
+              Type: "double"
+            - Name: "vehDiagValue"
+              Type: "double"
+
+  CMSDeliveryStream:
+    Type: 'AWS::CloudFormation::Stack'
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties:
+      TemplateURL: "IoTDeliveryStream.yml"
+      Parameters:
+        S3Bucket:
+          Fn::GetAtt: [ IotS3BucketName , "Arn" ]
+        Prefix:
+          Fn::Sub: "${AWS::StackName}/RTRADIOCMS/"
+        SQLCommand: "SELECT topic() as topic, parse_time('YYYY/MM/dd HH:mm:ss', timestamp()) as utcTime, encode(*, 'base64') as buffer FROM 'GTT/+/SVR/EVP/2100/+/RTRADIO/#'"
+
+  CMSDatabaseTable:
+    Type: 'AWS::Glue::Table'
+    Properties:
+      DatabaseName:
+        Ref: AthenaSCPDatabase
+      CatalogId:
+        Ref: AWS::AccountId
+      TableInput:
+        Name: "rtradiocms"
+        TableType: "EXTERNAL_TABLE"
+        Parameters: {"classification": "parquet", "compressionType": "none"}
+        PartitionKeys:
+          - Name: "utcdate"
+            Type: "string"
+        StorageDescriptor:
+          Location:
+            Fn::Sub: "s3://parquet-${S3Bucket}/${AWS::StackName}/RTRADIOCMS/"
+          InputFormat: "org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat"
+          OutputFormat: "org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat"
+          SerdeInfo:
+            SerializationLibrary: "org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe"
+          Columns:
+            - Name: "vehsn"
+              Type: "double"
+            - Name: "utctime"
+              Type: "timestamp"
+            - Name: "vehrssi"
+              Type: "double"
+            - Name: "location"
+              Type: "struct<type:string, latitude:double, longitude:double>"
+            - Name: "vehGPSVel_mpsd5"
+              Type: "double"
+            - Name: "vehGPSHdg_deg2"
+              Type: "double"
+            - Name: "vehGPSCStat"
+              Type: "double"
+            - Name: "vehGPSSatellites"
+              Type: "double"
+            - Name: "vehVehID"
+              Type: "double"
+            - Name: "vehCityID"
+              Type: "double"
+            - Name: "vehModeOpTurn"
+              Type: "double"
+            - Name: "vehClass"
+              Type: "double"
+            - Name: "conditionalPriority"
+              Type: "double"
+            - Name: "vehDiagValue"
+              Type: "double"
+
+  BCGPSDeliveryStream:
+    Type: 'AWS::CloudFormation::Stack'
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties:
+      TemplateURL: "IoTDeliveryStream.yml"
+      Parameters:
+        S3Bucket:
+          Fn::GetAtt: [ IotS3BucketName , "Arn" ]
+        Prefix:
+          Fn::Sub: "${AWS::StackName}/BCGPS/"
+        SQLCommand: "SELECT topic() as topic, parse_time('YYYY/MM/dd HH:mm:ss', timestamp()) as utcTime, encode(*, 'base64') as buffer FROM 'GTT/VEH/BCGPS2/+/#'"
+
+  BCGPSDatabaseTable:
+    Type: 'AWS::Glue::Table'
+    Properties:
+      DatabaseName:
+        Ref: AthenaSCPDatabase
+      CatalogId:
+        Ref: AWS::AccountId
+      TableInput:
+        Name: "bcgps"
+        TableType: "EXTERNAL_TABLE"
+        Parameters: {"classification": "parquet", "compressionType": "none"}
+        PartitionKeys:
+          - Name: "utcdate"
+            Type: "string"
+        StorageDescriptor:
+          Location:
+            Fn::Sub: "s3://parquet-${S3Bucket}/${AWS::StackName}/BCGPS/"
+          InputFormat: "org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat"
+          OutputFormat: "org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat"
+          SerdeInfo:
+            SerializationLibrary: "org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe"
+          Columns:
+            - Name: "serialNumber"
+              Type: "string"
+            - Name: "utctime"
+              Type: "timestamp"
+            - Name: "location"
+              Type: "struct<type:string, latitude:double, longitude:double>"
+            - Name: "speed"
+              Type: "double"
+            - Name: "heading"
+              Type: "double"
+            - Name: "valid"
+              Type: "string"
+
+  # GLUE JOB AND ROLE
+  GlueJobRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: glue.amazonaws.com
+            Action: 'sts:AssumeRole'
+      Policies:
+        - PolicyName:
+            Fn::Sub: "${AWS::StackName}-Glue-Policy"
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: "s3:*"
+                Resource:
+                  - Fn::Sub: 'arn:${AWS::Partition}:s3:::${ParquetIotS3BucketName}'
+                  - Fn::Sub: 'arn:${AWS::Partition}:s3:::${ParquetIotS3BucketName}/*'
+                  - Fn::Sub: 'arn:${AWS::Partition}:s3:::${ParquetBackupIotS3BucketName}'
+                  - Fn::Sub: 'arn:${AWS::Partition}:s3:::${ParquetBackupIotS3BucketName}/*'
+                  - Fn::Sub: 'arn:${AWS::Partition}:s3:::${DeploymentBucket}/*'
+              - Effect: Allow
+                Action:
+                      - s3:Get*
+                      - s3:List*
+                Resource:
+                  - Fn::Sub: 'arn:${AWS::Partition}:s3:::${IotS3BucketName}'
+                  - Fn::Sub: 'arn:${AWS::Partition}:s3:::${IotS3BucketName}*'
+              - Effect: Allow
+                Action:
+                  - cloudwatch:*
+                  - logs:*
+                Resource: '*'
+              - Effect: 'Allow'
+                Action: "dynamodb:*"
+                Resource:
+                  Fn::GetAtt: [ DynamoTable , "Arn" ]
+              - Effect: "Allow"
+                Action: "sns:Publish"
+                Resource:
+                  Ref: 'GlueJobSns'
+              - Effect: "Allow"
+                Action: "athena:StartQueryExecution"
+                Resource: '*'
+
+  EtlGlueJob:
+    Type: AWS::Glue::Job
+    Properties:
+      Command:
+        Name: 'glueetl'
+        PythonVersion: '3'
+        ScriptLocation: EtlCode/VehicleDataEtl.py
+      DefaultArguments:
+        "--extra-py-files":
+          Fn::Sub: "s3://${DeploymentBucket}/VehicleDataDecoders.zip"
+        "--sns_arn":
+          Ref: 'GlueJobSns'
+        "--vehicle_data_s3":
+          Fn::Sub:
+            - s3://${bucketName}/${stackName}
+            - bucketName:
+                Ref: IotS3BucketName
+              stackName:
+                Ref: AWS::StackName
+        "--dynamoDbTable":
+          Fn::GetAtt: [ DynamoTable , "Arn" ]
+        "--customerName":
+          Fn::Sub: "${AWS::StackName}"
+      GlueVersion: '1.0'
+      MaxCapacity: 2
+      MaxRetries: 0
+      Role:
+        Ref: GlueJobRole
+      Timeout: 30
+
+
+  # SNS
+  GlueJobSns:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName:
+        Fn::Sub: "${AWS::StackName}-GlueFails"
+
+
+  # STEP FUNCTION AND ROLE
+  StepFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect : 'Allow'
+            Principal:
+              Service :
+                - 'states.amazonaws.com'
+                - 'events.amazonaws.com'
+            Action:
+                - 'sts:AssumeRole'
+      Path: '/'
+      Policies:
+        - PolicyName:
+            Fn::Sub: "${AWS::StackName}-StepFunction-Policy"
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: "Allow"
+                Action: ["lambda:InvokeAsync","lambda:InvokeFunction"]
+                Resource:
+                  Fn::GetAtt: [ LambdaFunction , "Arn" ]
+              - Effect: "Allow"
+                Action: "sns:Publish"
+                Resource:
+                  Ref: 'GlueJobSns'
+              - Effect: 'Allow'
+                Action: 'states:StartExecution'
+                Resource:  !Sub "arn:${AWS::Partition}:states:::sns:publish"
+                Condition:
+                  StringEquals:
+                    aws:ResourceTag/datagtt: 'etl-jobs'
+
+  StepFunctionExecute:
+    Type: AWS::StepFunctions::StateMachine
+    Properties:
+      StateMachineName:
+        Fn::Sub: "${AWS::StackName}-StepFunction"
+      DefinitionString:
+          Fn::Sub:
+              - |-
+                {
+                "Comment":  "invoke lambda using step funtions",
+                "StartAt": "lambda_invoke",
+                "States":{
+                    "lambda_invoke":{
+                        "Type": "Task",
+                        "Resource" : "${lambdaArn}",
+                        "InputPath": "$",
+                        "ResultPath": "$.lambda_invoke",
+                        "Retry": [
+                          {
+                            "ErrorEquals": ["States.ALL"],
+                            "IntervalSeconds": 15,
+                            "BackoffRate": 5.0,
+                            "MaxAttempts": 3
+                          }
+                        ],
+                        "Catch": [
+                            {
+                                "ErrorEquals": ["States.ALL"],
+                                "Next": "notify_task"
+                            }
+                        ],
+                        "End": true
+                    },
+                    "notify_task":{
+                        "Type": "Task",
+                        "Resource": "arn:${AWS::Partition}:states:::sns:publish",
+                        "Parameters": {
+                            "Message": "Glue function invoke failed",
+                            "TopicArn": "${snstopicarn}"
+                            },
+                        "End": true
+                    }
+                  }
+                }
+              - lambdaArn :
+                  Fn::GetAtt: [ LambdaFunction , "Arn" ]
+                snstopicarn:
+                  Ref: GlueJobSns
+      RoleArn:
+        Fn::GetAtt: [ StepFunctionRole , "Arn" ]
+
+
+  # LAMBDA AND ROLE
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect : 'Allow'
+            Principal:
+              Service :
+                - 'lambda.amazonaws.com'
+            Action:
+                - 'sts:AssumeRole'
+      Path: '/'
+      ManagedPolicyArns:
+        - !Sub 'arn:${AWS::Partition}:iam::aws:policy/service-role/AWSGlueServiceRole'
+        - !Sub 'arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
+
+  LambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        ZipFile: |
+          # import required libraries
+          import json,os,boto3,json
+          # function to run the script
+          def lambda_handler(event, context):
+              client=boto3.client('glue')
+              response = client.start_job_run(
+                  JobName=event['jobName']
+              )
+      Description: execute glue job using the boto3
+      FunctionName:
+        Fn::Sub: "${AWS::StackName}-InvokeGlue"
+      Handler: index.lambda_handler
+      Role:
+        Fn::GetAtt: [ LambdaRole , "Arn" ]
+      Runtime: python3.7
+      Timeout: 30
+
+
+  # CLOUDWATCH TRIGGER AND ROLE
+  CloudwatchTriggerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: 'Allow'
+            Principal:
+              Service:
+                - 'events.amazonaws.com'
+            Action:
+              - 'sts:AssumeRole'
+      Path: '/'
+      Policies:
+        - PolicyName:
+            Fn::Sub: "${AWS::StackName}-CloudwatchTrigger-Policy"
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: "Allow"
+                Action: "states:StartExecution"
+                Resource:
+                  Ref: 'StepFunctionExecute'
+
+  CloudwatchEventTrigger:
+    Type: AWS::Events::Rule
+    Properties:
+      RoleArn:
+        Fn::GetAtt: [ CloudwatchTriggerRole , "Arn" ]
+      ScheduleExpression: cron(35 1 * * ? *)
+      State: "ENABLED"
+      Targets:
+        - Arn:
+            Ref: 'StepFunctionExecute'
+          Id: "VehicleDataStepFunction"
+          RoleArn:
+            Fn::GetAtt: [ CloudwatchTriggerRole , "Arn" ]
+          Input:
+            Fn::Sub:
+              - |-
+                {"jobName": "${glueJobName}"}
+              - glueJobName :
+                  Ref: EtlGlueJob
+
+  # DynamoDB Table
+  DynamoTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties:
+      BillingMode: "PAY_PER_REQUEST"
+      AttributeDefinitions:
+        - AttributeName: "cutomerName"
+          AttributeType: "S"
+        - AttributeName: "taskName"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "cutomerName"
+          KeyType: "HASH"
+        - AttributeName: "taskName"
+          KeyType: "RANGE"
+      TableName:
+        Fn::Sub: "${AWS::StackName}-JobStatus"
+
+  # ATHENA
+  AthenaSCPDatabase:
+    Type: AWS::Glue::Database
+    Properties:
+      CatalogId:
+        Ref: AWS::AccountId
+      DatabaseInput:
+        Name:
+          Fn::Sub: '${AthenaDatabase}'
+
+  # INIT DYNAMODB TABLE
+  InitDynamoDBLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName:
+            Fn::Sub: "${AWS::StackName}-initFunctionDynamoDb"
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Effect: Allow
+              Action:
+              - dynamodb:*
+              Resource:
+                Fn::GetAtt: [ DynamoTable , "Arn" ]
+
+  InitFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        ZipFile: |
+          import boto3
+          import cfnresponse
+
+          def lambda_handler(event, context):
+              try:
+                  tbl = boto3.resource('dynamodb').Table(event['ResourceProperties']['tableName'])
+                  tasks = event['ResourceProperties']['taskNames'].split(',')
+                  tables = event['ResourceProperties']['tableNames'].split(',')
+                  for i in range(len(tasks)):
+                      try:
+                          tbl.put_item(
+                              Item={
+                                  "cutomerName": event['ResourceProperties']['customerName'],
+                                  'taskName': tasks[i],
+                                  'lastSuccessfulTimestamp': '2020-01-01',
+                                  'database': event['ResourceProperties']['databaseName'],
+                                  'tableName': tables[i].lower(),
+                                  'active': True
+                              },
+                              ConditionExpression='attribute_not_exists(customerName) AND attribute_not_exists(taskName)'
+                          )
+                      except Exception as e:
+                          print(e)
+                  cfnresponse.send(event, context, cfnresponse.SUCCESS, {})
+              except Exception:
+                  cfnresponse.send(event, context, cfnresponse.FAILED, {})
+      Handler: index.lambda_handler
+      Role:
+        Fn::GetAtt: [ InitDynamoDBLambdaRole , "Arn" ]
+      Runtime: python3.7
+      Timeout: 60
+
+  InitializeDynamoDB:
+    Type: Custom::InitFunction
+    Properties:
+      ServiceToken:
+        Fn::GetAtt: [ InitFunction , "Arn" ]
+      customerName:
+        Fn::Sub: "${AWS::StackName}"
+      tableName:
+        Ref: DynamoTable
+      databaseName:
+        Ref: AthenaSCPDatabase
+      taskNames: "MP70,RTRADIO2100,RTRADIOCMS,BCGPS"
+      tableNames: "MP70,RTRADIO2100,RTRADIOCMS,BCGPS"

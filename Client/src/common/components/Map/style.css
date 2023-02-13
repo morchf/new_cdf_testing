@@ -1,0 +1,14 @@
+.map__skeleton {
+  height: 659px;
+  width: 100%;
+}
+
+.map__empty {
+  height: 659px;
+  width: 100%;
+  background-color: lightgrey;
+  opacity: 0.85;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

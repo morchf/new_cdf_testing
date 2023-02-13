@@ -1,0 +1,61 @@
+{
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "unregistered",
+        "registered",
+        "active"
+      ]
+    },
+    "serial": {
+      "type": "string"
+    },
+    "imei": {
+      "type": "string"
+    },
+    "plantCode": {
+      "type": "string"
+    },
+    "variant": {
+      "type": "string"
+    },
+    "hardwareVersion": {
+      "type": "string"
+    },
+    "softwareVersion": {
+      "type": "string"
+    },
+    "firmwareVersion": {
+      "type": "string"
+    },
+    "manufacturerInfo": {
+      "type": "string"
+    },
+    "manufacturerCustomerCode": {
+      "type": "string"
+    },
+    "manufacturingDate": {
+      "type": "string"
+    },
+    "softwarePackageVersion": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "status"
+  ],
+  "relations": {
+    "out": {
+      "monitors": [
+        "engine"
+      ],
+      "owned_by": [
+        "customer"
+      ],
+      "manufactured_by": [
+        "supplier"
+      ]
+    }
+  }
+}

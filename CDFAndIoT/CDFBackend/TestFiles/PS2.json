@@ -1,0 +1,24 @@
+{
+  "groups": {
+    "ownedby": [
+      "/r1/a1"
+    ]
+  },
+  "attributes": {
+    "description": "Also not the console",
+    "gttSerial": "7640xx2345",
+    "addressMAC": "04:04:04:04:04:04",
+    "addressLAN": "10.1.9.0",
+    "addressWAN": "10.1.1.20",
+    "IMEI": "9234adsf-1235813",
+    "devCertId": "NULL_CERT",
+    "make": "GTT",
+    "model": "764",
+    "lat": "",
+    "long": ""
+  },
+  "category": "device",
+  "templateId": "phaseselector",
+  "state": "active",
+  "deviceId": "PS2"
+}

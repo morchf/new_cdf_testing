@@ -1,0 +1,38 @@
+[
+    {
+        "name": "Airbag Alert",
+        "conditions": {
+            "all": [{
+                "fact": "event_id",
+                "operator": "equal",
+                "value": "$event_id"
+            }]
+        },
+        "supportedTargets": {
+            "push_gcm": "GCM"
+        },
+        "disableAlertThreshold": true,
+        "templates": {
+            "default": "{{=it.vin}}",
+            "GCM":"{{=it.vin}}"
+        }
+    },
+    {
+        "name": "Temperature Alert",
+        "conditions": {
+            "all": [{
+                "fact": "event_id",
+                "operator": "equal",
+                "value": "$event_id"
+            }]
+        },
+        "supportedTargets": {
+            "push_gcm": "GCM"
+        },
+        "disableAlertThreshold": true,
+        "templates": {
+            "default": "{{=it.vin}}",
+            "GCM":"{{=it.vin}}"
+        }
+    }
+]

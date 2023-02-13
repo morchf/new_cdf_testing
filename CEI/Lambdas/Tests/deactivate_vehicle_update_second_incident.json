@@ -1,0 +1,56 @@
+{
+    "messageId": "RANDOMIZEGUID",
+    "siteId": "CEI_EtE_TestRegion",
+    "agencyId": "CEI_EtE_CEIAgency",
+    "incidents": [
+      {
+        "id": "test_activateSecondIncident",
+        "action": "UPDATE",
+        "actionDateTime": "2021-03-17T11:39:32.143Z",
+        "status": "DISPATCHED",
+        "statusDateTime": "2021-03-17T11:39:32.143Z",
+        "type": "CRASH",
+        "priority": "Zero",
+        "location": {
+            "name": "North west's",
+            "address": {
+                "crossStreet": "North west wall st",
+                "street1": "NW wall st",
+                "street2": "NW Arizona st",
+                "city": "Salem",
+                "state": "OR",
+                "county": "",
+                "zip": "97765",
+            "directions": ""
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              -118.028666,
+              33.63668
+            ]
+          }
+        },
+        "units": [
+          {
+            "deviceId": "CEI_EtE_Vehicle_One",
+            "unitId": "111",
+            "dispatchDateTime": "2021-03-17T11:39:32.143Z",
+            "type": "PATROL",
+            "status": "EN",
+            "statusDateTime": "2021-03-17T11:39:32.143Z",
+            "location": {
+              "updateDateTime": "2021-03-17T11:39:32.143Z",
+              "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -118.050027,
+                    33.619108
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }

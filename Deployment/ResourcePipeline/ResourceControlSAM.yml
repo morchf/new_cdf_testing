@@ -1,0 +1,301 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: "AWS::Serverless-2016-10-31"
+
+Description: Backup Config for Multiple Resources
+
+Metadata:
+ cfn-lint:
+  config:
+    ignore_checks:
+      - I3042
+      - W2001
+
+Parameters:
+  Env:
+    Type: String
+    AllowedValues:
+      - develop
+      - test
+      - production
+      - pilot
+    Description: "Environment in which the deployment is happening. Allowed values: develop, test, production, or pilot"
+
+  TeamsURL:
+    Description: "Incoming Microsoft Teams Webhook URL"
+    Type: String
+    Default: "https://vontier.webhook.office.com/webhookb2/3271bb62-bf7a-4dcc-a3e3-7d8a2e0f631d@8df22a8d-9153-489d-950c-a20cccb65620/IncomingWebhook/e8f0a9aed21f4cbe9f75e33b0cbda4cf/a5b56e3f-3313-4414-aea9-b9ee9bc3a90f"
+
+  CoreName:
+    Type: String
+    Default: ResourcePipeline
+    Description: Base name for ResourcePipeline resources
+
+Conditions:
+   CreateResources: !Or [!Equals [!Ref "Env", test], !Equals [!Ref "Env", pilot], !Equals [!Ref "Env", production]]
+
+Resources:
+  BackupRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub BackupRole-${CoreName}
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - backup.amazonaws.com
+            Action: sts:AssumeRole
+      Description: "Resource Control AWS Backup Role"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForBackup
+        - arn:aws:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForRestores
+
+  EBSVault:
+    Type: AWS::Backup::BackupVault
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+    Properties:
+      BackupVaultName: !Sub EBSVault-${CoreName}
+  
+  EBSPlan:
+    Type: "AWS::Backup::BackupPlan"
+    Properties:
+      BackupPlan: 
+        BackupPlanName: !Sub EBSPlan-${CoreName}
+        BackupPlanRule: 
+          - RuleName: EBSRule
+            TargetBackupVault: !Ref EBSVault
+            ScheduleExpression: cron(0 5 * * ? *)
+            Lifecycle:
+              DeleteAfterDays: 7
+            StartWindowMinutes: 60
+            CompletionWindowMinutes: 180       
+  
+  EBSBackups:
+    Type: AWS::Backup::BackupSelection
+    Properties:
+      BackupSelection:
+        SelectionName: !Sub EBSBackups-${CoreName}
+        IamRoleArn: !GetAtt BackupRole.Arn
+        ListOfTags:
+          - ConditionType: STRINGEQUALS
+            ConditionKey: EBSKey
+            ConditionValue: EBSValue
+      BackupPlanId: !Ref EBSPlan
+
+  DynamoDBVault:
+      Type: AWS::Backup::BackupVault
+      UpdateReplacePolicy: Delete
+      DeletionPolicy: Delete
+      Properties:
+        BackupVaultName: !Sub DynamoDBVault-${CoreName}
+  
+  DynamoDBPlan:
+    Type: AWS::Backup::BackupPlan
+    Properties:
+      BackupPlan:
+        BackupPlanName: !Sub DynamoDBPlan-${CoreName}
+        BackupPlanRule:
+          - RuleName: DynamoDBRule
+            TargetBackupVault: !Ref DynamoDBVault
+            ScheduleExpression: cron(0 22 ? * * *)
+            Lifecycle:
+              DeleteAfterDays: 3
+            StartWindowMinutes: 60
+            CompletionWindowMinutes: 180
+  
+  DynamoBackups:
+    Type: AWS::Backup::BackupSelection
+    Properties:
+      BackupSelection:
+        SelectionName: !Sub DynamoBackups-${CoreName}
+        IamRoleArn: !GetAtt BackupRole.Arn
+        ListOfTags:
+          - ConditionType: STRINGEQUALS
+            ConditionKey: DynamoDBKey
+            ConditionValue: DynamoDBValue
+      BackupPlanId: !Ref DynamoDBPlan
+
+  EFSVault:
+      Type: AWS::Backup::BackupVault
+      UpdateReplacePolicy: Delete
+      DeletionPolicy: Delete
+      Properties:
+        BackupVaultName: !Sub EFSVault-${CoreName}
+  
+  EFSPlan:
+    Type: AWS::Backup::BackupPlan
+    Properties:
+      BackupPlan:
+        BackupPlanName: !Sub EFSPlan-${CoreName}
+        BackupPlanRule:
+          - RuleName: EFSRule
+            TargetBackupVault: !Ref EFSVault
+            ScheduleExpression: cron(0 22 ? * * *)
+            Lifecycle:
+              DeleteAfterDays: 7
+            StartWindowMinutes: 60
+            CompletionWindowMinutes: 180
+  
+  EFSBackups:
+    Type: AWS::Backup::BackupSelection
+    Properties:
+      BackupSelection:
+        SelectionName: !Sub EFSBackups-${CoreName}
+        IamRoleArn: !GetAtt BackupRole.Arn
+        ListOfTags:
+          - ConditionType: STRINGEQUALS
+            ConditionKey: EFSKey
+            ConditionValue: EFSValue
+      BackupPlanId: !Ref EFSPlan
+
+#Pipeline failure Alert resources
+
+  NotificationLambdaFunction:
+    Type: "AWS::Serverless::Function"
+    Condition: CreateResources
+    Properties:
+      FunctionName: !Sub NotificationLambdaFunction-${CoreName}
+      Handler: PipelineFailureAlert.lambda_handler
+      CodeUri: ./../../CDFAndIoT/Lambdas/PipelineFailureAlert/LambdaCode
+      Timeout: 30
+      MemorySize: 128
+      Environment:
+        Variables:
+          TEAMS_URL: !Ref TeamsURL
+          ENVIRONMENT: !Ref Env
+      Runtime: python3.8
+      Role: !GetAtt NotificationLambdaFunctioneRole.Arn
+
+  NotificationLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Condition: CreateResources
+    Properties:
+      FunctionName: !Ref NotificationLambdaFunction
+      Action: "lambda:InvokeFunction"
+      Principal: "sns.amazonaws.com"
+      SourceArn: !Ref NotificationSNSTopic
+
+  NotificationLambdaFunctioneRole:
+    Type: 'AWS::IAM::Role'
+    Condition: CreateResources
+    Properties:
+      RoleName: !Sub NotificationLambdaFunctioneRole-${CoreName}
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: 'lambda.amazonaws.com'
+            Action: 'sts:AssumeRole'
+      Policies:
+        - PolicyName: 'customresource'
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'sns:*'
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - 'logs:CreateLogGroup'
+                  - 'logs:CreateLogStream'
+                  - 'logs:PutLogEvents'
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - 'codepipeline:List*'
+                  - 'codepipeline:GetPipeline'
+                  - 'codepipeline:GetPipelineState'
+                  - 'codepipeline:GetPipelineExecution'
+                Resource: '*'
+
+  NotificationEventRule:
+    DependsOn: NotificationLambdaFunction
+    Condition: CreateResources
+    Type: AWS::Events::Rule
+    Properties:
+      Name: !Sub NotificationEventRule-${CoreName}
+      Description: "Pipeline notofication EventRule"
+      EventPattern:
+        source:
+          - "aws.codepipeline"
+        detail-type:
+          - "CodePipeline Pipeline Execution State Change"
+        detail:
+          state:
+            - "FAILED"
+          pipeline:
+            - PostDeployment
+            - TeletracDeployment
+            - ResourceControl
+            - CDFDeployment
+            - CEIDeployment
+            - TNDeployment
+            - UIDeployment
+            - AnalyticsDeployment
+            - WhelenDeployment
+            - VPSDeployment
+            - TSPDeployment    
+        resources:
+          - !Sub 'arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:PostDeployment'
+          - !Sub 'arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:TeletracDeployment'
+          - !Sub 'arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:ResourceControl'
+          - !Sub 'arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:CDFDeployment'
+          - !Sub 'arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:CEIDeployment'
+          - !Sub 'arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:TNDeployment'
+          - !Sub 'arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:UIDeployment'
+          - !Sub 'arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:AnalyticsDeployment'
+          - !Sub 'arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:WhelenDeployment'
+          - !Sub 'arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:VPSDeployment'
+          - !Sub 'arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:TSPDeployment'
+      State: "ENABLED"
+      Targets:
+        -
+          Arn:
+            !Ref NotificationSNSTopic
+          Id: "NotificationTeams"
+          
+  NotificationSNSTopic:
+    Type: AWS::SNS::Topic
+    Condition: CreateResources
+    Properties:
+      TopicName: !Sub NotificationSNSTopic-${CoreName}
+      DisplayName: String
+      Subscription:
+        - Protocol: lambda
+          Endpoint: !GetAtt NotificationLambdaFunction.Arn
+
+  NotificationSnsTopicPolicy:
+    Type: AWS::SNS::TopicPolicy
+    Condition: CreateResources
+    Properties:
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: NotificationSnsTopicPolicy
+            Effect: Allow
+            Principal:
+              AWS: "*"
+            Action:
+              - "SNS:GetTopicAttributes"
+              - "SNS:SetTopicAttributes"
+              - "SNS:AddPermission"
+              - "SNS:RemovePermission"
+              - "SNS:DeleteTopic"
+              - "SNS:Subscribe"
+              - "SNS:ListSubscriptionsByTopic"
+              - "SNS:Publish"
+              - "SNS:Receive"
+            Resource:
+              !Ref NotificationSNSTopic
+          - Sid: NotificationSnsTopicPolicyEvent
+            Effect: Allow
+            Principal:
+              Service: "events.amazonaws.com"
+            Action:
+              - "SNS:Publish"
+            Resource:
+              !Ref NotificationSNSTopic
+      Topics:
+        - !Ref NotificationSNSTopic

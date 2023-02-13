@@ -1,0 +1,13 @@
+#map {
+  height: 659px;
+}
+
+.gm-style-iw-d {
+  overflow-y: hidden !important;
+}
+
+.gm-style-iw-d * {
+  max-height: inherit;
+}
+
+a[href^="https://maps.google.com/maps"]{display:none !important}

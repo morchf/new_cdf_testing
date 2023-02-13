@@ -1,0 +1,1085 @@
+{
+  "intersectionName": "Street & Ave",
+  "locationType": "ntcip",
+  "latitude": 37.7673332,
+  "longitude": -122.43867471,
+  "timezone": "CST",
+  "approachMap":
+  [
+      {
+          "approachName": "1",
+          "numberOfCoordinates": 2,
+          "coordinates":
+          [
+              {
+                  "latitude": 37.762749,
+                  "longitude": -122.435533,
+                  "width": 30
+              },
+              {
+                  "latitude": 37.768245,
+                  "longitude": -122.428194,
+                  "width": 30
+              }
+          ]
+      },
+      {
+          "approachName": "2",
+          "numberOfCoordinates": 2,
+          "coordinates":
+          [
+              {
+                  "latitude": 37.460890,
+                  "longitude": 122.460998,
+                  "width": 30
+              },
+              {
+                  "latitude": 37.460823,
+                  "longitude": 122.450943,
+                  "width": 30
+              }
+          ]
+      }
+  ],
+  "thresholds":
+    {
+        "lowPriority":
+        [
+            {
+                "channelName": "Northbound",
+                "channel": "A",
+                "maxCallTimes": 360,
+                "lostSignalHold": 6,
+                "classes":
+                [
+                    {
+                        "class": "1",
+                        "name": "Regular Transit",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "2",
+                        "name": "Express Transit",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "3",
+                        "name": "Paratransit",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "4",
+                        "name": "Light Rail",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "5",
+                        "name": "Trolley",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "6",
+                        "name": "Snow Plows",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "7",
+                        "name": "Supervisor",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "8",
+                        "name": "Pavement Marking",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "9",
+                        "name": "Installer/Set-up",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "10",
+                        "name": "Bus Rapid Transit",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "10",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    },
+                    {
+                        "class": "11",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    },
+                    {
+                        "class": "12",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    },
+                    {
+                        "class": "13",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    },
+                    {
+                        "class": "14",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    },
+                    {
+                        "class": "15",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    }
+                ]
+            },
+            {
+                "channelName": "Southbound",
+                "channel": "B",
+                "maxCallTimes": 360,
+                "lostSignalHold": 6,
+                "classes":
+                [
+                    {
+                        "class": "1",
+                        "name": "Regular Transit",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "2",
+                        "name": "Express Transit",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "3",
+                        "name": "Paratransit",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "4",
+                        "name": "Light Rail",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "5",
+                        "name": "Trolley",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "6",
+                        "name": "Snow Plows",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "7",
+                        "name": "Supervisor",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "8",
+                        "name": "Pavement Marking",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "9",
+                        "name": "Installer/Set-up",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "10",
+                        "name": "Bus Rapid Transit",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "10",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    },
+                    {
+                        "class": "11",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    },
+                    {
+                        "class": "12",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    },
+                    {
+                        "class": "13",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    },
+                    {
+                        "class": "14",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    },
+                    {
+                        "class": "15",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    }
+                ]
+            },
+            {
+                "channelName": "Eastbound",
+                "channel": "C",
+                "maxCallTimes": 360,
+                "lostSignalHold": 6,
+                "classes":
+                [
+                    {
+                        "class": "1",
+                        "name": "Regular Transit",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "2",
+                        "name": "Express Transit",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "3",
+                        "name": "Paratransit",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "4",
+                        "name": "Light Rail",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "5",
+                        "name": "Trolley",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "6",
+                        "name": "Snow Plows",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "7",
+                        "name": "Supervisor",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "8",
+                        "name": "Pavement Marking",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "9",
+                        "name": "Installer/Set-up",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "10",
+                        "name": "Bus Rapid Transit",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "10",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    },
+                    {
+                        "class": "11",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    },
+                    {
+                        "class": "12",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    },
+                    {
+                        "class": "13",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    },
+                    {
+                        "class": "14",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    },
+                    {
+                        "class": "15",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    }
+                ]
+            },
+            {
+                "channelName": "Westbound",
+                "channel": "D",
+                "maxCallTimes": 360,
+                "lostSignalHold": 6,
+                "classes":
+                [
+                    {
+                        "class": "1",
+                        "name": "Regular Transit",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "2",
+                        "name": "Express Transit",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "3",
+                        "name": "Paratransit",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "4",
+                        "name": "Light Rail",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "5",
+                        "name": "Trolley",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "6",
+                        "name": "Snow Plows",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "7",
+                        "name": "Supervisor",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "8",
+                        "name": "Pavement Marking",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "9",
+                        "name": "Installer/Set-up",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "10",
+                        "name": "Bus Rapid Transit",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "10",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    },
+                    {
+                        "class": "11",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    },
+                    {
+                        "class": "12",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    },
+                    {
+                        "class": "13",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    },
+                    {
+                        "class": "14",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    },
+                    {
+                        "class": "15",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    }
+                ]
+            }
+        ],
+        "highPriority":
+        [
+            {
+                "channelName": "Northbound",
+                "channel": "A",
+                "maxCallTimes": 360,
+                "lostSignalHold": 6,
+                "classes":
+                [
+                    {
+                        "class": "1",
+                        "name": "Regular Transit",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "2",
+                        "name": "Express Transit",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "3",
+                        "name": "Paratransit",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "4",
+                        "name": "Light Rail",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "5",
+                        "name": "Trolley",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "6",
+                        "name": "Snow Plows",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "7",
+                        "name": "Supervisor",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "8",
+                        "name": "Pavement Marking",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "9",
+                        "name": "Installer/Set-up",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "10",
+                        "name": "Bus Rapid Transit",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "10",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    },
+                    {
+                        "class": "11",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    },
+                    {
+                        "class": "12",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    },
+                    {
+                        "class": "13",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    },
+                    {
+                        "class": "14",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    },
+                    {
+                        "class": "15",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    }
+                ]
+            },
+            {
+                "channelName": "Southbound",
+                "channel": "B",
+                "maxCallTimes": 360,
+                "lostSignalHold": 6,
+                "classes":
+                [
+                    {
+                        "class": "1",
+                        "name": "Regular Transit",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "2",
+                        "name": "Express Transit",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "3",
+                        "name": "Paratransit",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "4",
+                        "name": "Light Rail",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "5",
+                        "name": "Trolley",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "6",
+                        "name": "Snow Plows",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "7",
+                        "name": "Supervisor",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "8",
+                        "name": "Pavement Marking",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "9",
+                        "name": "Installer/Set-up",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "10",
+                        "name": "Bus Rapid Transit",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "10",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    },
+                    {
+                        "class": "11",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    },
+                    {
+                        "class": "12",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    },
+                    {
+                        "class": "13",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    },
+                    {
+                        "class": "14",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    },
+                    {
+                        "class": "15",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    }
+                ]
+            },
+            {
+                "channelName": "Eastbound",
+                "channel": "C",
+                "maxCallTimes": 360,
+                "lostSignalHold": 6,
+                "classes":
+                [
+                    {
+                        "class": "1",
+                        "name": "Regular Transit",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "2",
+                        "name": "Express Transit",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "3",
+                        "name": "Paratransit",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "4",
+                        "name": "Light Rail",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "5",
+                        "name": "Trolley",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "6",
+                        "name": "Snow Plows",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "7",
+                        "name": "Supervisor",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "8",
+                        "name": "Pavement Marking",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "9",
+                        "name": "Installer/Set-up",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "10",
+                        "name": "Bus Rapid Transit",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "10",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    },
+                    {
+                        "class": "11",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    },
+                    {
+                        "class": "12",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    },
+                    {
+                        "class": "13",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    },
+                    {
+                        "class": "14",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    },
+                    {
+                        "class": "15",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    }
+                ]
+            },
+            {
+                "channelName": "Westbound",
+                "channel": "D",
+                "maxCallTimes": 360,
+                "lostSignalHold": 6,
+                "classes":
+                [
+                    {
+                        "class": "1",
+                        "name": "Regular Transit",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "2",
+                        "name": "Express Transit",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "3",
+                        "name": "Paratransit",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "4",
+                        "name": "Light Rail",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "5",
+                        "name": "Trolley",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "6",
+                        "name": "Snow Plows",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "7",
+                        "name": "Supervisor",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "8",
+                        "name": "Pavement Marking",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "9",
+                        "name": "Installer/Set-up",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "10",
+                        "name": "Bus Rapid Transit",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "Y"
+                    },
+                    {
+                        "class": "10",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    },
+                    {
+                        "class": "11",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    },
+                    {
+                        "class": "12",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    },
+                    {
+                        "class": "13",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    },
+                    {
+                        "class": "14",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    },
+                    {
+                        "class": "15",
+                        "name": "Not used",
+                        "ETA": 30,
+                        "distance": 1000,
+                        "active": "N"
+                    }
+                ]
+            }
+        ]
+    },
+  "outputs": {
+    "lowPriority": 
+    {
+      "type": "NTCIP 1211",
+      "channels":
+      [
+        {
+          "channel": "A",
+          "straight": 1,
+          "left": 1,
+          "right": 1
+        },
+        {
+          "channel": "B",
+          "straight": 1,
+          "left": 1,
+          "right": 1
+        },
+        {
+          "channel": "C",
+          "straight": 1,
+          "left": 1,
+          "right": 1
+        },
+        {
+          "channel": "D",
+          "straight": 1,
+          "left": 1,
+          "right": 1
+        }
+      ]
+    },
+    "highPriority": 
+    {
+      "type": "NTCIP 1211",
+      "channels":
+      [
+        {
+          "channel": "A",
+          "straight": 1,
+          "left": 1,
+          "right": 1
+        },
+        {
+          "channel": "B",
+          "straight": 1,
+          "left": 1,
+          "right": 1
+        },
+        {
+          "channel": "C",
+          "straight": 1,
+          "left": 1,
+          "right": 1
+        },
+        {
+          "channel": "D",
+          "straight": 1,
+          "left": 1,
+          "right": 1
+        }
+      ]
+  }
+  }
+}

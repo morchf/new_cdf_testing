@@ -1,0 +1,341 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: Create an Egress VPC with a Signpost instance and a NAT gateway.
+
+###
+### =========================================================================
+###
+
+Metadata:
+
+  'AWS::CloudFormation::Interface':
+    ParameterGroups:
+      - Label:
+          default: Egress VPC
+        Parameters:
+          - EgressVpcCidr
+          - AvailabilityZone
+          - TransitGatewayId
+      - Label:
+          default: Egress private subnet
+        Parameters:
+          - PrivateSubnetCidr
+      - Label:
+          default: Egress public subnet
+        Parameters:
+          - PublicSubnetCidr
+      - Label:
+          default: Signpost instance
+        Parameters:
+          - SignpostAmiId
+          - SignpostInstanceType
+          - SignpostPrivateIpAddress
+          - SignpostSecurityGroupId
+
+    ParameterLabels:
+      EgressVpcCidr:
+        default: Egress VPC CIDR
+      PrivateSubnetCidr:
+        default: Egress VPC private subnet CIDR
+      PublicSubnetCidr:
+        default: Egress VPC public subnet CIDR
+      AvailabilityZone:
+        default: Availability Zone
+      SignpostAmiId:
+        default: Signpost instance AMI ID
+      SignpostInstanceType:
+        default: Signpost instance type
+      SignpostPrivateIpAddress:
+        default: Signpost instance private IP address
+      SignpostSecurityGroupId:
+        default: Signpost instance security group ID
+      TransitGatewayId:
+        default: Transit Gateway ID
+
+###
+### =========================================================================
+###
+
+Parameters:
+
+  AvailabilityZone:
+    Description: (Optional) The Availability Zone the subnets and Signpost instance will be created in
+    Type: String
+
+  EgressVpcCidr:
+    AllowedPattern: '^([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\/([0-9]|[1-2][0-9]|3[0-2])$'
+    ConstraintDescription: Must match the IPv4 CIDR pattern XXX.XXX.XXX.XXX/XX
+    Description: The CIDR of the Egress VPC
+    Type: String
+
+  PrivateSubnetCidr:
+    AllowedPattern: '^([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\/([0-9]|[1-2][0-9]|3[0-2])$'
+    ConstraintDescription: Must match the IPv4 CIDR pattern XXX.XXX.XXX.XXX/XX
+    Description: The CIDR of the private subnet in the Egress VPC
+    Type: String
+
+  PublicSubnetCidr:
+    AllowedPattern: '^([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\/([0-9]|[1-2][0-9]|3[0-2])$'
+    ConstraintDescription: Must match the IPv4 CIDR pattern XXX.XXX.XXX.XXX/XX
+    Description: The CIDR of the public subnet in the Egress VPC
+    Type: String
+
+  SignpostAmiId:
+    Description: The AMI used to launch the Signpost instance
+    Type: AWS::EC2::Image::Id
+
+  SignpostInstanceType:
+    Description: The instance type of the Signpost instance
+    Default: t2.nano
+    Type: String
+
+  SignpostPrivateIpAddress:
+    AllowedPattern: '^()$|^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]))$'
+    ConstraintDescription: Must match the IPv4 address pattern XXX.XXX.XXX.XXX
+    Description: (Optional) The private IPv4 address of the Signpost instance in the private subnet
+    Type: String
+
+  SignpostSecurityGroupId:
+    Description: (Optional) The security group assigned to the Signpost instance
+    Type: String
+
+  TransitGatewayId:
+    Description: The Transit Gateway attached to the Egress VPC
+    Type: String
+
+###
+### =========================================================================
+###
+
+Conditions:
+
+  HasAvailabilityZone:
+    Fn::Not: [ !Equals [ '', !Ref AvailabilityZone ] ]
+
+  HasSignpostPrivateIpAddress:
+    Fn::Not: [ !Equals [ '', !Ref SignpostPrivateIpAddress ] ]
+
+  HasSignpostSecurityGroupId:
+    Fn::Not: [ !Equals [ '', !Ref SignpostSecurityGroupId ] ]
+
+  UseDefaultSignpostSecurityGroup:
+    Fn::Equals: [ '', !Ref SignpostSecurityGroupId ]
+
+###
+### =========================================================================
+###
+
+Resources:
+
+  EgressVpc:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref EgressVpcCidr
+      EnableDnsHostnames: False
+      EnableDnsSupport: False
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName} Egress VPC
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName} Egress VPC Internet Gateway
+
+  TransitGatewayAttachment:
+    Type: AWS::EC2::TransitGatewayAttachment
+    Properties:
+      SubnetIds:
+        - !Ref PrivateSubnet
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName} Attachment to Egress VPC
+      TransitGatewayId: !Ref TransitGatewayId
+      VpcId: !Ref EgressVpc
+
+  VpcInternetGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref InternetGateway
+      VpcId: !Ref EgressVpc
+
+  ### Private subnet
+
+  PrivateSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone:
+        Fn::If:
+          - HasAvailabilityZone
+          - !Ref AvailabilityZone
+          - !Select [ 0, !GetAZs '' ]
+      CidrBlock: !Ref PrivateSubnetCidr
+      VpcId: !Ref EgressVpc
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName} Egress VPC private
+
+  PrivateSubnetRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref EgressVpc
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName} Egress VPC private routes
+
+  DefaultRouteToNatGateway:
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGateway
+      RouteTableId: !Ref PrivateSubnetRouteTable
+
+  PrivateSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PrivateSubnetRouteTable
+      SubnetId: !Ref PrivateSubnet
+
+  ### Signpost in private subnet
+
+  SignpostInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      AvailabilityZone:
+        Fn::If:
+          - HasAvailabilityZone
+          - !Ref AvailabilityZone
+          - !Select [ 0, !GetAZs '' ]
+      ImageId: !Ref SignpostAmiId
+      InstanceType: !Ref SignpostInstanceType
+      PrivateIpAddress:
+        Fn::If:
+          - HasSignpostPrivateIpAddress
+          - !Ref SignpostPrivateIpAddress
+          - !Ref AWS::NoValue
+      SecurityGroupIds:
+        - Fn::If:
+            - HasSignpostSecurityGroupId
+            - !Ref SignpostSecurityGroupId
+            - !Ref PingOnlySecurityGroup
+      SubnetId: !Ref PrivateSubnet
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName} Egress VPC Signpost
+
+  PingOnlySecurityGroup:
+    Condition: UseDefaultSignpostSecurityGroup
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Ping-only ingress rules
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0  # because the ping can come from arbitrary CIDRs on the other side of the TG
+          Description: ICMP Echo Request from anywhere
+          IpProtocol: icmp
+          FromPort: 8  # the ICMP type for Echo Request
+          ToPort: 0    # the ICMP code for Echo Request (0 is the only option)
+      VpcId: !Ref EgressVpc
+
+  ### Public subnet
+
+  PublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone:
+        Fn::If:
+          - HasAvailabilityZone
+          - !Ref AvailabilityZone
+          - !Select [ 0, !GetAZs '' ]
+      CidrBlock: !Ref PublicSubnetCidr
+      VpcId: !Ref EgressVpc
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName} Egress VPC public
+
+  PublicSubnetRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref EgressVpc
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName} Egress VPC public routes
+
+  DefaultRouteToInternetGateway:
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+      RouteTableId: !Ref PublicSubnetRouteTable
+
+  PublicSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PublicSubnetRouteTable
+      SubnetId: !Ref PublicSubnet
+
+  # NAT Gateway in public subnet
+
+  NatGateway:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt NatGatewayElasticIp.AllocationId
+      SubnetId: !Ref PublicSubnet
+
+  NatGatewayElasticIp:
+    Type: AWS::EC2::EIP
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName} NAT Gateway
+
+###
+### =========================================================================
+###
+
+Outputs:
+
+  AvailabilityZone:
+    Description: The Availability Zone of the Egress VPC subnets and Signpost instance
+    Value:
+      Fn::If:
+        - HasAvailabilityZone
+        - !Ref AvailabilityZone
+        - !Select [ 0, !GetAZs '' ]
+
+  EgressVpc:
+    Description: Egress VPC
+    Value: !Ref EgressVpc
+
+  NatGateway:
+    Description: NAT Gateway
+    Value: !Ref NatGateway
+
+  NatGatewayPublicIp:
+    Description: NAT Gateway public IP address
+    Value: !Ref NatGatewayElasticIp
+
+  PrivateSubnet:
+    Description: Egress VPC private subnet
+    Value: !Ref PrivateSubnet
+
+  PrivateSubnetRouteTable:
+    Description: Egress VPC private subnet route table
+    Value: !Ref PrivateSubnetRouteTable
+
+  PublicSubnet:
+    Description: Egress VPC public subnet
+    Value: !Ref PublicSubnet
+
+  PublicSubnetRouteTable:
+    Description: Egress VPC public subnet route table
+    Value: !Ref PublicSubnetRouteTable
+
+  SignpostInstance:
+    Description: Egress VPC Signpost instance
+    Value: !Ref SignpostInstance
+
+  TransitGatewayAttachment:
+    Description: Egress VPC attachment to Transit Gateway
+    Value: !Ref TransitGatewayAttachment

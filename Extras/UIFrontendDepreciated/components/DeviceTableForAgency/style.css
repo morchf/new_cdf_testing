@@ -1,0 +1,12 @@
+.DissociateDeviceToAgency {
+  padding: 60px 0;
+}
+
+.DissociateDeviceToAgency h5 {
+  font-size: medium;
+}
+
+.DissociateDeviceToAgency .DeviceTable {
+  width: 100%;
+  margin-bottom: 15px;
+}

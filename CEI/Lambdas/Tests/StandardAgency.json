@@ -1,0 +1,20 @@
+{
+    "attributes": {
+        "city": "CEI_EtE_Agency",
+        "state": "MN",
+        "timezone": "Central",
+        "agencyCode": 23,
+        "agencyID": "CEI_EtE_AgencyGUID",
+        "vpsCertId": "NULL_CERT",
+        "priority": "High",
+        "CMSId": "CEI_EtE_Agency",
+        "caCertId": "CEI_EtE_AgencyGUID"
+    },
+    "category": "group",
+    "templateId": "agency",
+    "name": "CEI_EtE_Agency",
+    "groupPath": "/CEI_EtE_TestRegion/CEI_EtE_Agency",
+    "parentPath": "/CEI_EtE_TestRegion",
+    "description": "CEI_EtE_Agency"
+}
+

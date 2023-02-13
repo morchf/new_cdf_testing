@@ -1,0 +1,4 @@
+pydantic>=1.9.0
+redis==4.2.2
+../../../../CDFAndIoT/API
+../../../../TSP/ScheduleAdherence/DataModel

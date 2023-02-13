@@ -1,0 +1,39 @@
+{
+  "Parameters": {
+      "ThingName": {
+          "Type": "String"
+      },
+      "CertificateId": {
+          "Type": "String"
+      }
+  },
+  "Resources": {
+      "thing": {
+          "Type": "AWS::IoT::Thing",
+          "Properties": {
+              "ThingName": {
+                  "Ref": "ThingName"
+              }
+          },
+          "OverrideSettings": {
+              "ThingTypeName": "REPLACE"
+          }
+      },
+      "certificate": {
+        "Type": "AWS::IoT::Certificate",
+        "Properties": {
+            "CertificateId": {"Ref" : "CertificateId"},
+            "Status": "ACTIVE"
+        },
+        "OverrideSettings": {
+            "Status": "REPLACE"
+        }
+    },
+      "policy": {
+          "Type": "AWS::IoT::Policy",
+          "Properties": {
+              "PolicyName": "CDF-JITR-Policy"
+          }
+      }
+  }
+}

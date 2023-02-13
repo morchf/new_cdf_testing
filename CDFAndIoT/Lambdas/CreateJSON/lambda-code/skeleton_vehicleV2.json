@@ -1,0 +1,18 @@
+{
+  "groups": {
+       "ownedby": [""]
+  },
+  "attributes": {
+    "name": "",
+    "description": "",
+    "type": "Unassigned",
+    "priority": "",
+    "class": 10,
+    "VID": 0,
+    "uniqueId": "NULL_GUID"
+  },
+  "category": "device",
+  "templateId": "vehicleV2",
+  "state": "active",
+  "deviceId": ""
+}

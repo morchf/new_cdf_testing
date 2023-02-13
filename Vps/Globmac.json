@@ -1,0 +1,13 @@
+{
+    "TableName": "globalMacVps",
+    "KeySchema": [
+        { "AttributeName": "primaryKey", "KeyType": "HASH" }
+    ],
+    "AttributeDefinitions": [
+        { "AttributeName": "primaryKey", "AttributeType": "N" }
+    ],
+    "ProvisionedThroughput": {
+        "ReadCapacityUnits": 50,
+        "WriteCapacityUnits": 50
+    }
+}

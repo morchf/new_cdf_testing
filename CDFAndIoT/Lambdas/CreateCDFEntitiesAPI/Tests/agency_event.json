@@ -1,0 +1,21 @@
+{
+    "body": {
+        "attributes": {
+            "city": "Oakdale",
+            "state": "Mn",
+            "timezone": "Central",
+            "agencyCode": 170,
+            "agencyID": "NULL_GUID",
+            "caCertId": "NULL_CA",
+            "vpsCertId": "NULL_CERT",
+            "Cert2100Id": "NULL_CERT",
+            "priority": "High"
+        },
+        "category": "group",
+        "templateId": "agency",
+        "description": "Next to Woodbury",
+        "parentPath": "/zoe_reg",
+        "name": "zoe_agy",
+        "groupPath": "/zoe_reg/zoe_agy"
+    }
+}

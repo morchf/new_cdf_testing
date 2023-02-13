@@ -1,0 +1,15 @@
+{
+    "templateId": "agency",
+    "parentPath": "/agency",
+    "name": "mphtest",
+    "attributes": {
+        "description": "myron test agency",
+        "city": "Oakdale",
+        "state": "Mn",
+        "timezone": "Central", 
+        "agencyCode": 1,
+        "agencyGuid": "9234adsf-1231251",
+        "ca_cert_id": "",
+        "priority": "High"
+    }
+}

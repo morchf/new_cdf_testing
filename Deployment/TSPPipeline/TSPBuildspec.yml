@@ -1,0 +1,194 @@
+version: 0.2
+
+env:
+  exported-variables:
+    - Env
+    - CDFAPIARN
+    - VPCCIDR
+    - PrivateSubnetCIDR
+    - PublicSubnetCIDR
+    - RegionName
+    - AgencyName
+    # ToDo: remove
+    - AgencyID
+    - RuntimeDeviceMessageBucketARN
+    - StaticGTFSBucketName
+  shell: bash
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.9
+      nodejs: 16
+
+  pre_build:
+    commands:
+      # Updating packages on container, installing AWSCLI and PyTest, and checking home path and python version for logging purposes.
+      - ls -l
+      - pwd=`pwd`
+      - echo $pwd
+      # - yum -y update --skip-broken
+      - python -V
+      - python3 -V
+      - pip -V
+      - pip3 -V
+      - python3 -m pip -V
+      # - pip3 install --upgrade pip
+      - npm -v
+      - node -v
+      - yum install -y sudo
+      - pip3 install pyopenssl
+      - pip3 install pytest
+      - pip3 install pytest-cov
+      - npm install -g aws-cdk
+
+      # Required to properly handle relative packages
+      - pip install --upgrade pip
+
+  build:
+    commands:
+      - echo $SHELL
+      # Setting up VPC and Subnet CIDRs
+      - |
+        if [ "$Env" = "develop" ]; then
+          VPCCIDR=10.10.1.0/24
+          PrivateSubnetCIDR=10.10.1.0/25
+          PublicSubnetCIDR=10.10.1.128/25
+        elif [ "$Env" = "test" ]; then
+          VPCCIDR=10.20.2.0/24
+          PrivateSubnetCIDR=10.20.2.0/25
+          PublicSubnetCIDR=10.20.2.128/25
+        elif [ "$Env" = "production" ]; then
+          VPCCIDR=10.30.2.0/24
+          PrivateSubnetCIDR=10.30.2.0/25
+          PublicSubnetCIDR=10.30.2.128/25
+        elif [ "$Env" = "pilot" ]; then
+          VPCCIDR=10.15.5.0/24
+          PrivateSubnetCIDR=10.15.5.0/25
+          PublicSubnetCIDR=10.15.5.128/25
+        else
+          echo "Value of Env is not set or is incorrect"
+        fi
+
+      # Assign Region/Agency name
+      - RegionName=${RegionName:-"tsptest"}
+      - AgencyName=${AgencyName:-"tsptest"}
+      - AgencyID=${AgencyID:-"tsptest"}
+
+      - HostedZoneName=${Env}gtt.com.
+      - echo $HostedZoneName
+
+      # S3 bucket for storing pipeline artifacts
+      - PipelineArtifactsS3=pipeline-artifacts-$Env
+
+      # S3 bucket(managed by CDFDeployment pipeline) for runtime EVP device message
+      - RuntimeDeviceMessageBucketARN=arn:aws:s3:::runtime-device-message-$Env
+      - echo $RuntimeDeviceMessageBucketARN
+
+      # CDF Asset Library API endpoint
+      - CDFAPIID=`aws apigateway get-rest-apis --query "items[?name=='cdf-assetlibrary-stage'].id" --output text`
+      - CDFAPIARN=https://$CDFAPIID.execute-api.us-east-1.amazonaws.com/Prod
+      - echo $CDFAPIARN
+
+      # Executing SAM template
+      - aws cloudformation package --template-file Deployment/TSPPipeline/TSPDeployment.yml --s3-bucket $PipelineArtifactsS3 --s3-prefix TSPDeployment --output-template-file Deployment/TSPPipeline/TSPDeploymentSAMOutput.yml
+
+      # Setting variables for docker
+      - account_id=$(aws sts get-caller-identity --query Account --output text)
+      - ecr_url=$account_id.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      - repository="gtt/tsp-gtfs-realtime"
+      - tag="latest"
+
+      # Logging in to ECR
+      - docker -v
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ecr_url
+
+      # Creating ECR repo if it doesn't exist
+      - aws ecr describe-repositories --repository-names $repository || aws ecr create-repository --repository-name $repository
+
+      # Build docker context
+      - docker_context="Deployment/TSPPipeline/Docker"
+      - echo ${docker_context}
+      - docker_context_include="
+        CDFAndIoT/DataModel
+        CDFAndIoT/Service
+        TSP/ScheduleAdherence
+        TSP/GTFSPoller
+        TSP/tsp-gtfs-realtime"
+      - echo ${docker_context_include}
+      # Create sparse smart-city-platform directory for build context
+      - mkdir ${docker_context}/smart-city-platform
+      - |
+        for fname in ${docker_context_include}; do 
+          cp -r --parents -t ${docker_context}/smart-city-platform ${fname}
+        done
+
+      # Building docker images
+      - services="
+        gtfs_realtime_api_poller
+        agency_manager
+        vehicle_manager
+        data_aggregator
+        trip_delay_manager
+        schedule_adherence_manager
+        device_activation_toggle_service"
+      - echo ${services}
+      - |
+        for service_name in ${services}; do
+          echo 'Building $service_name';
+          docker build \
+            --build-arg BASE_CONTAINER_REPO=${ecr_url} \
+            --build-arg SERVICE_NAME=${service_name} \
+            -f ${docker_context}/Dockerfile \
+            -t ${ecr_url}/${repository}:${service_name}-${tag} \
+            ${docker_context};
+        done
+
+      # Build Static GTFS Poller Docker image
+      - |
+        service_name=static_gtfs_poller \
+        && docker build \
+          --build-arg BASE_CONTAINER_REPO=${ecr_url} \
+          --build-arg SERVICE_NAME=${service_name} \
+            -f Deployment/TSPPipeline/Tasks/StaticGtfsPoller/Dockerfile \
+            -t ${ecr_url}/${repository}:${service_name}-${tag} \
+          ${docker_context};
+
+      # Push all images
+      - |
+        for service_name in $services "static_gtfs_poller"; do
+          docker push ${ecr_url}/${repository}:${service_name}-${tag};
+        done
+
+      # Build and push test server image
+      - test_server_dir="TSP/gtfs-realtime-test-server/Server"
+      - docker build --build-arg BASE_CONTAINER_REPO=${ecr_url} -f ${test_server_dir}/Dockerfile -t ${ecr_url}/gtt/gtfs-realtime-test-server:${tag} $test_server_dir
+      - docker push ${ecr_url}/gtt/gtfs-realtime-test-server:${tag}
+
+      # S3 Bucket for storing Static GTFS
+      - STATIC_GTFS_BUCKET_NAME=static-gtfs-${Env}
+      - echo $STATIC_GTFS_BUCKET_NAME
+
+      # Aurora secret
+      - AURORA_SECRET_NAME=${Env}/aurora/asmgtfs
+      - echo $AURORA_SECRET_NAME
+
+      - pip install -r Deployment/TSPPipeline/CDK/requirements.txt
+      - cd Deployment/TSPPipeline/CDK
+      - cdk bootstrap
+      - cdk synth
+      - cdk deploy --require-approval never
+
+      # Limit build artifact size
+      - cd ..
+      - rm -rf CDK/cdk.out
+      - rm -rf Docker/smart-city-platform
+
+      # Limit build artifact size
+      - cd ..
+      - rm -rf CDK/cdk.out
+      - rm -rf Docker/smart-city-platform
+
+artifacts:
+  files:
+    - "**/*"

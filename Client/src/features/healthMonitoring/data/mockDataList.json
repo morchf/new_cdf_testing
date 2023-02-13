@@ -1,0 +1,3202 @@
+[
+  {
+    "locationname": "Geneva and Naples",
+    "deviceName": "2.31.92",
+    "firmwareVersion": "8.55",
+    "dateLastLogRetrieved": "1990-01-29 20:18:48",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Bryant and 7th",
+    "deviceName": "2.23.28",
+    "firmwareVersion": "2.82",
+    "dateLastLogRetrieved": "1990-07-09 02:19:48",
+    "status": "Normal",
+    "channels": 2
+  },
+  {
+    "locationname": "Beal & Mission SEC",
+    "deviceName": "0.3.42",
+    "firmwareVersion": "7.39",
+    "dateLastLogRetrieved": "1991-04-08 17:34:05",
+    "status": "Error",
+    "channels": 4
+  },
+  {
+    "locationname": "O'Farrell/Starr King and Franklin",
+    "deviceName": "6.51.7",
+    "firmwareVersion": "9.20",
+    "dateLastLogRetrieved": "1992-04-29 22:01:12",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Kearney and Columbus",
+    "deviceName": "2.45.40",
+    "firmwareVersion": "0.51",
+    "dateLastLogRetrieved": "1993-09-12 12:43:30",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Folsom and 3rd",
+    "deviceName": "6.21.98",
+    "firmwareVersion": "8.34",
+    "dateLastLogRetrieved": "1995-05-19 17:39:12",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Market and 16th St",
+    "deviceName": "0.39.38",
+    "firmwareVersion": "7.74",
+    "dateLastLogRetrieved": "1997-05-16 13:21:50",
+    "status": "Normal",
+    "channels": 2
+  },
+  {
+    "locationname": "Mission and 16th St",
+    "deviceName": "8.28.19",
+    "firmwareVersion": "6.64",
+    "dateLastLogRetrieved": "1999-09-04 15:45:59",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Cyril Magnon & Eddy",
+    "deviceName": "3.84.61",
+    "firmwareVersion": "8.8",
+    "dateLastLogRetrieved": "2002-04-16 09:54:24",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Lincoln and 19th Ave",
+    "deviceName": "5.98.99",
+    "firmwareVersion": "2.64",
+    "dateLastLogRetrieved": "2005-03-19 10:46:34",
+    "status": "Normal",
+    "channels": 2
+  },
+  {
+    "locationname": "3rd St and 19th St",
+    "deviceName": "0.7.17",
+    "firmwareVersion": "9.71",
+    "dateLastLogRetrieved": "2008-06-13 14:55:47",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Euclid and Arguello",
+    "deviceName": "3.86.60",
+    "firmwareVersion": "1.30",
+    "dateLastLogRetrieved": "1990-06-04 05:14:48",
+    "status": "Error",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and 2nd",
+    "deviceName": "8.73.46",
+    "firmwareVersion": "1.79",
+    "dateLastLogRetrieved": "1992-05-23 16:04:33",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and Bosworth",
+    "deviceName": "3.67.77",
+    "firmwareVersion": "1.54",
+    "dateLastLogRetrieved": "1994-09-03 21:10:00",
+    "status": "Normal",
+    "channels": 2
+  },
+  {
+    "locationname": "Clay and Polk",
+    "deviceName": "7.64.67",
+    "firmwareVersion": "5.92",
+    "dateLastLogRetrieved": "1997-04-07 09:53:44",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and 16th",
+    "deviceName": "5.92.49",
+    "firmwareVersion": "1.84",
+    "dateLastLogRetrieved": "2003-05-20 02:43:30",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Folsom and 8th St",
+    "deviceName": "5.78.96",
+    "firmwareVersion": "9.94",
+    "dateLastLogRetrieved": "1990-06-09 12:50:56",
+    "status": "Error",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and 3rd/4th Midblock",
+    "deviceName": "5.22.22",
+    "firmwareVersion": "0.96",
+    "dateLastLogRetrieved": "1991-10-13 10:41:40",
+    "status": "Error",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and 20th St",
+    "deviceName": "4.77.90",
+    "firmwareVersion": "8.53",
+    "dateLastLogRetrieved": "1993-06-08 15:48:07",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Taraval and 19th Ave",
+    "deviceName": "4.62.57",
+    "firmwareVersion": "2.87",
+    "dateLastLogRetrieved": "1995-05-27 07:41:00",
+    "status": "Error",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and 11th",
+    "deviceName": "2.26.52",
+    "firmwareVersion": "2.94",
+    "dateLastLogRetrieved": "1997-09-04 13:16:02",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and 17th",
+    "deviceName": "6.11.4",
+    "firmwareVersion": "7.8",
+    "dateLastLogRetrieved": "1990-01-27 02:29:00",
+    "status": "Error",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and Masonic",
+    "deviceName": "8.41.19",
+    "firmwareVersion": "0.95",
+    "dateLastLogRetrieved": "1991-01-31 03:19:28",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and Jones",
+    "deviceName": "7.93.51",
+    "firmwareVersion": "8.34",
+    "dateLastLogRetrieved": "1992-05-27 20:22:57",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and Valencia",
+    "deviceName": "3.26.93",
+    "firmwareVersion": "5.83",
+    "dateLastLogRetrieved": "1994-01-13 19:41:26",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Quintara and 19th Ave",
+    "deviceName": "2.37.41",
+    "firmwareVersion": "0.68",
+    "dateLastLogRetrieved": "1995-12-24 12:13:30",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and Collins",
+    "deviceName": "1.80.26",
+    "firmwareVersion": "7.42",
+    "dateLastLogRetrieved": "1998-03-26 15:49:28",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Columbus and Union",
+    "deviceName": "8.44.86",
+    "firmwareVersion": "0.96",
+    "dateLastLogRetrieved": "2000-10-18 04:49:48",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Jones and Sutter",
+    "deviceName": "6.82.7",
+    "firmwareVersion": "2.73",
+    "dateLastLogRetrieved": "2003-09-03 10:34:35",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "3rd st and 20th St",
+    "deviceName": "5.61.67",
+    "firmwareVersion": "1.23",
+    "dateLastLogRetrieved": "2006-11-09 21:02:56",
+    "status": "Normal",
+    "channels": 2
+  },
+  {
+    "locationname": "O'Farrell and Mason",
+    "deviceName": "9.72.32",
+    "firmwareVersion": "8.35",
+    "dateLastLogRetrieved": "2010-05-10 11:05:40",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and 18th St",
+    "deviceName": "8.52.96",
+    "firmwareVersion": "6.60",
+    "dateLastLogRetrieved": "2014-02-28 21:47:00",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "O'Farrell and Jones",
+    "deviceName": "3.64.46",
+    "firmwareVersion": "3.42",
+    "dateLastLogRetrieved": "2018-04-13 06:13:56",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission Rock and 3rd St",
+    "deviceName": "1.86.11",
+    "firmwareVersion": "7.34",
+    "dateLastLogRetrieved": "2022-09-16 17:23:17",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Fillmore and Union",
+    "deviceName": "8.92.96",
+    "firmwareVersion": "0.53",
+    "dateLastLogRetrieved": "1990-05-28 00:12:48",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Kearney and Clay",
+    "deviceName": "6.45.38",
+    "firmwareVersion": "6.56",
+    "dateLastLogRetrieved": "1991-01-28 13:32:00",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Rivera and 19th Ave",
+    "deviceName": "8.72.76",
+    "firmwareVersion": "1.88",
+    "dateLastLogRetrieved": "1992-01-22 17:02:06",
+    "status": "Error",
+    "channels": 4
+  },
+  {
+    "locationname": "Church and 16th St",
+    "deviceName": "4.38.1",
+    "firmwareVersion": "6.55",
+    "dateLastLogRetrieved": "1993-05-09 07:49:19",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Fillmore and Lombard",
+    "deviceName": "4.10.45",
+    "firmwareVersion": "1.40",
+    "dateLastLogRetrieved": "1994-12-16 12:33:23",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Pacheco and 19th Ave",
+    "deviceName": "7.58.83",
+    "firmwareVersion": "9.68",
+    "dateLastLogRetrieved": "1996-11-15 05:16:12",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and Avalon",
+    "deviceName": "4.68.96",
+    "firmwareVersion": "8.57",
+    "dateLastLogRetrieved": "1999-02-06 06:45:16",
+    "status": "Error",
+    "channels": 4
+  },
+  {
+    "locationname": "O'Farrell and Hyde",
+    "deviceName": "7.22.70",
+    "firmwareVersion": "3.80",
+    "dateLastLogRetrieved": "2001-08-21 00:56:40",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "4th and Mission/Howard  Midblock",
+    "deviceName": "3.91.78",
+    "firmwareVersion": "5.36",
+    "dateLastLogRetrieved": "2004-06-26 09:21:38",
+    "status": "Error",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and 13th",
+    "deviceName": "9.0.12",
+    "firmwareVersion": "1.72",
+    "dateLastLogRetrieved": "2007-08-23 22:32:33",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "De Haro and 16th St",
+    "deviceName": "6.37.70",
+    "firmwareVersion": "5.24",
+    "dateLastLogRetrieved": "2011-02-11 03:56:40",
+    "status": "Error",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and 12th/South Van Ness",
+    "deviceName": "3.10.16",
+    "firmwareVersion": "7.35",
+    "dateLastLogRetrieved": "1991-07-22 02:56:40",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Folsom and 2nd St",
+    "deviceName": "5.43.93",
+    "firmwareVersion": "0.70",
+    "dateLastLogRetrieved": "1996-04-09 18:34:24",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and 7th",
+    "deviceName": "4.7.99",
+    "firmwareVersion": "9.15",
+    "dateLastLogRetrieved": "1999-02-05 22:56:24",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and 2nd",
+    "deviceName": "3.86.43",
+    "firmwareVersion": "3.53",
+    "dateLastLogRetrieved": "2002-03-27 08:32:04",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "25th Ave & Fulton NEC",
+    "deviceName": "2.42.54",
+    "firmwareVersion": "0.41",
+    "dateLastLogRetrieved": "2005-09-06 06:36:36",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and 23rd",
+    "deviceName": "6.41.40",
+    "firmwareVersion": "2.18",
+    "dateLastLogRetrieved": "1990-05-06 06:34:43",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Judah and 19th Ave",
+    "deviceName": "2.12.16",
+    "firmwareVersion": "2.24",
+    "dateLastLogRetrieved": "1991-08-11 22:04:30",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and 32nd",
+    "deviceName": "6.4.19",
+    "firmwareVersion": "5.50",
+    "dateLastLogRetrieved": "1993-03-10 01:13:56",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Townsend and 3rd St",
+    "deviceName": "8.43.24",
+    "firmwareVersion": "8.33",
+    "dateLastLogRetrieved": "1995-01-28 16:11:44",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "California and Laurel",
+    "deviceName": "0.14.45",
+    "firmwareVersion": "9.58",
+    "dateLastLogRetrieved": "1997-04-10 19:38:24",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geneva and Moscow",
+    "deviceName": "8.19.96",
+    "firmwareVersion": "7.68",
+    "dateLastLogRetrieved": "1999-10-14 21:06:57",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Rhode Island and 16th St",
+    "deviceName": "8.88.29",
+    "firmwareVersion": "2.63",
+    "dateLastLogRetrieved": "1990-08-25 10:35:08",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Sacramento and Powell",
+    "deviceName": "3.90.23",
+    "firmwareVersion": "1.14",
+    "dateLastLogRetrieved": "1991-11-23 00:41:36",
+    "status": "Error",
+    "channels": 4
+  },
+  {
+    "locationname": "Stockton and Vallejo",
+    "deviceName": "4.56.85",
+    "firmwareVersion": "4.2",
+    "dateLastLogRetrieved": "1993-06-13 01:05:00",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Stockton and Pacific",
+    "deviceName": "3.99.1",
+    "firmwareVersion": "9.46",
+    "dateLastLogRetrieved": "1995-04-25 14:42:24",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Clay and Franklin",
+    "deviceName": "1.1.92",
+    "firmwareVersion": "8.42",
+    "dateLastLogRetrieved": "1997-06-28 19:01:35",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and 30th",
+    "deviceName": "3.84.48",
+    "firmwareVersion": "1.16",
+    "dateLastLogRetrieved": "1999-12-24 05:06:50",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and 15th St",
+    "deviceName": "1.15.27",
+    "firmwareVersion": "2.52",
+    "dateLastLogRetrieved": "2002-10-11 10:54:36",
+    "status": "Warning",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and Onondaga",
+    "deviceName": "0.3.72",
+    "firmwareVersion": "6.35",
+    "dateLastLogRetrieved": "2005-11-19 20:27:52",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Fell & Fillmore",
+    "deviceName": "2.72.92",
+    "firmwareVersion": "2.22",
+    "dateLastLogRetrieved": "2009-04-22 09:14:14",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and Italy",
+    "deviceName": "9.47.12",
+    "firmwareVersion": "5.79",
+    "dateLastLogRetrieved": "2017-01-28 17:15:36",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and Virginia",
+    "deviceName": "2.32.44",
+    "firmwareVersion": "5.25",
+    "dateLastLogRetrieved": "2021-06-06 12:44:40",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Kearney and Washington",
+    "deviceName": "4.49.44",
+    "firmwareVersion": "7.94",
+    "dateLastLogRetrieved": "1990-01-04 21:50:30",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Gough and Sacramento",
+    "deviceName": "0.77.43",
+    "firmwareVersion": "9.90",
+    "dateLastLogRetrieved": "1990-11-22 13:19:07",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and 6th",
+    "deviceName": "9.19.80",
+    "firmwareVersion": "7.58",
+    "dateLastLogRetrieved": "1991-10-19 15:12:06",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Larkin and Sutter",
+    "deviceName": "0.43.11",
+    "firmwareVersion": "5.86",
+    "dateLastLogRetrieved": "1993-01-06 08:08:00",
+    "status": "Error",
+    "channels": 4
+  },
+  {
+    "locationname": "Stockton and Bay",
+    "deviceName": "0.80.98",
+    "firmwareVersion": "9.73",
+    "dateLastLogRetrieved": "1994-07-18 10:13:58",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and 11th",
+    "deviceName": "9.60.57",
+    "firmwareVersion": "5.72",
+    "dateLastLogRetrieved": "1998-07-14 02:33:45",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mississippi and 7th St",
+    "deviceName": "3.88.12",
+    "firmwareVersion": "6.34",
+    "dateLastLogRetrieved": "2000-12-28 13:36:36",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Fillmore and Sacramento",
+    "deviceName": "5.53.41",
+    "firmwareVersion": "3.85",
+    "dateLastLogRetrieved": "2003-10-07 01:58:40",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Potrero and 20th",
+    "deviceName": "0.86.38",
+    "firmwareVersion": "6.77",
+    "dateLastLogRetrieved": "2010-03-28 19:41:36",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "3rd St and 16th St",
+    "deviceName": "2.48.66",
+    "firmwareVersion": "1.52",
+    "dateLastLogRetrieved": "1990-09-21 16:37:59",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Fillmore and Eddy",
+    "deviceName": "6.41.91",
+    "firmwareVersion": "3.17",
+    "dateLastLogRetrieved": "1992-11-06 19:51:42",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Fillmore and Pine",
+    "deviceName": "2.79.59",
+    "firmwareVersion": "5.78",
+    "dateLastLogRetrieved": "1995-04-16 06:04:16",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Irving and 19th Ave",
+    "deviceName": "0.40.26",
+    "firmwareVersion": "8.46",
+    "dateLastLogRetrieved": "1998-01-14 01:45:42",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Bush and Presidio",
+    "deviceName": "4.66.14",
+    "firmwareVersion": "2.69",
+    "dateLastLogRetrieved": "2001-02-04 18:09:50",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and Parker",
+    "deviceName": "6.77.23",
+    "firmwareVersion": "8.5",
+    "dateLastLogRetrieved": "2004-06-19 15:19:17",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Ortega and 19th Ave",
+    "deviceName": "8.95.32",
+    "firmwareVersion": "7.78",
+    "dateLastLogRetrieved": "1990-04-04 21:41:50",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Golden Gate and Hyde",
+    "deviceName": "7.2.31",
+    "firmwareVersion": "9.34",
+    "dateLastLogRetrieved": "1991-06-13 12:16:32",
+    "status": "Error",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and 9th",
+    "deviceName": "7.56.76",
+    "firmwareVersion": "0.4",
+    "dateLastLogRetrieved": "1992-12-12 13:20:06",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "O'Farrell and Polk",
+    "deviceName": "6.12.11",
+    "firmwareVersion": "1.57",
+    "dateLastLogRetrieved": "1994-10-05 05:31:40",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geneva and Prague",
+    "deviceName": "8.28.27",
+    "firmwareVersion": "2.47",
+    "dateLastLogRetrieved": "1996-11-18 13:50:18",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Sacramento and Grant",
+    "deviceName": "6.8.55",
+    "firmwareVersion": "3.98",
+    "dateLastLogRetrieved": "1999-04-26 07:15:26",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and Ocean",
+    "deviceName": "2.62.1",
+    "firmwareVersion": "8.89",
+    "dateLastLogRetrieved": "1990-03-22 18:40:00",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "McAllister and Polk",
+    "deviceName": "0.50.31",
+    "firmwareVersion": "3.25",
+    "dateLastLogRetrieved": "1991-05-23 06:09:10",
+    "status": "Warning",
+    "channels": 4
+  },
+  {
+    "locationname": "Fulton and Central",
+    "deviceName": "7.41.8",
+    "firmwareVersion": "3.50",
+    "dateLastLogRetrieved": "1992-11-13 07:17:46",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geneva and Carter",
+    "deviceName": "6.15.91",
+    "firmwareVersion": "2.41",
+    "dateLastLogRetrieved": "1994-08-28 20:40:44",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Lawton and 19th Ave",
+    "deviceName": "6.49.74",
+    "firmwareVersion": "8.10",
+    "dateLastLogRetrieved": "1996-10-04 00:02:54",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Stevenson and 3rd St",
+    "deviceName": "4.68.81",
+    "firmwareVersion": "5.5",
+    "dateLastLogRetrieved": "2001-11-21 13:03:49",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Clay and Battery",
+    "deviceName": "6.66.91",
+    "firmwareVersion": "0.32",
+    "dateLastLogRetrieved": "1990-12-25 00:51:52",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "McAllister and Franklin",
+    "deviceName": "5.55.81",
+    "firmwareVersion": "8.41",
+    "dateLastLogRetrieved": "1992-01-22 03:24:00",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Fillmore and Bay",
+    "deviceName": "3.9.11",
+    "firmwareVersion": "2.0",
+    "dateLastLogRetrieved": "1993-06-11 18:25:00",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and Steuart",
+    "deviceName": "6.51.64",
+    "firmwareVersion": "1.21",
+    "dateLastLogRetrieved": "1997-02-24 16:15:00",
+    "status": "Normal",
+    "channels": 2
+  },
+  {
+    "locationname": "Laguna and Sutter",
+    "deviceName": "7.67.42",
+    "firmwareVersion": "0.31",
+    "dateLastLogRetrieved": "1999-06-21 23:45:48",
+    "status": "Warning",
+    "channels": 2
+  },
+  {
+    "locationname": "Geary and Polk",
+    "deviceName": "2.87.39",
+    "firmwareVersion": "3.79",
+    "dateLastLogRetrieved": "2002-02-06 12:27:48",
+    "status": "Error",
+    "channels": 2
+  },
+  {
+    "locationname": "Fulton and Parker/Shrader",
+    "deviceName": "0.10.98",
+    "firmwareVersion": "4.98",
+    "dateLastLogRetrieved": "2005-01-15 13:38:40",
+    "status": "Normal",
+    "channels": 2
+  },
+  {
+    "locationname": "Clay and Davis",
+    "deviceName": "8.68.64",
+    "firmwareVersion": "8.45",
+    "dateLastLogRetrieved": "2008-04-17 16:40:51",
+    "status": "Normal",
+    "channels": 2
+  },
+  {
+    "locationname": "Mission and Trumbull",
+    "deviceName": "9.86.8",
+    "firmwareVersion": "9.69",
+    "dateLastLogRetrieved": "2011-11-09 17:04:42",
+    "status": "Normal",
+    "channels": 2
+  },
+  {
+    "locationname": "California and Broderick",
+    "deviceName": "1.16.22",
+    "firmwareVersion": "7.77",
+    "dateLastLogRetrieved": "2015-09-24 14:16:48",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Folsom and 16th St",
+    "deviceName": "7.79.29",
+    "firmwareVersion": "4.23",
+    "dateLastLogRetrieved": "1996-03-06 18:45:45",
+    "status": "Warning",
+    "channels": 4
+  },
+  {
+    "locationname": "Brannan and 8th St",
+    "deviceName": "0.55.77",
+    "firmwareVersion": "6.38",
+    "dateLastLogRetrieved": "1990-03-25 03:50:24",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Harrison and 9th St",
+    "deviceName": "3.76.99",
+    "firmwareVersion": "3.6",
+    "dateLastLogRetrieved": "1992-01-06 23:35:24",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Sacramento and Franklin",
+    "deviceName": "8.93.56",
+    "firmwareVersion": "5.43",
+    "dateLastLogRetrieved": "1993-05-17 22:01:32",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Golden Gate and Larkin",
+    "deviceName": "2.12.86",
+    "firmwareVersion": "4.43",
+    "dateLastLogRetrieved": "1995-01-18 00:44:15",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Howard and 11th St",
+    "deviceName": "3.12.21",
+    "firmwareVersion": "8.30",
+    "dateLastLogRetrieved": "1999-04-27 22:52:24",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and 23rd",
+    "deviceName": "8.74.99",
+    "firmwareVersion": "4.42",
+    "dateLastLogRetrieved": "2001-12-03 20:14:10",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "O'Farrell/Market and Grant",
+    "deviceName": "6.40.84",
+    "firmwareVersion": "0.86",
+    "dateLastLogRetrieved": "2004-11-02 03:24:18",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "California and Fillmore",
+    "deviceName": "5.21.93",
+    "firmwareVersion": "6.84",
+    "dateLastLogRetrieved": "1990-03-08 07:07:01",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "California and Arguello",
+    "deviceName": "0.97.62",
+    "firmwareVersion": "0.81",
+    "dateLastLogRetrieved": "1991-10-31 06:44:12",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Howard and 5th",
+    "deviceName": "6.96.78",
+    "firmwareVersion": "0.3",
+    "dateLastLogRetrieved": "1993-10-16 02:13:44",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "3rd and Mission/Howard  Midblock",
+    "deviceName": "9.77.9",
+    "firmwareVersion": "3.16",
+    "dateLastLogRetrieved": "1996-01-23 01:03:54",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Market/Battery/Bush and 1st",
+    "deviceName": "1.46.3",
+    "firmwareVersion": "3.64",
+    "dateLastLogRetrieved": "1998-08-22 20:11:04",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Owens and 16th St",
+    "deviceName": "6.25.35",
+    "firmwareVersion": "5.21",
+    "dateLastLogRetrieved": "2001-07-13 19:29:15",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and Larkin",
+    "deviceName": "1.36.85",
+    "firmwareVersion": "4.45",
+    "dateLastLogRetrieved": "2004-09-25 14:05:00",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Sutter and Buchanan",
+    "deviceName": "5.59.70",
+    "firmwareVersion": "2.93",
+    "dateLastLogRetrieved": "2008-03-31 18:12:00",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "California and Scott",
+    "deviceName": "8.13.40",
+    "firmwareVersion": "9.13",
+    "dateLastLogRetrieved": "1990-08-13 16:44:30",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Brannan and 2nd St",
+    "deviceName": "5.64.80",
+    "firmwareVersion": "8.29",
+    "dateLastLogRetrieved": "1994-03-19 22:08:42",
+    "status": "Warning",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and Van Ness",
+    "deviceName": "5.73.37",
+    "firmwareVersion": "5.80",
+    "dateLastLogRetrieved": "1996-06-24 04:02:00",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and Fremont",
+    "deviceName": "8.39.7",
+    "firmwareVersion": "8.53",
+    "dateLastLogRetrieved": "1990-09-02 07:57:30",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Fillmore and Turk",
+    "deviceName": "4.74.86",
+    "firmwareVersion": "6.0",
+    "dateLastLogRetrieved": "1991-09-02 11:49:08",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and Spruce",
+    "deviceName": "0.50.71",
+    "firmwareVersion": "2.91",
+    "dateLastLogRetrieved": "1992-12-23 23:55:03",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and Fillmore",
+    "deviceName": "7.35.51",
+    "firmwareVersion": "5.65",
+    "dateLastLogRetrieved": "1994-08-08 08:14:42",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Potrero and 22nd West",
+    "deviceName": "7.13.37",
+    "firmwareVersion": "1.89",
+    "dateLastLogRetrieved": "1996-07-13 21:33:36",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Kearney and Sacramento",
+    "deviceName": "7.25.4",
+    "firmwareVersion": "1.75",
+    "dateLastLogRetrieved": "1998-10-10 22:21:22",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Potrero and 22nd East",
+    "deviceName": "1.94.95",
+    "firmwareVersion": "4.87",
+    "dateLastLogRetrieved": "2001-04-30 15:54:18",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Clay and Montgomery",
+    "deviceName": "1.46.87",
+    "firmwareVersion": "0.42",
+    "dateLastLogRetrieved": "2004-03-11 21:09:24",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and Allison",
+    "deviceName": "5.17.41",
+    "firmwareVersion": "4.93",
+    "dateLastLogRetrieved": "2007-05-15 16:55:54",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geneva and Madrid",
+    "deviceName": "4.31.14",
+    "firmwareVersion": "8.74",
+    "dateLastLogRetrieved": "2014-08-26 12:39:45",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and Steiner",
+    "deviceName": "9.75.61",
+    "firmwareVersion": "5.50",
+    "dateLastLogRetrieved": "2018-10-04 12:36:32",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Stockton and Sutter",
+    "deviceName": "3.78.55",
+    "firmwareVersion": "7.80",
+    "dateLastLogRetrieved": "1992-02-24 08:10:06",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and 27th",
+    "deviceName": "8.66.35",
+    "firmwareVersion": "2.50",
+    "dateLastLogRetrieved": "1990-03-03 05:44:00",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "California and Walnut",
+    "deviceName": "7.74.34",
+    "firmwareVersion": "9.3",
+    "dateLastLogRetrieved": "1990-10-30 21:02:15",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Market and 17th St",
+    "deviceName": "6.4.11",
+    "firmwareVersion": "7.71",
+    "dateLastLogRetrieved": "1991-10-21 04:14:51",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "McAllister and Larkin",
+    "deviceName": "5.12.72",
+    "firmwareVersion": "5.66",
+    "dateLastLogRetrieved": "1993-01-31 18:03:20",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Fillmore and Oak",
+    "deviceName": "8.53.76",
+    "firmwareVersion": "7.41",
+    "dateLastLogRetrieved": "1994-09-05 23:34:18",
+    "status": "Warning",
+    "channels": 4
+  },
+  {
+    "locationname": "Columbus and Vallejo",
+    "deviceName": "4.36.39",
+    "firmwareVersion": "5.41",
+    "dateLastLogRetrieved": "1996-08-01 13:50:48",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "26th Ave & Fulton NEC",
+    "deviceName": "5.24.42",
+    "firmwareVersion": "0.9",
+    "dateLastLogRetrieved": "1998-10-20 01:28:12",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and Midblock 4th and 5th",
+    "deviceName": "9.38.36",
+    "firmwareVersion": "4.97",
+    "dateLastLogRetrieved": "2001-04-29 15:57:41",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Fulton and Masonic",
+    "deviceName": "0.67.94",
+    "firmwareVersion": "9.65",
+    "dateLastLogRetrieved": "2004-02-29 21:10:48",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Laguna and Post",
+    "deviceName": "1.21.35",
+    "firmwareVersion": "6.42",
+    "dateLastLogRetrieved": "2007-04-24 12:08:18",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Harrison and 3rd",
+    "deviceName": "2.97.50",
+    "firmwareVersion": "9.95",
+    "dateLastLogRetrieved": "1991-02-14 22:32:00",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Potrero and Midblock 22nd/23rd",
+    "deviceName": "3.36.18",
+    "firmwareVersion": "5.56",
+    "dateLastLogRetrieved": "1993-01-02 15:45:10",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and Cortland",
+    "deviceName": "8.2.85",
+    "firmwareVersion": "1.64",
+    "dateLastLogRetrieved": "1995-03-14 14:40:15",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and 21st St",
+    "deviceName": "6.66.43",
+    "firmwareVersion": "0.9",
+    "dateLastLogRetrieved": "1997-09-14 08:50:24",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Stockton and Clay",
+    "deviceName": "8.14.72",
+    "firmwareVersion": "3.55",
+    "dateLastLogRetrieved": "2000-07-08 07:13:30",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary/St. Joseph and Baker",
+    "deviceName": "0.24.78",
+    "firmwareVersion": "8.6",
+    "dateLastLogRetrieved": "2003-08-23 21:21:56",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Kearney and Sutter",
+    "deviceName": "9.83.35",
+    "firmwareVersion": "4.71",
+    "dateLastLogRetrieved": "2007-01-30 02:44:48",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Potrero and Mariposa",
+    "deviceName": "0.51.58",
+    "firmwareVersion": "7.0",
+    "dateLastLogRetrieved": "2010-10-29 13:49:45",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Market and Spear",
+    "deviceName": "0.79.42",
+    "firmwareVersion": "6.11",
+    "dateLastLogRetrieved": "1990-07-02 08:06:00",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and 10th",
+    "deviceName": "9.56.72",
+    "firmwareVersion": "4.93",
+    "dateLastLogRetrieved": "1996-05-28 19:44:18",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and Santa Rosa",
+    "deviceName": "3.90.25",
+    "firmwareVersion": "1.20",
+    "dateLastLogRetrieved": "1994-12-31 16:39:50",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Gough and McCoppin/Otis",
+    "deviceName": "2.88.70",
+    "firmwareVersion": "9.94",
+    "dateLastLogRetrieved": "1990-10-16 03:12:24",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Sacramento and Montgomery",
+    "deviceName": "6.55.93",
+    "firmwareVersion": "0.74",
+    "dateLastLogRetrieved": "1991-11-13 23:29:05",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Stockton and Jackson",
+    "deviceName": "6.53.59",
+    "firmwareVersion": "4.99",
+    "dateLastLogRetrieved": "1993-04-04 06:46:50",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Clay and Drumm",
+    "deviceName": "0.77.92",
+    "firmwareVersion": "6.94",
+    "dateLastLogRetrieved": "1994-12-16 03:32:06",
+    "status": "Warning",
+    "channels": 4
+  },
+  {
+    "locationname": "Potrero and 15th",
+    "deviceName": "5.27.90",
+    "firmwareVersion": "4.83",
+    "dateLastLogRetrieved": "1996-12-19 13:05:24",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and 25th",
+    "deviceName": "6.76.37",
+    "firmwareVersion": "8.49",
+    "dateLastLogRetrieved": "1999-04-16 13:04:14",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and 29th",
+    "deviceName": "5.67.72",
+    "firmwareVersion": "1.11",
+    "dateLastLogRetrieved": "2001-12-02 18:02:59",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Howard and 8th St",
+    "deviceName": "2.73.53",
+    "firmwareVersion": "2.90",
+    "dateLastLogRetrieved": "2004-11-11 11:30:36",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Masonic and Pine/Presidio",
+    "deviceName": "5.45.33",
+    "firmwareVersion": "8.67",
+    "dateLastLogRetrieved": "2008-02-13 05:44:36",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and 10th",
+    "deviceName": "8.51.10",
+    "firmwareVersion": "3.72",
+    "dateLastLogRetrieved": "2011-09-07 00:25:12",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Fillmore and Post",
+    "deviceName": "0.60.1",
+    "firmwareVersion": "5.52",
+    "dateLastLogRetrieved": "2015-07-23 13:05:20",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Folsom and Main",
+    "deviceName": "1.92.90",
+    "firmwareVersion": "2.42",
+    "dateLastLogRetrieved": "2019-09-29 06:13:57",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Bryant and 6th",
+    "deviceName": "6.19.53",
+    "firmwareVersion": "1.90",
+    "dateLastLogRetrieved": "1992-05-22 01:17:34",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and 5th",
+    "deviceName": "6.85.50",
+    "firmwareVersion": "9.91",
+    "dateLastLogRetrieved": "1995-04-24 01:07:20",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Bryant and 2nd St",
+    "deviceName": "8.50.50",
+    "firmwareVersion": "9.13",
+    "dateLastLogRetrieved": "1990-05-16 02:56:28",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and 33rd",
+    "deviceName": "8.73.57",
+    "firmwareVersion": "7.61",
+    "dateLastLogRetrieved": "1991-02-10 10:39:46",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Folsom and 9th St",
+    "deviceName": "9.17.2",
+    "firmwareVersion": "1.51",
+    "dateLastLogRetrieved": "1992-02-29 06:26:15",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Bryant and 9th St",
+    "deviceName": "3.55.14",
+    "firmwareVersion": "6.68",
+    "dateLastLogRetrieved": "1993-07-10 21:04:12",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and Arguello",
+    "deviceName": "8.47.20",
+    "firmwareVersion": "5.43",
+    "dateLastLogRetrieved": "1997-03-06 23:32:00",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "7Th St & Folsom",
+    "deviceName": "8.20.82",
+    "firmwareVersion": "5.98",
+    "dateLastLogRetrieved": "1999-06-22 22:56:36",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Howard and 3rd",
+    "deviceName": "4.65.69",
+    "firmwareVersion": "8.58",
+    "dateLastLogRetrieved": "2002-01-29 04:52:57",
+    "status": "Warning",
+    "channels": 4
+  },
+  {
+    "locationname": "Harrison and 5th",
+    "deviceName": "4.52.4",
+    "firmwareVersion": "0.68",
+    "dateLastLogRetrieved": "2004-12-29 11:57:04",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and 17th",
+    "deviceName": "8.59.23",
+    "firmwareVersion": "6.31",
+    "dateLastLogRetrieved": "1991-04-16 06:38:12",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and Precita",
+    "deviceName": "1.80.47",
+    "firmwareVersion": "0.4",
+    "dateLastLogRetrieved": "1993-04-01 14:59:50",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and 24th",
+    "deviceName": "4.34.50",
+    "firmwareVersion": "8.23",
+    "dateLastLogRetrieved": "1995-07-10 09:26:28",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and 20th",
+    "deviceName": "6.60.18",
+    "firmwareVersion": "7.77",
+    "dateLastLogRetrieved": "1998-02-07 19:01:40",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Kirkham and 19th Ave",
+    "deviceName": "1.0.5",
+    "firmwareVersion": "0.3",
+    "dateLastLogRetrieved": "2000-12-30 10:36:36",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and Webster",
+    "deviceName": "4.54.6",
+    "firmwareVersion": "4.29",
+    "dateLastLogRetrieved": "2004-03-14 13:40:24",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Divisadero and Sutter",
+    "deviceName": "2.86.21",
+    "firmwareVersion": "9.54",
+    "dateLastLogRetrieved": "2011-07-17 22:04:42",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and 22nd",
+    "deviceName": "2.28.83",
+    "firmwareVersion": "2.36",
+    "dateLastLogRetrieved": "1991-02-06 01:32:56",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Bryant and 5th",
+    "deviceName": "1.62.94",
+    "firmwareVersion": "4.67",
+    "dateLastLogRetrieved": "1992-09-28 23:30:00",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Hyde and Sutter",
+    "deviceName": "9.44.14",
+    "firmwareVersion": "5.41",
+    "dateLastLogRetrieved": "1996-12-19 13:35:45",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "California and Divisadero",
+    "deviceName": "9.21.35",
+    "firmwareVersion": "6.96",
+    "dateLastLogRetrieved": "1990-06-16 16:35:44",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Bryant and 3rd",
+    "deviceName": "8.7.46",
+    "firmwareVersion": "6.31",
+    "dateLastLogRetrieved": "1991-06-17 12:55:24",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Clay and Powell",
+    "deviceName": "0.77.82",
+    "firmwareVersion": "0.86",
+    "dateLastLogRetrieved": "1992-10-08 18:18:04",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and 14th St",
+    "deviceName": "4.70.91",
+    "firmwareVersion": "5.57",
+    "dateLastLogRetrieved": "1994-05-24 17:49:32",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and 1st",
+    "deviceName": "3.87.30",
+    "firmwareVersion": "1.12",
+    "dateLastLogRetrieved": "1996-04-29 23:25:11",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Powell and North Point",
+    "deviceName": "3.37.90",
+    "firmwareVersion": "2.90",
+    "dateLastLogRetrieved": "1998-07-28 16:29:42",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Sacramento and Davis",
+    "deviceName": "1.46.32",
+    "firmwareVersion": "8.51",
+    "dateLastLogRetrieved": "2001-02-16 01:30:40",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Potrero and 18th",
+    "deviceName": "1.48.24",
+    "firmwareVersion": "9.60",
+    "dateLastLogRetrieved": "2003-12-29 18:03:12",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Bryant and Boardman",
+    "deviceName": "7.67.67",
+    "firmwareVersion": "6.35",
+    "dateLastLogRetrieved": "2007-03-04 11:00:50",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Noriega and 19th Ave",
+    "deviceName": "3.57.54",
+    "firmwareVersion": "4.39",
+    "dateLastLogRetrieved": "2010-08-29 04:46:21",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and Stanyan/Jordan",
+    "deviceName": "7.12.67",
+    "firmwareVersion": "9.12",
+    "dateLastLogRetrieved": "2014-06-16 09:00:44",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Stockton and Broadway",
+    "deviceName": "6.39.6",
+    "firmwareVersion": "5.38",
+    "dateLastLogRetrieved": "2018-07-26 08:43:00",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and 4th",
+    "deviceName": "3.19.7",
+    "firmwareVersion": "2.58",
+    "dateLastLogRetrieved": "1991-04-04 02:04:50",
+    "status": "Warning",
+    "channels": 4
+  },
+  {
+    "locationname": "Market and 2nd",
+    "deviceName": "1.13.8",
+    "firmwareVersion": "1.89",
+    "dateLastLogRetrieved": "1994-02-06 00:16:24",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and 9th",
+    "deviceName": "4.24.26",
+    "firmwareVersion": "0.61",
+    "dateLastLogRetrieved": "1990-04-16 09:51:15",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Sacramento and Drumm",
+    "deviceName": "1.96.17",
+    "firmwareVersion": "2.16",
+    "dateLastLogRetrieved": "1990-12-14 16:37:32",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geneva and Alemany",
+    "deviceName": "6.46.84",
+    "firmwareVersion": "0.84",
+    "dateLastLogRetrieved": "1991-12-05 11:28:56",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and Excelsior",
+    "deviceName": "8.83.49",
+    "firmwareVersion": "5.80",
+    "dateLastLogRetrieved": "1993-03-18 21:55:54",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and 24th",
+    "deviceName": "5.17.7",
+    "firmwareVersion": "0.85",
+    "dateLastLogRetrieved": "1994-10-22 19:54:54",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Clay and Sansome",
+    "deviceName": "5.78.25",
+    "firmwareVersion": "5.87",
+    "dateLastLogRetrieved": "1996-09-18 02:28:09",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "O'Farrell and Cyril Magnin",
+    "deviceName": "2.12.80",
+    "firmwareVersion": "8.61",
+    "dateLastLogRetrieved": "1998-12-06 22:55:44",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and Franklin",
+    "deviceName": "0.87.53",
+    "firmwareVersion": "3.74",
+    "dateLastLogRetrieved": "2001-06-17 13:03:36",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Brannan and 7th St",
+    "deviceName": "4.75.21",
+    "firmwareVersion": "0.93",
+    "dateLastLogRetrieved": "2007-06-13 17:59:00",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "O'Farrell and Leavenworth",
+    "deviceName": "2.17.3",
+    "firmwareVersion": "9.85",
+    "dateLastLogRetrieved": "1990-07-24 03:27:11",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and 22nd St",
+    "deviceName": "0.55.36",
+    "firmwareVersion": "4.9",
+    "dateLastLogRetrieved": "1992-06-11 11:51:48",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and 26th",
+    "deviceName": "0.85.40",
+    "firmwareVersion": "1.57",
+    "dateLastLogRetrieved": "1994-08-22 04:04:00",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and Gough/Peter Yorke",
+    "deviceName": "2.28.90",
+    "firmwareVersion": "8.28",
+    "dateLastLogRetrieved": "1997-02-22 05:44:42",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and Park Presidio",
+    "deviceName": "0.82.32",
+    "firmwareVersion": "2.52",
+    "dateLastLogRetrieved": "2006-07-12 09:21:54",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Harrison and 8th St",
+    "deviceName": "7.9.93",
+    "firmwareVersion": "7.72",
+    "dateLastLogRetrieved": "2010-04-11 11:43:36",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "O'Farrell and Larkin",
+    "deviceName": "8.72.35",
+    "firmwareVersion": "4.90",
+    "dateLastLogRetrieved": "1990-12-17 21:55:37",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geneva and San Jose",
+    "deviceName": "7.2.27",
+    "firmwareVersion": "6.73",
+    "dateLastLogRetrieved": "1992-07-12 18:57:36",
+    "status": "Warning",
+    "channels": 4
+  },
+  {
+    "locationname": "Folsom and 6th St",
+    "deviceName": "2.62.40",
+    "firmwareVersion": "3.54",
+    "dateLastLogRetrieved": "1994-05-30 10:13:34",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mason and Eddy",
+    "deviceName": "1.88.62",
+    "firmwareVersion": "9.79",
+    "dateLastLogRetrieved": "1990-02-18 07:48:16",
+    "status": "Normal",
+    "channels": 2
+  },
+  {
+    "locationname": "25Th Ave & California",
+    "deviceName": "9.38.13",
+    "firmwareVersion": "0.59",
+    "dateLastLogRetrieved": "1991-01-22 03:10:55",
+    "status": "Normal",
+    "channels": 2
+  },
+  {
+    "locationname": "Mission and Foote",
+    "deviceName": "4.48.20",
+    "firmwareVersion": "3.4",
+    "dateLastLogRetrieved": "1992-04-17 08:38:30",
+    "status": "Normal",
+    "channels": 2
+  },
+  {
+    "locationname": "Market and Montgomery/New Montgomery/Post",
+    "deviceName": "1.88.70",
+    "firmwareVersion": "2.82",
+    "dateLastLogRetrieved": "1993-11-03 01:58:48",
+    "status": "Normal",
+    "channels": 2
+  },
+  {
+    "locationname": "Geary and 36th",
+    "deviceName": "1.76.48",
+    "firmwareVersion": "5.38",
+    "dateLastLogRetrieved": "1995-09-12 11:34:10",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Harrison and 2nd St",
+    "deviceName": "5.72.59",
+    "firmwareVersion": "5.87",
+    "dateLastLogRetrieved": "1991-10-02 13:25:04",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Bush and Montgomery",
+    "deviceName": "2.8.81",
+    "firmwareVersion": "1.60",
+    "dateLastLogRetrieved": "1990-02-07 05:49:30",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and Laguna",
+    "deviceName": "0.47.48",
+    "firmwareVersion": "4.82",
+    "dateLastLogRetrieved": "1990-08-17 04:52:12",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Santiago and 19th Ave",
+    "deviceName": "8.78.41",
+    "firmwareVersion": "0.95",
+    "dateLastLogRetrieved": "1991-06-17 13:23:36",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "California and Baker",
+    "deviceName": "5.4.79",
+    "firmwareVersion": "9.59",
+    "dateLastLogRetrieved": "1992-08-08 11:54:53",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Townsend and 2nd St",
+    "deviceName": "9.27.29",
+    "firmwareVersion": "1.75",
+    "dateLastLogRetrieved": "1994-01-21 22:11:09",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and 19th",
+    "deviceName": "8.91.44",
+    "firmwareVersion": "5.89",
+    "dateLastLogRetrieved": "1995-10-28 19:24:24",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Columbus and Filbert",
+    "deviceName": "5.21.2",
+    "firmwareVersion": "5.13",
+    "dateLastLogRetrieved": "2002-12-26 14:02:15",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and 21st",
+    "deviceName": "0.12.57",
+    "firmwareVersion": "4.85",
+    "dateLastLogRetrieved": "2009-04-25 00:36:22",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Fillmore and Golden Gate",
+    "deviceName": "6.99.83",
+    "firmwareVersion": "0.79",
+    "dateLastLogRetrieved": "2012-12-11 01:01:40",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Polk & Washington",
+    "deviceName": "8.20.25",
+    "firmwareVersion": "0.97",
+    "dateLastLogRetrieved": "1990-06-30 02:48:00",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Guerrero and 16th St",
+    "deviceName": "7.18.23",
+    "firmwareVersion": "8.81",
+    "dateLastLogRetrieved": "1992-11-10 01:53:06",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Golden Gate and Jones",
+    "deviceName": "8.75.85",
+    "firmwareVersion": "9.96",
+    "dateLastLogRetrieved": "1995-07-15 07:12:57",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Franklin & Hayes",
+    "deviceName": "3.90.53",
+    "firmwareVersion": "4.17",
+    "dateLastLogRetrieved": "1998-07-09 23:01:40",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Gough and Post",
+    "deviceName": "9.71.80",
+    "firmwareVersion": "4.44",
+    "dateLastLogRetrieved": "2001-10-26 11:24:00",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Clement and Park Presidio",
+    "deviceName": "3.68.7",
+    "firmwareVersion": "5.66",
+    "dateLastLogRetrieved": "1990-10-06 05:05:48",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "California and 6th Ave",
+    "deviceName": "6.97.73",
+    "firmwareVersion": "9.51",
+    "dateLastLogRetrieved": "1991-11-18 06:43:12",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Kearney and Embarcadero",
+    "deviceName": "0.77.66",
+    "firmwareVersion": "5.35",
+    "dateLastLogRetrieved": "1993-04-22 17:25:11",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Polk and Post",
+    "deviceName": "8.19.77",
+    "firmwareVersion": "8.81",
+    "dateLastLogRetrieved": "1995-01-17 15:35:48",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Bush & Polk",
+    "deviceName": "1.56.85",
+    "firmwareVersion": "5.91",
+    "dateLastLogRetrieved": "1997-02-04 00:45:48",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "San Bruno and Paul/Dwight",
+    "deviceName": "0.22.80",
+    "firmwareVersion": "2.10",
+    "dateLastLogRetrieved": "1999-06-16 06:04:54",
+    "status": "Warning",
+    "channels": 4
+  },
+  {
+    "locationname": "California and Spruce",
+    "deviceName": "5.11.6",
+    "firmwareVersion": "7.63",
+    "dateLastLogRetrieved": "2002-02-15 17:28:14",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "O'Farrell and Taylor",
+    "deviceName": "1.39.3",
+    "firmwareVersion": "2.85",
+    "dateLastLogRetrieved": "1990-02-05 09:42:45",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "San Bruno and Silver",
+    "deviceName": "8.0.61",
+    "firmwareVersion": "3.51",
+    "dateLastLogRetrieved": "1991-07-03 20:50:24",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "27th Ave & Fulton NEC",
+    "deviceName": "8.41.69",
+    "firmwareVersion": "9.48",
+    "dateLastLogRetrieved": "1993-03-21 13:26:00",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Market and 5th",
+    "deviceName": "6.54.41",
+    "firmwareVersion": "0.50",
+    "dateLastLogRetrieved": "1997-08-01 21:09:48",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Perry and 3rd St",
+    "deviceName": "6.16.74",
+    "firmwareVersion": "1.16",
+    "dateLastLogRetrieved": "2000-03-26 01:27:15",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Potrero and 17th",
+    "deviceName": "2.37.29",
+    "firmwareVersion": "2.14",
+    "dateLastLogRetrieved": "2003-03-12 01:16:12",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Columbus and Broadway",
+    "deviceName": "8.19.42",
+    "firmwareVersion": "3.63",
+    "dateLastLogRetrieved": "2006-06-18 12:20:32",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "California and Pierce",
+    "deviceName": "9.20.14",
+    "firmwareVersion": "9.66",
+    "dateLastLogRetrieved": "2010-01-16 04:19:50",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geneva and Paris",
+    "deviceName": "5.17.46",
+    "firmwareVersion": "6.21",
+    "dateLastLogRetrieved": "2013-12-07 17:21:30",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Folsom and 11th St",
+    "deviceName": "8.55.47",
+    "firmwareVersion": "9.51",
+    "dateLastLogRetrieved": "2018-02-19 09:48:49",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and Brazil",
+    "deviceName": "6.86.42",
+    "firmwareVersion": "5.88",
+    "dateLastLogRetrieved": "1991-07-30 15:31:42",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Bayshore and Arleta",
+    "deviceName": "2.28.83",
+    "firmwareVersion": "1.55",
+    "dateLastLogRetrieved": "1993-08-07 02:24:16",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and Silver",
+    "deviceName": "3.45.31",
+    "firmwareVersion": "5.42",
+    "dateLastLogRetrieved": "1990-06-01 20:20:05",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Kearney and Pine",
+    "deviceName": "5.56.0",
+    "firmwareVersion": "0.63",
+    "dateLastLogRetrieved": "1991-03-05 02:56:24",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "California and Presidio",
+    "deviceName": "9.11.41",
+    "firmwareVersion": "9.60",
+    "dateLastLogRetrieved": "1992-03-28 22:01:35",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Powell and Sutter",
+    "deviceName": "5.40.66",
+    "firmwareVersion": "4.94",
+    "dateLastLogRetrieved": "1993-08-14 11:32:30",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "San Bruno and Bacon",
+    "deviceName": "1.39.19",
+    "firmwareVersion": "5.23",
+    "dateLastLogRetrieved": "1997-04-22 17:37:39",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Market/Front and Fremont",
+    "deviceName": "6.70.46",
+    "firmwareVersion": "0.36",
+    "dateLastLogRetrieved": "1999-08-14 12:23:50",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Kearney and Bush",
+    "deviceName": "6.67.64",
+    "firmwareVersion": "6.99",
+    "dateLastLogRetrieved": "2002-03-28 23:36:16",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and 25th",
+    "deviceName": "8.74.32",
+    "firmwareVersion": "2.24",
+    "dateLastLogRetrieved": "2005-03-03 23:35:58",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and Blake",
+    "deviceName": "7.9.93",
+    "firmwareVersion": "6.21",
+    "dateLastLogRetrieved": "2011-12-20 06:32:17",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Howard and Main",
+    "deviceName": "7.3.3",
+    "firmwareVersion": "7.17",
+    "dateLastLogRetrieved": "2015-10-31 13:28:20",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Bayshore and Leland",
+    "deviceName": "0.58.19",
+    "firmwareVersion": "0.68",
+    "dateLastLogRetrieved": "1991-11-07 05:03:44",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Larkin and Post",
+    "deviceName": "3.77.97",
+    "firmwareVersion": "4.91",
+    "dateLastLogRetrieved": "1994-06-13 09:28:30",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "O'Farrell and Van Ness",
+    "deviceName": "9.68.73",
+    "firmwareVersion": "9.32",
+    "dateLastLogRetrieved": "1997-05-11 00:22:08",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and Persia",
+    "deviceName": "6.10.86",
+    "firmwareVersion": "4.84",
+    "dateLastLogRetrieved": "2000-07-30 11:47:27",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Potrero and 25th",
+    "deviceName": "2.95.98",
+    "firmwareVersion": "1.86",
+    "dateLastLogRetrieved": "1990-08-26 15:50:59",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Potrero and Alameda",
+    "deviceName": "9.35.3",
+    "firmwareVersion": "6.15",
+    "dateLastLogRetrieved": "1991-09-10 13:36:00",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "California and Cherry/Jordan",
+    "deviceName": "9.97.47",
+    "firmwareVersion": "6.5",
+    "dateLastLogRetrieved": "1993-01-15 21:22:54",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and Hyde",
+    "deviceName": "5.10.61",
+    "firmwareVersion": "3.65",
+    "dateLastLogRetrieved": "1994-09-14 18:38:40",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Clement and 7th Ave",
+    "deviceName": "4.53.46",
+    "firmwareVersion": "5.14",
+    "dateLastLogRetrieved": "1998-12-17 06:56:05",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "O'Farrell and Powell",
+    "deviceName": "9.69.43",
+    "firmwareVersion": "3.66",
+    "dateLastLogRetrieved": "2001-07-21 19:22:24",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Kearney and Bay",
+    "deviceName": "2.56.16",
+    "firmwareVersion": "0.47",
+    "dateLastLogRetrieved": "2004-06-16 15:19:10",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Harrison and 6th",
+    "deviceName": "6.26.70",
+    "firmwareVersion": "3.53",
+    "dateLastLogRetrieved": "1990-11-24 14:14:40",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Gough and Sutter",
+    "deviceName": "4.98.13",
+    "firmwareVersion": "1.28",
+    "dateLastLogRetrieved": "1992-07-15 13:39:06",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and 3rd",
+    "deviceName": "4.68.25",
+    "firmwareVersion": "2.75",
+    "dateLastLogRetrieved": "1994-06-27 18:33:27",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Sutter and Taylor",
+    "deviceName": "9.85.17",
+    "firmwareVersion": "8.21",
+    "dateLastLogRetrieved": "1996-09-30 16:56:48",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Bush and Sansome",
+    "deviceName": "6.68.27",
+    "firmwareVersion": "1.65",
+    "dateLastLogRetrieved": "1999-04-27 21:19:10",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Potrero and 23rd",
+    "deviceName": "7.49.18",
+    "firmwareVersion": "1.87",
+    "dateLastLogRetrieved": "2002-03-15 19:11:06",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Ulloa and 19th Ave",
+    "deviceName": "5.49.6",
+    "firmwareVersion": "3.37",
+    "dateLastLogRetrieved": "2005-05-25 05:01:00",
+    "status": "Warning",
+    "channels": 4
+  },
+  {
+    "locationname": "Geneva and Delano",
+    "deviceName": "3.95.32",
+    "firmwareVersion": "0.25",
+    "dateLastLogRetrieved": "2008-11-24 20:05:13",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Haight and Steiner",
+    "deviceName": "7.62.60",
+    "firmwareVersion": "5.70",
+    "dateLastLogRetrieved": "2012-09-18 09:09:52",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and Palm",
+    "deviceName": "2.69.47",
+    "firmwareVersion": "3.46",
+    "dateLastLogRetrieved": "2016-11-03 00:42:06",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary/Kearney/Market and 3rd",
+    "deviceName": "0.12.17",
+    "firmwareVersion": "8.62",
+    "dateLastLogRetrieved": "1991-05-30 11:49:25",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and 26th",
+    "deviceName": "2.70.34",
+    "firmwareVersion": "6.57",
+    "dateLastLogRetrieved": "1993-05-09 21:46:54",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Market and 18th St",
+    "deviceName": "4.13.37",
+    "firmwareVersion": "1.17",
+    "dateLastLogRetrieved": "1990-03-20 12:10:35",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Bryant and 8th St",
+    "deviceName": "0.22.25",
+    "firmwareVersion": "7.46",
+    "dateLastLogRetrieved": "1990-11-23 20:18:24",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and Niagara/Pope/Rolph",
+    "deviceName": "0.15.81",
+    "firmwareVersion": "7.45",
+    "dateLastLogRetrieved": "1991-11-20 16:21:40",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and 4th",
+    "deviceName": "2.6.92",
+    "firmwareVersion": "8.66",
+    "dateLastLogRetrieved": "1993-03-10 01:43:03",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Montgomery and Sutter",
+    "deviceName": "6.11.4",
+    "firmwareVersion": "7.92",
+    "dateLastLogRetrieved": "1994-10-19 21:06:08",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Bush and Fillmore",
+    "deviceName": "7.88.45",
+    "firmwareVersion": "5.53",
+    "dateLastLogRetrieved": "1996-09-21 02:58:05",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Folsom and 4th St",
+    "deviceName": "4.72.97",
+    "firmwareVersion": "8.5",
+    "dateLastLogRetrieved": "1998-12-15 23:47:12",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Potrero and 21st",
+    "deviceName": "1.24.24",
+    "firmwareVersion": "2.39",
+    "dateLastLogRetrieved": "2001-07-02 11:45:12",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Bryant and 10th St",
+    "deviceName": "5.25.72",
+    "firmwareVersion": "0.85",
+    "dateLastLogRetrieved": "2004-05-10 10:47:53",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and Mason",
+    "deviceName": "0.59.65",
+    "firmwareVersion": "8.4",
+    "dateLastLogRetrieved": "2007-07-10 16:20:50",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Kansas and 16th St",
+    "deviceName": "0.24.94",
+    "firmwareVersion": "8.65",
+    "dateLastLogRetrieved": "2014-10-15 05:31:00",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "California and 10th Ave",
+    "deviceName": "9.88.88",
+    "firmwareVersion": "2.92",
+    "dateLastLogRetrieved": "1990-11-06 03:33:32",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and Lowell/Naglee",
+    "deviceName": "0.98.12",
+    "firmwareVersion": "4.55",
+    "dateLastLogRetrieved": "1993-05-15 14:33:15",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mason and Post",
+    "deviceName": "7.37.56",
+    "firmwareVersion": "4.22",
+    "dateLastLogRetrieved": "1996-03-15 03:31:48",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Stockton and Washington",
+    "deviceName": "3.28.32",
+    "firmwareVersion": "4.99",
+    "dateLastLogRetrieved": "1999-05-07 15:00:06",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Townsend and 4th St",
+    "deviceName": "0.64.89",
+    "firmwareVersion": "3.35",
+    "dateLastLogRetrieved": "1992-10-14 06:09:49",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Potrero and 10th St",
+    "deviceName": "8.10.12",
+    "firmwareVersion": "8.65",
+    "dateLastLogRetrieved": "1994-05-16 01:30:30",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Fillmore and Haight",
+    "deviceName": "6.32.40",
+    "firmwareVersion": "3.71",
+    "dateLastLogRetrieved": "1996-04-07 17:02:48",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Sacramento and Battery",
+    "deviceName": "7.72.14",
+    "firmwareVersion": "8.28",
+    "dateLastLogRetrieved": "1998-06-22 12:36:28",
+    "status": "Warning",
+    "channels": 4
+  },
+  {
+    "locationname": "Harrison and 16th St",
+    "deviceName": "7.5.40",
+    "firmwareVersion": "4.14",
+    "dateLastLogRetrieved": "2000-12-27 18:39:00",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "California and Locust",
+    "deviceName": "6.56.70",
+    "firmwareVersion": "2.67",
+    "dateLastLogRetrieved": "2003-10-26 17:07:27",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Vermont and 16th St",
+    "deviceName": "8.34.25",
+    "firmwareVersion": "9.8",
+    "dateLastLogRetrieved": "1990-04-20 16:59:20",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Vicente and 19th Ave",
+    "deviceName": "3.9.42",
+    "firmwareVersion": "9.58",
+    "dateLastLogRetrieved": "1991-11-12 13:07:24",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and 7th",
+    "deviceName": "4.8.42",
+    "firmwareVersion": "5.86",
+    "dateLastLogRetrieved": "1993-09-26 18:06:40",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geneva and Cayuga",
+    "deviceName": "6.0.36",
+    "firmwareVersion": "4.28",
+    "dateLastLogRetrieved": "1995-12-03 14:33:00",
+    "status": "Error",
+    "channels": 4
+  },
+  {
+    "locationname": "Stockton and Sacramento",
+    "deviceName": "4.97.33",
+    "firmwareVersion": "2.87",
+    "dateLastLogRetrieved": "1998-06-01 19:00:17",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Kearney and California",
+    "deviceName": "1.72.95",
+    "firmwareVersion": "5.22",
+    "dateLastLogRetrieved": "2001-03-22 12:51:37",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and 8th",
+    "deviceName": "5.55.50",
+    "firmwareVersion": "5.71",
+    "dateLastLogRetrieved": "2004-05-04 00:30:40",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Folsom and Beale",
+    "deviceName": "4.61.17",
+    "firmwareVersion": "7.43",
+    "dateLastLogRetrieved": "2015-07-22 00:19:40",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Presidio and Sacramento",
+    "deviceName": "1.14.81",
+    "firmwareVersion": "9.54",
+    "dateLastLogRetrieved": "1991-04-02 09:32:15",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and Taylor",
+    "deviceName": "6.77.85",
+    "firmwareVersion": "3.15",
+    "dateLastLogRetrieved": "1993-02-12 18:58:44",
+    "status": "Error",
+    "channels": 4
+  },
+  {
+    "locationname": "4th St and 16th St",
+    "deviceName": "9.20.51",
+    "firmwareVersion": "3.31",
+    "dateLastLogRetrieved": "1990-01-09 09:18:48",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Clay and Grant",
+    "deviceName": "6.27.42",
+    "firmwareVersion": "8.61",
+    "dateLastLogRetrieved": "1990-08-17 17:29:36",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Church and 15th St",
+    "deviceName": "0.85.84",
+    "firmwareVersion": "9.4",
+    "dateLastLogRetrieved": "1991-07-17 12:18:26",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Clement and Arguello",
+    "deviceName": "4.98.23",
+    "firmwareVersion": "8.63",
+    "dateLastLogRetrieved": "1992-10-06 20:42:48",
+    "status": "Error",
+    "channels": 4
+  },
+  {
+    "locationname": "Lawrence Mission & Oliver SEC",
+    "deviceName": "7.98.80",
+    "firmwareVersion": "9.22",
+    "dateLastLogRetrieved": "1994-04-20 14:10:48",
+    "status": "Error",
+    "channels": 4
+  },
+  {
+    "locationname": "Divisadero and McAllister",
+    "deviceName": "2.27.38",
+    "firmwareVersion": "5.16",
+    "dateLastLogRetrieved": "1996-02-23 18:07:40",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Grant and Sutter",
+    "deviceName": "0.0.35",
+    "firmwareVersion": "5.1",
+    "dateLastLogRetrieved": "1998-04-21 20:33:29",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Potrero and 19th",
+    "deviceName": "3.99.81",
+    "firmwareVersion": "2.7",
+    "dateLastLogRetrieved": "2000-10-09 01:43:20",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and Spear",
+    "deviceName": "3.88.67",
+    "firmwareVersion": "3.66",
+    "dateLastLogRetrieved": "2003-07-20 23:49:00",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and Whittier",
+    "deviceName": "7.63.78",
+    "firmwareVersion": "8.52",
+    "dateLastLogRetrieved": "2006-08-22 04:26:52",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geneva and Mission",
+    "deviceName": "2.53.20",
+    "firmwareVersion": "9.20",
+    "dateLastLogRetrieved": "2010-01-14 19:33:36",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Bayshore and Visitatacion",
+    "deviceName": "2.29.67",
+    "firmwareVersion": "9.6",
+    "dateLastLogRetrieved": "2013-10-01 15:25:35",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Bryant and 11th St",
+    "deviceName": "9.8.31",
+    "firmwareVersion": "7.82",
+    "dateLastLogRetrieved": "2017-10-09 07:45:18",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and Powell",
+    "deviceName": "2.7.64",
+    "firmwareVersion": "8.76",
+    "dateLastLogRetrieved": "1992-04-19 22:27:12",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Bryant and 4th",
+    "deviceName": "2.44.9",
+    "firmwareVersion": "9.92",
+    "dateLastLogRetrieved": "1998-02-14 13:15:20",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and Grant",
+    "deviceName": "7.34.21",
+    "firmwareVersion": "6.92",
+    "dateLastLogRetrieved": "1990-06-15 13:58:13",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Grant and Post",
+    "deviceName": "7.61.94",
+    "firmwareVersion": "0.93",
+    "dateLastLogRetrieved": "1992-07-15 16:45:56",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "California and Lyon",
+    "deviceName": "9.35.17",
+    "firmwareVersion": "4.94",
+    "dateLastLogRetrieved": "1994-01-17 10:11:32",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Powell and Bay",
+    "deviceName": "4.45.34",
+    "firmwareVersion": "7.27",
+    "dateLastLogRetrieved": "1995-11-13 00:27:28",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "California and 4th Ave",
+    "deviceName": "1.18.23",
+    "firmwareVersion": "0.62",
+    "dateLastLogRetrieved": "1997-12-29 19:06:03",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "McAllister and Laguna",
+    "deviceName": "5.10.43",
+    "firmwareVersion": "3.95",
+    "dateLastLogRetrieved": "2000-06-08 02:13:30",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and Appleton",
+    "deviceName": "2.47.32",
+    "firmwareVersion": "3.94",
+    "dateLastLogRetrieved": "2003-03-09 22:44:56",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mason and Ellis",
+    "deviceName": "6.71.29",
+    "firmwareVersion": "3.36",
+    "dateLastLogRetrieved": "1992-12-29 19:29:05",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mason and Sutter",
+    "deviceName": "0.90.49",
+    "firmwareVersion": "9.64",
+    "dateLastLogRetrieved": "1995-02-07 10:02:08",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Sacramento and Hyde",
+    "deviceName": "4.46.14",
+    "firmwareVersion": "8.17",
+    "dateLastLogRetrieved": "1997-07-09 22:21:28",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and 30th",
+    "deviceName": "5.30.60",
+    "firmwareVersion": "1.85",
+    "dateLastLogRetrieved": "2000-04-01 12:07:30",
+    "status": "Error",
+    "channels": 4
+  },
+  {
+    "locationname": "Stockton and Columbus",
+    "deviceName": "1.24.96",
+    "firmwareVersion": "9.42",
+    "dateLastLogRetrieved": "2006-08-22 13:03:35",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Market/Davis/Pine and Beale",
+    "deviceName": "4.51.97",
+    "firmwareVersion": "6.78",
+    "dateLastLogRetrieved": "2010-04-20 14:46:30",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and New Montegomery",
+    "deviceName": "9.43.94",
+    "firmwareVersion": "8.28",
+    "dateLastLogRetrieved": "2014-04-10 19:32:00",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Dolores and 16th St",
+    "deviceName": "7.38.19",
+    "firmwareVersion": "3.35",
+    "dateLastLogRetrieved": "1991-02-06 11:30:18",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and 8th",
+    "deviceName": "8.0.40",
+    "firmwareVersion": "1.53",
+    "dateLastLogRetrieved": "1992-11-21 19:59:46",
+    "status": "Error",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and Divisadero",
+    "deviceName": "7.72.68",
+    "firmwareVersion": "4.1",
+    "dateLastLogRetrieved": "1990-05-14 16:59:30",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Folsom and 10th St",
+    "deviceName": "6.4.83",
+    "firmwareVersion": "7.98",
+    "dateLastLogRetrieved": "1991-03-16 09:04:24",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "12Th Ave & California",
+    "deviceName": "4.40.43",
+    "firmwareVersion": "5.47",
+    "dateLastLogRetrieved": "1992-05-08 14:38:10",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and Main",
+    "deviceName": "6.71.54",
+    "firmwareVersion": "8.19",
+    "dateLastLogRetrieved": "1995-07-31 14:06:27",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and Cesar Chavez",
+    "deviceName": "8.83.65",
+    "firmwareVersion": "8.53",
+    "dateLastLogRetrieved": "2023-06-25 21:13:20",
+    "status": "Normal",
+    "channels": 2
+  },
+  {
+    "locationname": "Folsom and 5th",
+    "deviceName": "8.37.10",
+    "firmwareVersion": "1.24",
+    "dateLastLogRetrieved": "1990-02-10 10:44:14",
+    "status": "Normal",
+    "channels": 2
+  },
+  {
+    "locationname": "Sacramento and Polk",
+    "deviceName": "5.67.60",
+    "firmwareVersion": "0.99",
+    "dateLastLogRetrieved": "1990-07-19 08:07:59",
+    "status": "Normal",
+    "channels": 2
+  },
+  {
+    "locationname": "Capp and 16th St",
+    "deviceName": "5.6.70",
+    "firmwareVersion": "2.16",
+    "dateLastLogRetrieved": "1991-04-17 18:08:03",
+    "status": "Normal",
+    "channels": 2
+  },
+  {
+    "locationname": "Mission and Richland",
+    "deviceName": "7.37.9",
+    "firmwareVersion": "6.56",
+    "dateLastLogRetrieved": "1992-05-07 16:14:36",
+    "status": "Normal",
+    "channels": 2
+  },
+  {
+    "locationname": "6th Ave & Clement",
+    "deviceName": "3.18.35",
+    "firmwareVersion": "0.38",
+    "dateLastLogRetrieved": "1993-09-19 00:20:12",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Harrison and 7th",
+    "deviceName": "8.94.30",
+    "firmwareVersion": "9.24",
+    "dateLastLogRetrieved": "1995-05-24 22:55:20",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and 29th",
+    "deviceName": "9.17.89",
+    "firmwareVersion": "2.1",
+    "dateLastLogRetrieved": "1997-05-20 11:36:18",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and 19th Ave",
+    "deviceName": "2.44.71",
+    "firmwareVersion": "1.36",
+    "dateLastLogRetrieved": "1999-09-07 11:25:00",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Potrero and 24th",
+    "deviceName": "3.47.66",
+    "firmwareVersion": "7.42",
+    "dateLastLogRetrieved": "2002-04-17 19:11:36",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Bryant and 16th St",
+    "deviceName": "1.9.56",
+    "firmwareVersion": "4.52",
+    "dateLastLogRetrieved": "2008-06-12 02:43:30",
+    "status": "Error",
+    "channels": 4
+  },
+  {
+    "locationname": "Hyde and Post",
+    "deviceName": "2.6.64",
+    "firmwareVersion": "7.75",
+    "dateLastLogRetrieved": "2011-12-28 05:19:12",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Market and  Sansome/Sutter",
+    "deviceName": "0.12.75",
+    "firmwareVersion": "2.97",
+    "dateLastLogRetrieved": "1991-05-19 02:21:44",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and 12th",
+    "deviceName": "9.28.66",
+    "firmwareVersion": "7.82",
+    "dateLastLogRetrieved": "1993-08-27 18:33:56",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Howard and 7th",
+    "deviceName": "8.25.77",
+    "firmwareVersion": "1.80",
+    "dateLastLogRetrieved": "1996-03-29 21:15:00",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "California and 8th Ave",
+    "deviceName": "1.57.90",
+    "firmwareVersion": "5.49",
+    "dateLastLogRetrieved": "2002-05-09 04:08:30",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geneva and Ocean",
+    "deviceName": "6.48.90",
+    "firmwareVersion": "8.1",
+    "dateLastLogRetrieved": "2005-11-15 03:35:32",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Stockton and North Point",
+    "deviceName": "1.19.10",
+    "firmwareVersion": "9.94",
+    "dateLastLogRetrieved": "1990-12-16 03:26:24",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Bayshore and Silver",
+    "deviceName": "2.79.34",
+    "firmwareVersion": "8.19",
+    "dateLastLogRetrieved": "1992-04-18 13:29:36",
+    "status": "Error",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and 3rd",
+    "deviceName": "4.59.60",
+    "firmwareVersion": "9.94",
+    "dateLastLogRetrieved": "1993-12-12 17:01:21",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Sacramento ans Sansome",
+    "deviceName": "2.10.43",
+    "firmwareVersion": "4.76",
+    "dateLastLogRetrieved": "1998-03-08 01:32:00",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Folsom and Russ",
+    "deviceName": "8.0.84",
+    "firmwareVersion": "1.93",
+    "dateLastLogRetrieved": "1990-07-30 04:30:00",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Harrison and 10th St",
+    "deviceName": "7.17.61",
+    "firmwareVersion": "1.11",
+    "dateLastLogRetrieved": "1991-11-23 09:42:55",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and 34th",
+    "deviceName": "2.62.95",
+    "firmwareVersion": "4.20",
+    "dateLastLogRetrieved": "1993-07-10 04:24:42",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Kearney and Jackson",
+    "deviceName": "3.68.67",
+    "firmwareVersion": "6.78",
+    "dateLastLogRetrieved": "1995-06-18 14:36:12",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Harrison and 11th St",
+    "deviceName": "1.23.24",
+    "firmwareVersion": "9.69",
+    "dateLastLogRetrieved": "1997-09-17 11:10:30",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Post and Powell",
+    "deviceName": "2.51.47",
+    "firmwareVersion": "9.81",
+    "dateLastLogRetrieved": "2000-04-09 22:35:34",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Townsend and 7th St",
+    "deviceName": "8.25.24",
+    "firmwareVersion": "3.84",
+    "dateLastLogRetrieved": "2003-02-22 14:58:21",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geneva and Howth",
+    "deviceName": "4.10.27",
+    "firmwareVersion": "0.25",
+    "dateLastLogRetrieved": "2006-04-29 20:50:00",
+    "status": "Error",
+    "channels": 4
+  },
+  {
+    "locationname": "Market/Main and Drumm",
+    "deviceName": "8.24.73",
+    "firmwareVersion": "0.7",
+    "dateLastLogRetrieved": "2009-10-26 20:42:48",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and 6th",
+    "deviceName": "0.62.84",
+    "firmwareVersion": "7.5",
+    "dateLastLogRetrieved": "2013-08-16 08:11:50",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "California and Park Presidio",
+    "deviceName": "6.4.10",
+    "firmwareVersion": "4.37",
+    "dateLastLogRetrieved": "2017-09-27 09:18:12",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and Leavenworth",
+    "deviceName": "4.94.47",
+    "firmwareVersion": "5.72",
+    "dateLastLogRetrieved": "2022-03-01 12:50:51",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and Scott",
+    "deviceName": "2.59.66",
+    "firmwareVersion": "0.89",
+    "dateLastLogRetrieved": "1990-01-16 09:29:42",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "3rd St and 18th St",
+    "deviceName": "0.22.5",
+    "firmwareVersion": "5.29",
+    "dateLastLogRetrieved": "1990-05-27 07:28:48",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "California and Maple/Parker",
+    "deviceName": "8.36.45",
+    "firmwareVersion": "6.86",
+    "dateLastLogRetrieved": "1991-01-26 14:11:18",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and 18th",
+    "deviceName": "2.83.96",
+    "firmwareVersion": "3.19",
+    "dateLastLogRetrieved": "1992-01-19 11:20:50",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Howard and Beale",
+    "deviceName": "0.64.90",
+    "firmwareVersion": "9.73",
+    "dateLastLogRetrieved": "1993-05-04 19:31:21",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Potrero and 16th",
+    "deviceName": "8.95.93",
+    "firmwareVersion": "3.52",
+    "dateLastLogRetrieved": "1994-12-10 16:09:28",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and 28th",
+    "deviceName": "3.33.54",
+    "firmwareVersion": "3.55",
+    "dateLastLogRetrieved": "1999-01-28 22:28:22",
+    "status": "Error",
+    "channels": 4
+  },
+  {
+    "locationname": "Geary and 15th",
+    "deviceName": "1.16.51",
+    "firmwareVersion": "3.70",
+    "dateLastLogRetrieved": "2004-06-15 04:39:35",
+    "status": "Normal",
+    "channels": 4
+  },
+  {
+    "locationname": "Mission and 5th",
+    "deviceName": "6.11.92",
+    "firmwareVersion": "2.5",
+    "dateLastLogRetrieved": "2011-01-28 17:20:16",
+    "status": "Normal",
+    "channels": 4
+  }
+]

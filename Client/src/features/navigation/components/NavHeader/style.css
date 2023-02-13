@@ -1,0 +1,25 @@
+header.ant-layout-header {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  position: fixed;
+  height: 50px;
+  width: 100%;
+  padding-left: 1.5em;
+  padding-right: 2em;
+  left: 0;
+  top: 0;
+  right: 0;
+  z-index: 1000 !important;
+  background: #fff;
+  box-shadow: inset 0px -1px 0px #dce0e4;
+}
+
+header.ant-layout-header a {
+  display: inline-flex;
+  align-items: center;
+}
+
+header.ant-layout-header a svg {
+  margin-right: 8px;
+}

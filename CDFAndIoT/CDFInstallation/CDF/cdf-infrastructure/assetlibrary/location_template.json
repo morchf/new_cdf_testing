@@ -1,0 +1,44 @@
+{
+  "properties": {
+    "description": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "longitude": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "latitude": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "address": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },    
+    "displayName": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "locationId": {
+      "type": [
+          "null",
+          "string"
+      ]
+    }    
+  },
+  "relations": {},
+  "required": [
+    "locationId"
+  ]
+}

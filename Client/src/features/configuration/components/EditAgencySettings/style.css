@@ -1,0 +1,22 @@
+.site-card-border-less-wrapper {
+  padding: 8px;
+  background: #fafafa;
+}
+.card-padding-top {
+  padding-top: 8px;
+}
+.card-padding-bottom {
+  margin-bottom: -8%;
+  margin-top: -3%;
+}
+
+.card-title{
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.box{
+  box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.02);
+  border: solid 1px #fafafa;
+  background-color: var(--neutral-1);
+  }

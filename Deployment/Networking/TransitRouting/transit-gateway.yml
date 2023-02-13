@@ -1,0 +1,384 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: >-
+  Create a Transit Gateway with attachments to VPN Gateways.
+
+###
+### =========================================================================
+###
+
+Metadata:
+
+  'AWS::CloudFormation::Interface':
+    ParameterGroups:
+      - Label:
+          default: VPN Gateway A
+        Parameters:
+          - GatewayA
+          - GatewayAName
+          - GatewayARoutingType
+      - Label:
+          default: VPN Gateway B (optional)
+        Parameters:
+          - GatewayB
+          - GatewayBName
+          - GatewayBRoutingType
+      - Label:
+          default: VPN Gateway C (optional)
+        Parameters:
+          - GatewayC
+          - GatewayCName
+          - GatewayCRoutingType
+      - Label:
+          default: VPN Gateway D (optional)
+        Parameters:
+          - GatewayD
+          - GatewayDName
+          - GatewayDRoutingType
+
+    ParameterLabels:
+      GatewayA:
+        default: Customer Gateway ID of Gateway A
+      GatewayAName:
+        default: Name of Gateway A
+      GatewayARoutingType:
+        default: Routing type for Gateway A
+      GatewayB:
+        default: Customer Gateway ID of Gateway B
+      GatewayBName:
+        default: Name of Gateway B
+      GatewayBRoutingType:
+        default: Routing type for Gateway B
+      GatewayC:
+        default: Customer Gateway ID of Gateway C
+      GatewayCName:
+        default: Name of Gateway C
+      GatewayCRoutingType:
+        default: Routing type for Gateway C
+      GatewayD:
+        default: Customer Gateway ID of Gateway D
+      GatewayDName:
+        default: Name of Gateway D
+      GatewayDRoutingType:
+        default: Routing type for Gateway D
+
+###
+### =========================================================================
+###
+
+Parameters:
+
+  AmazonSideAsn:
+    Default: 64512
+    Description: A private ASN for the Amazon side of a BGP session
+    Type: Number
+
+  GatewayA:
+    Description: A Customer Gateway used to create a VPN connection
+    Type: String
+
+  GatewayAName:
+    Default: Gateway A
+    Description: A name for this gateway
+    Type: String
+
+  GatewayARoutingType:
+    AllowedValues:
+      - static
+      - dynamic
+    Default: dynamic
+    Type: String
+
+  GatewayB:
+    Description: A Customer Gateway used to create a VPN connection
+    Type: String
+
+  GatewayBName:
+    Default: Gateway B
+    Description: A name for this gateway
+    Type: String
+
+  GatewayBRoutingType:
+    AllowedValues:
+      - static
+      - dynamic
+    Default: dynamic
+    Type: String
+
+  GatewayC:
+    Description: A Customer Gateway used to create a VPN connection
+    Type: String
+
+  GatewayCName:
+    Default: Gateway C
+    Description: A name for this gateway
+    Type: String
+
+  GatewayCRoutingType:
+    AllowedValues:
+      - static
+      - dynamic
+    Default: dynamic
+    Type: String
+
+  GatewayD:
+    Description: A Customer Gateway used to create a VPN connection
+    Type: String
+
+  GatewayDName:
+    Default: Gateway D
+    Description: A name for this gateway
+    Type: String
+
+  GatewayDRoutingType:
+    AllowedValues:
+      - static
+      - dynamic
+    Default: dynamic
+    Type: String
+
+###
+### =========================================================================
+###
+
+Conditions:
+
+  GatewayAHasStaticRouting:
+    !Equals [ 'static', !Ref GatewayARoutingType ]
+
+  HasGatewayB:
+    Fn::Not: [ !Equals [ '', !Ref GatewayB ] ]
+
+  GatewayBHasStaticRouting:
+    !Equals [ 'static', !Ref GatewayBRoutingType ]
+
+  HasGatewayC:
+    Fn::Not: [ !Equals [ '', !Ref GatewayC ] ]
+
+  GatewayCHasStaticRouting:
+    !Equals [ 'static', !Ref GatewayCRoutingType ]
+
+  HasGatewayD:
+    Fn::Not: [ !Equals [ '', !Ref GatewayD ] ]
+
+  GatewayDHasStaticRouting:
+    !Equals [ 'static', !Ref GatewayDRoutingType ]
+
+###
+### =========================================================================
+###
+
+Resources:
+
+  TransitGateway:
+    Type: AWS::EC2::TransitGateway
+    Properties:
+      AmazonSideAsn: !Ref AmazonSideAsn
+      AutoAcceptSharedAttachments: disable
+      DefaultRouteTableAssociation: disable
+      DefaultRouteTablePropagation: disable
+      Description: Transit Gateway connecting remote networks and an Egress VPC
+      DnsSupport: enable
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName} Transit Gateway
+      VpnEcmpSupport: disable
+
+  ### Gateways
+
+  GatewayAVpnConnection:
+    Type: AWS::EC2::VPNConnection
+    Properties:
+      CustomerGatewayId: !Ref GatewayA
+      StaticRoutesOnly: !If [ GatewayAHasStaticRouting, true, false ]
+      Tags:
+        - Key: Name
+          Value: !Sub VPN Connection to ${GatewayAName}
+      TransitGatewayId: !Ref TransitGateway
+      Type: ipsec.1
+
+  GatewayBVpnConnection:
+    Condition: HasGatewayB
+    Type: AWS::EC2::VPNConnection
+    Properties:
+      CustomerGatewayId: !Ref GatewayB
+      StaticRoutesOnly: !If [ GatewayBHasStaticRouting, true, false ]
+      Tags:
+        - Key: Name
+          Value: !Sub VPN Connection to ${GatewayBName}
+      TransitGatewayId: !Ref TransitGateway
+      Type: ipsec.1
+
+  GatewayCVpnConnection:
+    Condition: HasGatewayC
+    Type: AWS::EC2::VPNConnection
+    Properties:
+      CustomerGatewayId: !Ref GatewayC
+      StaticRoutesOnly: !If [ GatewayCHasStaticRouting, true, false ]
+      Tags:
+        - Key: Name
+          Value: !Sub VPN Connection to ${GatewayCName}
+      TransitGatewayId: !Ref TransitGateway
+      Type: ipsec.1
+
+  GatewayDVpnConnection:
+    Condition: HasGatewayD
+    Type: AWS::EC2::VPNConnection
+    Properties:
+      CustomerGatewayId: !Ref GatewayD
+      StaticRoutesOnly: !If [ GatewayDHasStaticRouting, true, false ]
+      Tags:
+        - Key: Name
+          Value: !Sub VPN Connection to ${GatewayDName}
+      TransitGatewayId: !Ref TransitGateway
+      Type: ipsec.1
+
+  IngressTransitGatewayRouteTable:
+    Type: AWS::EC2::TransitGatewayRouteTable
+    Properties:
+      TransitGatewayId: !Ref TransitGateway
+      Tags:
+        - Key: Name
+          Value: Ingress Route Table
+
+  # CloudFormation can't automate associating a VPN connection with a Transit
+  # Gateway route table. This issue has been raised to AWS, who treated it as
+  # a feature request. The RouteTableAssociations below have been included for
+  # completeness, so when the future finally arrives, they can be uncommented.
+  # Until then, associating the VPN connections is a step handled by an
+  # external script.
+
+  # GatewayATransitGatewayRouteTableAssociation:
+  #   Type: AWS::EC2::TransitGatewayRouteTableAssociation
+  #   Properties:
+  #     TransitGatewayAttachmentId: !Ref GatewayAVpnConnection
+  #     TransitGatewayRouteTableId: !Ref IngressTransitGatewayRouteTable
+
+  # GatewayBTransitGatewayRouteTableAssociation:
+  #   Condition: HasGatewayB
+  #   Type: AWS::EC2::TransitGatewayRouteTableAssociation
+  #   Properties:
+  #     TransitGatewayAttachmentId: !Ref GatewayBVpnConnection
+  #     TransitGatewayRouteTableId: !Ref IngressTransitGatewayRouteTable
+
+  # GatewayCTransitGatewayRouteTableAssociation:
+  #   Condition: HasGatewayC
+  #   Type: AWS::EC2::TransitGatewayRouteTableAssociation
+  #   Properties:
+  #     TransitGatewayAttachmentId: !Ref GatewayCVpnConnection
+  #     TransitGatewayRouteTableId: !Ref IngressTransitGatewayRouteTable
+
+  # GatewayDTransitGatewayRouteTableAssociation:
+  #   Condition: HasGatewayD
+  #   Type: AWS::EC2::TransitGatewayRouteTableAssociation
+  #   Properties:
+  #     TransitGatewayAttachmentId: !Ref GatewayDVpnConnection
+  #     TransitGatewayRouteTableId: !Ref IngressTransitGatewayRouteTable
+
+  ### Egress
+
+  EgressTransitGatewayRouteTable:
+    Type: AWS::EC2::TransitGatewayRouteTable
+    Properties:
+      TransitGatewayId: !Ref TransitGateway
+      Tags:
+        - Key: Name
+          Value: Egress Route Table
+
+###
+### =========================================================================
+###
+
+Outputs:
+
+  TransitGateway:
+    Description: Transit Gateway ID
+    Value: !Ref TransitGateway
+
+  EgressTransitGatewayRouteTable:
+    Description: Transit Gateway Route Table for outbound traffic
+    Value: !Ref EgressTransitGatewayRouteTable
+
+  IngressTransitGatewayRouteTable:
+    Description: Transit Gateway Route Table for return traffic
+    Value: !Ref IngressTransitGatewayRouteTable
+
+  AmazonSideAsn:
+    Description: The ASN used by the Transit Gateway for BGP sessions
+    Value: !Ref AmazonSideAsn
+
+  GatewayAId:
+    Description: Customer Gateway ID for Gateway A
+    Value: !Ref GatewayA
+
+  GatewayAName:
+    Description: Gateway A Name
+    Value: !Ref GatewayAName
+
+  GatewayARoutingType:
+    Description: Gateway A routing type
+    Value: !Ref GatewayARoutingType
+
+  GatewayAVpnConnection:
+    Description: VPN Connection ID for Gateway A
+    Value: !Ref GatewayAVpnConnection
+
+  GatewayBId:
+    Condition: HasGatewayB
+    Description: Customer Gateway ID for Gateway B
+    Value: !Ref GatewayB
+
+  GatewayBName:
+    Condition: HasGatewayB
+    Description: Gateway B Name
+    Value: !Ref GatewayBName
+
+  GatewayBRoutingType:
+    Condition: HasGatewayB
+    Description: Gateway B routing type
+    Value: !Ref GatewayBRoutingType
+
+  GatewayBVpnConnection:
+    Condition: HasGatewayB
+    Description: VPN Connection ID for Gateway B
+    Value: !Ref GatewayBVpnConnection
+
+  GatewayCId:
+    Condition: HasGatewayC
+    Description: Customer Gateway ID for Gateway C
+    Value: !Ref GatewayC
+
+  GatewayCName:
+    Condition: HasGatewayC
+    Description: Gateway C Name
+    Value: !Ref GatewayCName
+
+  GatewayCRoutingType:
+    Condition: HasGatewayC
+    Description: Gateway C routing type
+    Value: !Ref GatewayCRoutingType
+
+  GatewayCVpnConnection:
+    Condition: HasGatewayC
+    Description: VPN Connection ID for Gateway C
+    Value: !Ref GatewayCVpnConnection
+
+  GatewayDId:
+    Condition: HasGatewayD
+    Description: Customer Gateway ID for Gateway D
+    Value: !Ref GatewayD
+
+  GatewayDName:
+    Condition: HasGatewayD
+    Description: Gateway D Name
+    Value: !Ref GatewayDName
+
+  GatewayDRoutingType:
+    Condition: HasGatewayD
+    Description: Gateway D routing type
+    Value: !Ref GatewayDRoutingType
+
+  GatewayDVpnConnection:
+    Condition: HasGatewayD
+    Description: VPN Connection ID for Gateway D
+    Value: !Ref GatewayDVpnConnection

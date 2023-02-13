@@ -1,0 +1,73 @@
+version: "3.9"
+services:
+  redis:
+    image: "redis:alpine"
+    restart: unless-stopped
+    # allows for accessing redis from outside docker at localhost:6379
+    command: ["redis-server", "--bind", "0.0.0.0"]
+    ports:
+      - "6379:6379"
+    volumes:
+    - "./.redis-data:/data"
+  gtfs-realtime-api-poller:
+    image: globaltraffictech/tsp-gtfs-realtime:latest
+    restart: unless-stopped
+    env_file: .env
+    command: ["gtfs-realtime-api-poller", "--local-development"]
+    volumes:
+      # allows local file changes to modify container
+      - type: bind
+        source: .
+        # should be same as WORKDIR from Dockerfile
+        target: /tsp-gtfs-realtime
+        read_only: true
+    depends_on:
+      - redis
+  agency-manager:
+    image: globaltraffictech/tsp-gtfs-realtime:latest
+    env_file: .env
+    command: ["agency-manager", "--get-statistics", "--local-development"]
+    volumes:
+      # allows accessing host docker daemon
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+      # allows local file changes to modify container
+      - type: bind
+        source: .
+        # should be same as WORKDIR from Dockerfile
+        target: /tsp-gtfs-realtime
+        read_only: true
+    depends_on:
+      - redis
+  vehicle-manager:
+    image: globaltraffictech/tsp-gtfs-realtime:latest
+    env_file: .env
+    command: ["vehicle-manager"]
+    volumes:
+      # allows local file changes to modify container
+      - type: bind
+        source: .
+        # should be same as WORKDIR from Dockerfile
+        target: /tsp-gtfs-realtime
+        read_only: true
+    depends_on:
+      - redis
+    profiles:
+      - vehicle
+  recorded-data-playback:
+    image: globaltraffictech/tsp-gtfs-realtime:latest
+    env_file: .env
+    command:
+      ["python", "./tools/recorded_data_publisher.py", "--get-statistics"]
+    volumes:
+      # allows local file changes to modify container
+      - type: bind
+        source: .
+        # should be same as WORKDIR from Dockerfile
+        target: /tsp-gtfs-realtime
+        read_only: true
+    depends_on:
+      - redis
+    profiles:
+      - playback

@@ -1,0 +1,45 @@
+.table-card {
+  overflow: hidden;
+  padding: 0 1rem 1rem 1rem;
+  background-color: var(--fg);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+  position: relative;
+}
+
+.table-card--empty {
+  padding: 1rem;
+}
+
+.table-card__controls {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.table-card__header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  height: fit-content;
+  min-height: 4rem;
+}
+
+.table-card__header--vertical {
+  flex-direction: column;
+  text-align: left;
+  align-items: flex-start;
+  margin-top: 1rem;
+}
+
+.table-card__title {
+  margin: 0 1rem 0 0 !important;
+  width: fit-content;
+  align-items: center;
+  grid-gap: 0.5rem;
+}
+
+.table-card__table {
+  overflow-x: auto;
+}

@@ -1,0 +1,9 @@
+{
+  "aws": {
+      "dynamoDb": {
+          "tables": {
+              "events": "cdf-assetlibraryhistory-development"
+          }
+      }
+  }
+}

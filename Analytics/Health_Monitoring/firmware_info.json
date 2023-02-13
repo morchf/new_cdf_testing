@@ -1,0 +1,7 @@
+{
+    "12345":{
+        "44": {"currentFirmwareVersion":"4", "historyFirmwareVersion": [{"date":"7/15", "version":"3"}, {"date": "3/25", "version":"1"}]},
+        "50": {"currentFirmwareVersion":"4", "historyFirmwareVersion": [{"date":"7/15", "version":"3"}, {"date": "5/05", "version":"2"}]},
+        "31": {"currentFirmwareVersion":"3", "historyFirmwareVersion": []}
+    }
+}

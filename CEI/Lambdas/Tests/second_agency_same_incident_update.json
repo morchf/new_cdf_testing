@@ -1,0 +1,34 @@
+{
+    "messageId": "RANDOMIZEGUID",
+    "siteId": "CEI_EtE_TestRegion",
+    "agencyId": "CEI_EtE_CEIAgencyTwo",
+    "incidents": [
+      {
+        "id": "test_SecondAgencyReporting",
+        "action": "UPDATE",
+        "actionDateTime": "2020-03-17T11:39:32.143Z",
+        "status": "DISPATCHED",
+        "statusDateTime": "2020-03-17T11:39:32.143Z",
+        "units": [
+          {
+            "deviceId": "CEI_EtE_Vehicle_Two",
+            "unitId": "222",
+            "dispatchDateTime": "2020-03-17T11:39:32.143Z",
+            "type": "PATROL",
+            "status": "EN",
+            "statusDateTime": "2020-03-17T11:39:32.143Z",
+            "location": {
+              "updateDateTime": "2020-03-17T11:39:32.143Z",
+              "geometry": {
+                "type": "Point",
+                "coordinates": [
+                  -117.050027,
+                  32.619108
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }

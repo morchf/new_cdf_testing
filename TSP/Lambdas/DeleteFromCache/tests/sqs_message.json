@@ -1,0 +1,21 @@
+{
+    "Messages": [
+        {
+            "MessageId": "d07a0fce-36b0-4a2b-aac8-c2006fd4e852",
+            "ReceiptHandle": "AQEBgX8iy8Dk47epmMDPLD0a7ReVQTSPWwksWp4kfZQJVqRfpWsorltBRlmmtY5AYbQlOQ2pNJpmq8flRCEUwXig013cp4eVgEdwdYPWwnfDBZWsx/DiSaES1Mqptf6Ef0qNIZKSTlnWgQUmpUR165qm3rBFH++nFTZcO6cr2S+0LPgpqCzgdLN7pd3jyAp0tjq9PCzYE+F3N7rZlEaHHg49ns5L6YUomIJP0xdZ9Kuv6a1Enep16M6li+I+pwcG6uYL0prbX4MkNHRaIoDAKgMz7SmaKrJPs54fintTcZlDy14=",
+            "MD5OfBody": "1ae59d813b04597746bb2a3f80caa33a",
+            "Body": "12,14,16"
+        }
+    ],
+    "ResponseMetadata": {
+        "RequestId": "1a7856ea-49ae-5cb3-b9af-0f98d6be087e",
+        "HTTPStatusCode": 200,
+        "HTTPHeaders": {
+            "x-amzn-requestid": "1a7856ea-49ae-5cb3-b9af-0f98d6be087e",
+            "date": "Wed,21 Jul 2021 22: 16: 48 GMT",
+            "content-type": "text/xml",
+            "content-length": "753"
+        },
+        "RetryAttempts": 0
+    }
+}

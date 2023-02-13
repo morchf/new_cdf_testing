@@ -1,0 +1,21 @@
+{
+  "groups": {
+    "ownedby": ["/ulyss2/ulyss_agency2"]
+  },
+  "attributes": {
+    "serial": "7625479",
+    "gttSerial": "CreateJSON02",
+    "addressMAC": "",
+    "addressLAN": "10.1.1.1",
+    "addressWAN": "10.1.1.25",
+    "IMEI": "",
+    "devCertId": "NULL_CERT",
+    "make": "GTT",
+    "model": "2100",
+    "uniqueId": "NULL_GUID"
+  },
+  "category": "device",
+  "templateId": "communicator",
+  "state": "active",
+  "deviceId": "createjson_comm1"
+}

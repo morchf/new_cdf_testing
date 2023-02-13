@@ -1,0 +1,13 @@
+{
+  "1576175734002": {
+    "atp.glat": 44.9512963,
+    "atp.ghed": 0,
+    "atp.glon": -92.9453703,
+    "atp.gspd": 0,
+    "atp.gpi": 9,
+    "atp.gstt": 1,
+    "atp.gsat": 3,
+    "atp.gqal": 1
+  },
+  "topic": "unitTestModem/messages/json"
+}

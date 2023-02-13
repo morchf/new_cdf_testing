@@ -1,0 +1,59 @@
+.ant-skeleton-element .ant-skeleton-button {
+  display: block;
+  width: auto;
+}
+
+.approach-container {
+  padding: 0.5rem;
+  margin: 1.5rem;
+}
+
+.approach-container--unsaved {
+  border-radius: 0.5rem;
+  background-color: gray;
+  box-shadow: var(--card-shadow);
+  border-radius: var(--card-radius);
+}
+
+.approach-container--saved {
+  border-radius: 0rem !important;
+}
+
+.approach-container .ant-page-header-heading-left {
+  margin: 0 0 0 35%;
+}
+
+.approach-container .ant-page-header-heading-title {
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.approach-container .ant-tabs-nav {
+  margin: 0px !important;
+  padding: 0.5rem 0rem 0rem 1.5rem;
+}
+
+.approach-container .ant-col {
+  padding: 0 1.5rem 0 0;
+}
+
+.approach-container-tabs {
+  height: 659px;
+  width: 100%;
+  padding: none;
+
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+  background-color: var(--fg);
+  box-shadow: var(--card-shadow);
+}
+
+.general-form,
+.thresholds-form,
+.outputs-form {
+  padding: 1rem 0rem 0rem 2rem;
+}
+
+.thresholds-form > .ant-tabs-tab {
+  background-color: red;
+}

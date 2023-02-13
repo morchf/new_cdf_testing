@@ -1,0 +1,11 @@
+{
+    "id": "0e0d7bbc-2f26-4968-aa87-aa2e72982774",
+    "agency_id":"6c34122c-1b9f-43a5-9577-ce9fb5c23477", 
+    "vehicle_id":"097c9f35-2d56-4072-91b0-91c07b7201b2", 
+    "description":"Insert COM x", 
+    "serial":"08008080808",
+    "address_mac":"00:24:81:00:00:03", 
+    "make":"Sierra Wireless", 
+    "model":"IBR900",
+    "state":"GA"
+}

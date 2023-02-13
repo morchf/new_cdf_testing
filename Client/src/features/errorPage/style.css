@@ -1,0 +1,56 @@
+.http-errors___text span {
+  display: block;
+  text-align: center;
+  text-shadow: var(--box-shadow);
+  animation: popIn 600ms var(--acc-back) 1 forwards;
+  opacity: 0;
+}
+
+@keyframes popIn {
+  0%,
+  13% {
+    transform: scaleX(0.89) scaleY(0.75);
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.http-errors___bg-code {
+  color: #fff;
+  font-size: 350px;
+  margin-bottom: -0.25em;
+  z-index: 0;
+  background: linear-gradient(
+    to top,
+    rgba(32, 38, 40, 0) 25%,
+    rgba(49, 57, 61, 1) 100%
+  );
+}
+
+.http-errors___msg {
+  font-size: 36px;
+  animation-delay: calc(var(--delay-base) + 3 * var(--delay-added));
+  color: #8b8b8b;
+  letter-spacing: 2px;
+}
+
+.http-errors___msg span {
+  color: #fff;
+  letter-spacing: -1px;
+}
+
+.http-errors___support {
+  bottom: -50px;
+  right: -21px;
+  font-size: 18px;
+  animation-delay: calc(var(--delay-base) + 4 * var(--delay-added));
+  display: block;
+  margin-top: 15px;
+  color: #b2b3b4;
+}
+
+.http-errors___support span {
+  margin-bottom: 3px;
+}

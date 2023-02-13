@@ -1,0 +1,34 @@
+{
+    "attributes": {
+        "name": "veh1238",
+        "type": "Ladder Truck",
+        "priority": "High",
+        "class": 10,
+        "VID": 3326,
+        "auxiliaryIo": 0,
+        "speed": 0,
+        "heading": 0,
+        "fixStatus": 0,
+        "numFixSat": 0,
+        "lat": 0,
+        "long": 0,
+        "lastGPIOMsgTimestamp": "",
+        "lastGPSMsgTimestamp": "",
+        "uniqueId": "NULL_GUID"
+    },
+    "groups": {
+        "ownedby": [
+            "/regUnitTest/agyUnitTest"
+        ]
+    },
+    "devices": {
+        "installedat": [
+            "unitTestModem"
+        ]
+    },
+    "category": "device",
+    "templateId": "vehiclev2",
+    "description": "Tan",
+    "deviceId": "unitTestVeh",
+    "state": "active"
+}

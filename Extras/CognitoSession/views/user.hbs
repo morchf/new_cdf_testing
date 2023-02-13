@@ -1,0 +1,47 @@
+<h1>Your profile</h1>
+<p>
+  You need to be signed in to visit this page.
+  Otherwise, you will be redirected to the main page.
+</p>
+<div id="slot"></div>
+<div>
+  <a href="/">Return to the main page.</a>
+</div>
+
+<script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+<script>
+  const e = React.createElement;
+
+  class ProfileWidget extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = {loading: true, profile: null, error: false};
+    }
+
+    componentDidMount() {
+      fetch('/api/profile')
+      .then(res => res.json())
+      .then(data => this.setState({profile: data}))
+      .catch(err => this.setState({error: true}));
+      this.timerId = setTimeout(() => this.setState({loading: false}), 1500);
+    }
+
+    componentWillUnmount() {
+      clearTimeout(this.timerId);
+    }
+
+    render() {
+      if (this.state.loading) {
+        return e('p', null, 'Loading your profile...');
+      } else if (!(this.state.loading || this.state.error)) {
+        return e('pre', null, JSON.stringify(this.state.profile, null, 2));
+      } else {
+        return e('pre', null, 'An error occurred.');
+      }
+    }
+  }
+
+  const slot = document.getElementById('slot');
+  ReactDOM.render(e(ProfileWidget), slot);
+</script>

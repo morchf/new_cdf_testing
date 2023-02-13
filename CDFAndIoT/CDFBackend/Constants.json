@@ -1,0 +1,4 @@
+{
+    "OAUTH_URL": "https://eu.airvantage.net/api/oauth/token?",
+    "GET_URL": "https://na.airvantage.net/api/v1/systems?&company="
+}

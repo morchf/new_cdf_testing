@@ -1,0 +1,30 @@
+{
+    "statusCode": 400,
+    "body": {
+        "000V7641234": "error",
+        "groups": {
+            "ownedby": [
+                "/r1/a1"
+            ]
+        },
+        "attributes": {
+            "description": "Not the console",
+            "gttSerial": "7640xx1234",
+            "addressMAC": "04:04:04:04:04:04",
+            "addressLAN": "10.1.9.0",
+            "addressWAN": "10.1.1.20",
+            "IMEI": "9234adsf-1235813",
+            "make": "GTT",
+            "model": "764",
+            "lat": "",
+            "long": ""
+        },
+        "category": "device",
+        "templateId": "phaseselector",
+        "state": "error",
+        "deviceId": "ps1"
+    },
+    "headers": {
+        "Content-Type": "application/json"
+    }
+}

@@ -1,0 +1,12 @@
+{
+    "attributes": {
+        "description": "But not D2",
+        "caCertId": "NULL_CA",
+        "regionGUID": "NULL_GUID"
+    },
+    "category": "group",
+    "templateId": "region",
+    "parentPath": "/",
+    "name": "R2",
+    "groupPath": "/R2"
+}

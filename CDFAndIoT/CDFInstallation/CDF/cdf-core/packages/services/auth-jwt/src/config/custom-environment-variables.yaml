@@ -1,0 +1,10 @@
+aws:
+  region: AWS_REGION
+  accountId: AWS_ACCOUNT_ID
+
+token:
+  issuer: CDF_AUTH_JWT_TOKEN_ISSUER
+
+logging:
+  level: debug
+

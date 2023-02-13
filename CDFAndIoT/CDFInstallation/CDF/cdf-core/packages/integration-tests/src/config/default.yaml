@@ -1,0 +1,20 @@
+aws:
+  accountid:
+  region:
+assetLibrary:
+  baseUrl:
+assetLibraryHistory:
+  baseUrl:
+commands:
+    baseUrl:
+provisioning:
+  baseUrl:
+  templates:
+    bucket:
+    prefix:
+    suffix:
+thing:
+  name:
+  arn:
+logging:
+  level: 'debug'

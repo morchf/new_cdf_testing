@@ -1,0 +1,91 @@
+extends:
+  - eslint:recommended
+  - plugin:react/recommended
+  - plugin:react-hooks/recommended
+  - airbnb-base
+  - google
+  - prettier
+
+settings:
+  import/resolver:
+    node:
+      extensions: ['.js', '.jsx', '.ts', '.tsx']
+
+  react:
+    version: 17.0.2
+
+env:
+  # Recognize globals (document, window, sessionStorage...)
+  browser: true
+  node: true
+
+parserOptions:
+  # Allow null checking operator (?.)
+  ecmaVersion: 2020
+
+rules:
+  require-jsdoc: 0
+  react/prop-types: off
+
+  # Confusing references
+  no-shadow: warn
+
+  # Class-based components
+  no-invalid-this: warn
+
+  # Repeated debugging/logging
+  no-console: off
+  no-alert: warn
+
+  # '++' in loops
+  no-plusplus: off
+
+  # Commented-out / reference material
+  no-unused-vars: off
+
+  # Block-comments
+  valid-jsdoc: off
+
+  # Prefer default for single-funcion files, unless the file may be extended
+  import/prefer-default-export: off
+
+  # Only for in-place Redux state modification
+  no-param-reassign: off
+
+  # Allow .jsx files without 'React' in scope
+  react/react-in-jsx-scope: off
+
+  # Cleaner short-circuits
+  no-nested-ternary: off
+
+  # 'forwardRef' declarations
+  react/display-name: off
+
+overrides:
+  - extends:
+      - plugin:cypress/recommended
+      - eslint:recommended
+      - airbnb-base
+      - google
+      - prettier
+    files:
+      - Client/cypress.config.js
+      - Client/cypress/**/*.js
+      - ./cypress.config.js
+      - ./cypress/**/*.js
+    rules:
+      # Cypress-specific patterns
+      cypress/no-unnecessary-waiting: off
+      no-shadow: off
+      no-plusplus: off
+      class-methods-use-this: off
+      require-jsdoc: off
+      global-require: off
+      no-invalid-this: off
+      func-names: off
+
+  - files:
+      - '**/*.test.js'
+      - '**/*.test.jsx'
+    env:
+      jest: true

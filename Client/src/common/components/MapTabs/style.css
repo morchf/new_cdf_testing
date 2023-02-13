@@ -1,0 +1,13 @@
+.map-tabs__tabs {
+  height: 659px;
+  width: 100%;
+  padding: none;
+  border-top-right-radius: 0;
+  border-top-left-radius: 0;
+}
+
+.tabs-skeleton {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}

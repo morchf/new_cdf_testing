@@ -1,0 +1,25 @@
+.map-settings__routes_multiselect {
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  padding: 4px 7px 4px 17px;
+}
+
+.map-settings__routes_multiselect .map-settings__routes_multiselect__top-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.map-settings__routes_multiselect .map-settings__routes_multiselect__top-row button {
+  cursor: pointer;
+}
+
+.map-settings__routes_multiselect .ant-radio-group {
+  display: flex;
+  flex-direction: column;
+  max-height: 157px;
+  overflow-y: scroll;
+}
+
+.map-settings__routes_multiselect .ant-radio-group .ant-radio-wrapper {
+  margin-top: 8px;
+}

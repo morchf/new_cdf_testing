@@ -1,0 +1,39 @@
+.button-select {
+  display: flex;
+  box-sizing: border-box;
+}
+
+.button-select .btn-secondary:focus,
+.button-select .btn-secondary:hover {
+  background-color: #FFFFFF;
+  border: 1px solid #2EA5DB;
+  color: #0274A8;
+}
+
+.btn-primary:active,
+.btn-primary:active {
+  border-color: #0274A8;
+}
+
+.button-select .btn:focus.btn-primary:focus,
+.button-select .btn:hover.btn-primary:focus,
+.button-select .btn:focus.btn-primary:hover,
+.button-select .btn:hover.btn-primary:hover {
+  border-color: #2EA5DB;
+}
+
+.button-select .btn:focus.btn-primary:active,
+.button-select .btn:hover.btn-primary:active {
+  border-color: #0274A8;
+}
+
+.button-select .btn:not(:last-child) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.button-select .btn:not(:first-child) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-left-width: 0;
+}

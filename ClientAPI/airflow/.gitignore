@@ -1,0 +1,4 @@
+# Airflow local runner
+docker-compose.yaml
+logs/
+plugins/

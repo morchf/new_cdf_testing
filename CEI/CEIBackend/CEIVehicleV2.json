@@ -1,0 +1,47 @@
+{
+  "groups": {
+    "ownedby": [
+      "/CEI_EtE_TestRegion/CEI_EtE_CEIAgencyTwo"
+    ]
+  },
+  "attributes": {
+    "name": "CEI_Vehicle_V2",
+    "description": "Exists for CDF Test verification",
+    "type": "CEI",
+    "class": "1",
+    "VID": "CEIV2",
+    "uniqueId": "CEIV2TestInstall",
+    "auxiliaryIo": "None",
+    "priority": "High",
+    "CEIDeviceID": "CEI_Vehicle_V2",
+    "CEIIncidentStatus": "None",
+    "CEIIncidentAction": "None",
+    "CEIIncidentStatusDateandTime": "None",
+    "CEIIncidentTypeCode": "None",
+    "CEIIncidentPriority": "None",
+    "CEIIncidentActionDateandTime": "None",
+    "CEIIncidentLocationName": "None",
+    "CEIIncidentLocationCrossStreet": "None",
+    "CEIIncidentLocationStreet1": "None",
+    "CEIIncidentLocationStreet2": "None",
+    "CEIIncidentLocationCity": "None",
+    "CEIIncidentLocationState": "None",
+    "CEIIncidentLocationCounty": "None",
+    "CEIIncidentLocationZip": "None",
+    "CEIIncidentLocationDirections": "None",
+    "CEIIncidentLocationCoordinates": "None",
+    "CEIUnitID": "None",
+    "CEIDispatchDateandTime": "None",
+    "CEIUnitTypeID": "None",
+    "CEIUnitStatus": "None",
+    "CEIUnitStatusDateandTime": "None",
+    "CEIUnitLocationLatitudeandLongitude": "None",
+    "CEIUnitLocationDateandTime": "None",
+    "CEIVehicleActive": false,
+    "CEILastReferenced": "None"
+  },
+  "category": "device",
+  "templateId": "ceivehicleV2",
+  "state": "active",
+  "deviceId": "CEI_EtE_Vehicle_V2"
+}

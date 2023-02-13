@@ -1,0 +1,31 @@
+{
+    "body": {
+        "groups": {
+            "ownedby": [
+                "/zoe_reg/zoe_agy"
+            ]
+        },
+        "attributes": {
+            "name": "veh123",
+            "type": "Ladder Truck",
+            "priority": "High",
+            "class": 10,
+            "VID": 234,
+            "lat": 44.9512963,
+            "long": -92.9453703,
+            "heading": 3,
+            "speed": 20,
+            "fixStatus": 1,
+            "numFixSat": 3,
+            "lastGPSMsgTimestamp": "1576175734002",
+            "auxiliaryIo": 0,
+            "lastGPIOMsgTimestamp": "1576175734002",
+            "uniqueId": "NULL_GUID"
+        },
+        "category": "device",
+        "templateId": "vehiclev2",
+        "description": "a vehicle",
+        "state": "active",
+        "deviceId": "zoe_veh"
+    }
+}

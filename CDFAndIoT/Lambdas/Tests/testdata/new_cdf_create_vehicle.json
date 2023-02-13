@@ -1,0 +1,10 @@
+{
+    "agency_id":"e9851fb9-0973-4d9f-b430-36b59ccbf908", 
+    "vid": "55", 
+    "name":"el camino1", 
+    "description":"half truck half car1", 
+    "type":"truck1", 
+    "priority":"High", 
+    "class":"20",
+    "state":"GA"
+}

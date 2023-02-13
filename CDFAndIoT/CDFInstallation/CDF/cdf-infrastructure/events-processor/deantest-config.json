@@ -1,0 +1,33 @@
+{
+  "aws": {
+    "region": "",
+    "accountId": "157731826412",
+    "iot": {
+      "endpoint": "aofuby49j6efy-ats.iot.us-east-1.amazonaws.com"
+    },
+    "dynamoDb": {
+      "tables": {
+        "eventConfig": {
+          "name": ""
+        },
+        "eventNotifications": {
+          "name": ""
+        }
+      },
+      "dax": {
+        "endpoints": ""
+      }
+    },
+    "lambda": {
+      "dynamoDbStream": {
+        "name": ""
+      },
+      "lambdaInvoke": {
+        "arn": ""
+      }
+    }
+  },
+  "cors": {
+    "origin": "*"
+  }
+}

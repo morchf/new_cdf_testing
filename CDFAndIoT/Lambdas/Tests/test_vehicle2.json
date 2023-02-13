@@ -1,0 +1,34 @@
+{
+    "groups": {
+        "ownedby": [
+            "/ulyss2/ulyss_agency2"
+        ]
+    },
+    "attributes": {
+        "description": "uniqueness test vehicle",
+        "gttSerial": "test_gttSerial",
+        "addressMAC": "FA:FA:FA:FA:FA:FD",
+        "addressLAN": "127.255.255.203",
+        "addressWAN": "127.255.255.103",
+        "IMEI": "UniquenessTest-0004",
+        "auxiliaryIo": 0,
+        "devCertId": "NULL_CERT",
+        "make": "Sierra Wireless",
+        "model": "2100",
+        "priority": "High",
+        "class": 8,
+        "VID": "UniquenessDeviceId0003",
+        "lat": 0,
+        "long": 0,
+        "heading": 0,
+        "speed": 0,
+        "fixStatus": "",
+        "numFixSat": 0,
+        "lastGPSMsgTimestamp": "",
+        "lastGPIOMsgTimestamp": ""
+    },
+    "category": "device",
+    "templateId": "vehicle",
+    "state": "active",
+    "deviceId": "test_ulyss_vehicle2"
+}

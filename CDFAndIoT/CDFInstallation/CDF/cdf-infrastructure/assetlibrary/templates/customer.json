@@ -1,0 +1,15 @@
+{
+  "properties": {
+    "eulaAccepted": {
+      "type": "boolean"
+    }
+  },
+  "relations": {
+    "out": {
+      "located_at": [
+        "location"
+      ]
+    }
+  },
+  "required": []
+}

@@ -1,0 +1,26 @@
+.tabs-extra-content {
+  align-items: center;
+  width: 100%;
+}
+
+.tabs-button {
+  height: 100%;
+  display: inline-block;
+}
+
+.tabs-tablesearch {
+  display: inline-block;
+  margin-left: 10px;
+}
+
+.tabs-tablesearch .search-row {
+  padding: 0px !important;
+}
+
+.legend {
+  font-weight: bold;
+}
+
+.intersection {
+  font-weight: 600;
+}

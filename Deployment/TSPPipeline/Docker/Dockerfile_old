@@ -1,0 +1,77 @@
+ARG BASE_CONTAINER_REPO="docker.io"
+FROM $BASE_CONTAINER_REPO/python:3.10-bullseye AS builder-core
+
+RUN pip install --upgrade pip
+RUN pip install wheel
+
+COPY build/core-requirements.txt ./requirements.txt
+COPY build/DataModel /Dependencies/DataModel
+COPY build/Service /Dependencies/Service
+RUN pip install --no-cache-dir --user -r requirements.txt
+RUN ls -l
+
+COPY setup.py .
+COPY tsp_gtfs_realtime/core/__init__.py tsp_gtfs_realtime/core/aws.py tsp_gtfs_realtime/core/estimation.py ./tsp_gtfs_realtime/core/
+COPY tsp_gtfs_realtime/__init__.py ./tsp_gtfs_realtime/
+RUN pip install --no-cache-dir --no-deps --user .
+
+FROM builder-core as builder-agency
+COPY build/agency-requirements.txt ./agency-requirements.txt
+RUN pip install --no-cache-dir --user -r agency-requirements.txt
+RUN ls -l
+
+FROM builder-core as builder-vehicle
+COPY build/vehicle-requirements.txt ./vehicle-requirements.txt
+RUN pip install --no-cache-dir --user -r vehicle-requirements.txt
+RUN ls -l
+
+FROM builder-core as builder-gtfs-realtime
+COPY build/gtfs-realtime-requirements.txt ./gtfs-realtime-requirements.txt
+RUN pip install --no-cache-dir --user -r gtfs-realtime-requirements.txt
+COPY tsp_gtfs_realtime/core/gtfs_realtime.py ./tsp_gtfs_realtime/core/
+RUN pip install --no-cache-dir --no-deps --user .
+RUN ls -l
+
+FROM builder-core as builder-data-aggregator
+COPY build/data-aggregator-requirements.txt ./data-aggregator-requirements.txt
+RUN pip install --no-cache-dir --user -r data-aggregator-requirements.txt
+
+FROM $BASE_CONTAINER_REPO/python:3.10-slim-bullseye AS core
+RUN useradd --no-log-init python
+USER python
+WORKDIR /home/python
+COPY --from=builder-core --chown=python:python /root/.local /home/python/.local
+ENV PATH="/home/python/.local/bin:$PATH"
+
+FROM core AS vehicle-manager
+COPY --from=builder-vehicle --chown=python:python /root/.local /home/python/.local
+COPY tsp_gtfs_realtime/vehicle_manager.py /home/python/.local/lib/python3.10/site-packages/tsp_gtfs_realtime/
+CMD vehicle-manager
+
+FROM core AS agency-manager
+COPY --from=builder-agency --chown=python:python /root/.local /home/python/.local
+COPY tsp_gtfs_realtime/agency_manager.py /home/python/.local/lib/python3.10/site-packages/tsp_gtfs_realtime/
+CMD ["agency-manager", "--get-statistics"]
+
+FROM core AS gtfs-realtime-api-poller
+COPY --from=builder-gtfs-realtime --chown=python:python /root/.local /home/python/.local
+COPY tsp_gtfs_realtime/config/gtfs-realtime-api-poller.json /home/python/.local/lib/python3.10/site-packages/tsp_gtfs_realtime/config/
+COPY tsp_gtfs_realtime/gtfs_realtime_api_poller.py /home/python/.local/lib/python3.10/site-packages/tsp_gtfs_realtime/
+CMD gtfs-realtime-api-poller
+
+FROM core AS data-aggregator
+COPY --from=builder-data-aggregator --chown=python:python /root/.local /home/python/.local
+COPY tsp_gtfs_realtime/data_aggregator.py /home/python/.local/lib/python3.10/site-packages/tsp_gtfs_realtime/
+CMD data-aggregator
+
+FROM core AS recorded-data-publisher
+COPY --from=builder-data-aggregator --chown=python:python /root/.local /home/python/.local
+COPY tools/recorded_data_publisher.py /home/python/
+COPY data.parquet /home/python/
+CMD ["python", "/home/python/recorded_data_publisher.py", "--get-statistics"]
+
+FROM core AS simulate-drive-test
+COPY --from=builder-data-aggregator --chown=python:python /root/.local /home/python/.local
+COPY tools/simulate_drive_test.py /home/python/
+COPY RTRadioMessages.txt /home/python/
+CMD ["python", "/home/python/simulate_drive_test.py", "--repeat"]

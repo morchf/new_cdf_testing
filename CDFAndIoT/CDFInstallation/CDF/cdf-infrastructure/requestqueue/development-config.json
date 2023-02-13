@@ -1,0 +1,30 @@
+{
+  "aws": {
+    "region": "",
+    "accountId": ""
+  },
+  "sqs": {
+    "requestQueue": {
+      "queueUrl": "",
+      "replayBatchSize": 5
+    },
+    "dlqQueue": {
+      "queueUrl": ""
+    }
+  },
+  "primary": {
+    "healthCheckUrl": "",
+    "healthCheckResponse": {},
+    "apiLambdaArn": ""
+  },
+  "lambda": {
+    "stopLambdaAtRemainingMillis": 20000
+  },
+  "cdf": {
+    "mimeType": "application/vnd.aws-cdf-v1.0+json",
+    "allowedMethods": ["POST", "PUT", "PATCH", "DELETE"]
+  },
+  "cors": {
+    "origin": "*"
+  }
+}

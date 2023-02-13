@@ -1,0 +1,6 @@
+C:\Development\C#\IBR Sim\CradlepointSIM\M2Mqtt\bin\Debug\M2Mqtt.dll
+C:\Development\C#\IBR Sim\CradlepointSIM\M2Mqtt\bin\Debug\M2Mqtt.pdb
+C:\Development\C#\IBR Sim\CradlepointSIM\M2Mqtt\obj\Debug\M2Mqtt.csprojAssemblyReference.cache
+C:\Development\C#\IBR Sim\CradlepointSIM\M2Mqtt\obj\Debug\M2Mqtt.csproj.CoreCompileInputs.cache
+C:\Development\C#\IBR Sim\CradlepointSIM\M2Mqtt\obj\Debug\M2Mqtt.dll
+C:\Development\C#\IBR Sim\CradlepointSIM\M2Mqtt\obj\Debug\M2Mqtt.pdb

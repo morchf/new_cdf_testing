@@ -1,0 +1,2094 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: "AWS::Serverless-2016-10-31"
+
+Description: This template contains resources that are commonly used across the SCP - like CDF ecosystem, EC cluster, Internal VPC, IBR resources, Feature Persistence resources, etc.
+
+Metadata:
+  cfn-lint:
+    config:
+      ignore_checks:
+        - I3042
+        - E3002
+        - E0000
+        - W3010
+        - I3013
+        - I1022
+        - I3011
+
+Parameters:
+  CoreName:
+    Type: String
+    Default: CDFPipeline
+    Description: Base name for CDFPipeline resources
+
+  Env:
+    Type: String
+    AllowedValues:
+      - develop
+      - test
+      - production
+      - pilot
+    Description: "Provide the environment you are deploying this on. Allowed values: develop, test, production, or pilot"
+
+  CDFAPIARN:
+    Type: String
+    Description: CDF Asset Library API endpoint required by the SAM template
+
+  IOTCoreEndpoint:
+    Type: String
+    Description: "IOT Core endpoint Address"
+
+  ManageCDFEntitiesAPI:
+    Type: String
+    Description: "ManageCDFEntitiesUI endpoint Address"
+
+  CEICADAPI:
+    Type: String
+    Description: "CEICADAPI endpoint Address"
+
+Mappings:
+  PostgresClusterScalingConfigMap:
+    develop:
+      MinCapacity: 2
+      MaxCapacity: 4
+      DeletionProtection: "false"
+      SecretName: develop/aurora/asmgtfsV2
+      DomainName: iot.developgtt.com
+      APIDomainName: api.developgtt.com
+      HostedZoneId: 'Z0860428QVHGOUOOXYBM'
+
+    test:
+      MinCapacity: 2
+      MaxCapacity: 4
+      DeletionProtection: "false"
+      SecretName: test/aurora/asmgtfs
+      DomainName: iot.testgtt.com
+      APIDomainName: api.testgtt.com
+      HostedZoneId: 'Z04615521GBGU5FIMOQK6'
+
+    pilot:
+      MinCapacity: 4
+      MaxCapacity: 8
+      DeletionProtection: "true"
+      SecretName: pilot/aurora/asmgtfs
+      DomainName: iot.pilotgtt.com
+      APIDomainName: api.pilotgtt.com
+      HostedZoneId: 'Z09856952W4853W9UTQ6S'
+
+    production:
+      MinCapacity: 4
+      MaxCapacity: 8
+      DeletionProtection: "true"
+      SecretName: production/aurora/asmgtfs
+      DomainName: iot.opticom.cloud
+      APIDomainName: api.opticom.cloud
+      HostedZoneId: 'Z1W3792GXLR8ZA'
+
+Resources:
+  FirehoseDeliveryRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: FirehoseDeliveryRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: firehose.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonS3FullAccess
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonKinesisFullAccess
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSGlueServiceRole
+
+  IoTFirehoseRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: IoTFirehoseRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect : Allow
+            Principal:
+              Service : iot.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      Policies:
+        - PolicyName: IoTFirehoseRole-Policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: firehose:PutRecord
+                Resource:
+                  - !GetAtt Route2100DataKinesisDeliveryStream.Arn
+                  - !GetAtt RouteModemDataKinesisDeliveryStream.Arn
+
+  RuntimeDeviceMessageBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub runtime-device-message-${Env}
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: True
+        BlockPublicPolicy: True
+        IgnorePublicAcls: True
+        RestrictPublicBuckets: True
+
+  Route2100Data:
+    Type: AWS::IoT::TopicRule
+    Properties:
+      RuleName: Route2100Data
+      TopicRulePayload:
+        Description: "Gets 2100 message and invokes the Process2100Data Lambda"
+        RuleDisabled: false
+        AwsIotSqlVersion: "2016-03-23"
+        Sql: >-
+          SELECT encode(*, 'base64') AS data, topic() as topic, parse_time('YYYY/MM/dd HH:mm:ss', timestamp()) as timestamp FROM 'GTT/GTT/VEH/EVP/2100/#'
+        Actions:
+          - Lambda:
+              FunctionArn: !GetAtt "Process2100Data.Arn"
+          - Firehose:
+              DeliveryStreamName: !Ref Route2100DataKinesisDeliveryStream
+              RoleArn: !GetAtt IoTFirehoseRole.Arn
+              BatchMode: True
+
+  Route2100DataKinesisDeliveryStream:
+    Type: AWS::KinesisFirehose::DeliveryStream
+    Properties: 
+      DeliveryStreamName: Route2100DataKinesisDeliveryStream
+      DeliveryStreamType: DirectPut
+      S3DestinationConfiguration: 
+        BucketARN: !GetAtt RuntimeDeviceMessageBucket.Arn
+        BufferingHints: 
+          IntervalInSeconds: 60
+          SizeInMBs: 1
+        CloudWatchLoggingOptions: 
+          Enabled: True
+          LogGroupName: /kinesis/Route2100Data
+          LogStreamName: EVP
+        # partition based on yyyy-mm-dd date
+        Prefix: '2100-EVP/utc_date=!{timestamp:yyyy}-!{timestamp:mm}-!{timestamp:dd}/'
+        ErrorOutputPrefix: '!{firehose:error-output-type}/2100-EVP/utc_date=!{timestamp:yyyy}-!{timestamp:mm}-!{timestamp:dd}/'
+        RoleARN: !GetAtt FirehoseDeliveryRole.Arn
+
+  RouteModemData:
+    Type: AWS::IoT::TopicRule
+    Properties:
+      RuleName: RouteModemData
+      TopicRulePayload:
+        Description: "Gets MP70 message, and invokes lambda to process and create RT radio message"
+        RuleDisabled: false
+        AwsIotSqlVersion: "2016-03-23"
+        Sql: >-
+          SELECT *, topic() AS topic, parse_time('YYYY/MM/dd HH:mm:ss', timestamp()) as timestamp FROM '+/messages/json'
+        Actions:
+          - Lambda:
+              FunctionArn: !GetAtt "CreateRTRADIOMsg.Arn"
+          - Firehose:
+              DeliveryStreamName: !Ref RouteModemDataKinesisDeliveryStream
+              RoleArn: !GetAtt IoTFirehoseRole.Arn
+              BatchMode: True
+
+  RouteModemDataKinesisDeliveryStream:
+    Type: AWS::KinesisFirehose::DeliveryStream
+    Properties: 
+      DeliveryStreamName: RouteModemDataKinesisDeliveryStream
+      DeliveryStreamType: DirectPut
+      S3DestinationConfiguration: 
+        BucketARN: !GetAtt RuntimeDeviceMessageBucket.Arn
+        BufferingHints: 
+          IntervalInSeconds: 60
+          SizeInMBs: 1
+        CloudWatchLoggingOptions: 
+          Enabled: True
+          LogGroupName: /kinesis/RouteModemData
+          LogStreamName: EVP
+        # partition based on yyyy-mm-dd date
+        Prefix: 'MP70-EVP/utc_date=!{timestamp:yyyy}-!{timestamp:mm}-!{timestamp:dd}/'
+        ErrorOutputPrefix: '!{firehose:error-output-type}/MP70-EVP/utc_date=!{timestamp:yyyy}-!{timestamp:mm}-!{timestamp:dd}/'
+        RoleARN: !GetAtt FirehoseDeliveryRole.Arn
+
+  CreateRTRADIOMsgRBPolicy:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt CreateRTRADIOMsg.Arn
+      Principal: iot.amazonaws.com
+      SourceAccount: !Ref "AWS::AccountId"
+      SourceArn: !GetAtt RouteModemData.Arn
+
+  Process2100DataRBPolicy:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt Process2100Data.Arn
+      Principal: iot.amazonaws.com
+      SourceAccount: !Ref "AWS::AccountId"
+      SourceArn: !GetAtt Route2100Data.Arn
+
+  CreateRTRADIOMsg:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      FunctionName: CreateRTRADIOMsg
+      Handler: CreateRTRADIOMsg.lambda_handler
+      Runtime: python3.8
+      CodeUri: ./../../CDFAndIoT/Lambdas/CreateRTRADIOMsg/lambda-code
+      Description: "Get data from CDF and construct RTRADIO message"
+      MemorySize: 128
+      Timeout: 5
+      Role: !GetAtt 'CreateRTRADIOMsgRole.Arn'
+      Layers:
+        - !Ref CDFLayer
+      Environment:
+        Variables:
+          CDF_URL: !Ref CDFAPIARN
+
+  CreateJSON:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      FunctionName: CreateJSON
+      Handler: CreateJSON.lambda_handler
+      Runtime: python3.7
+      CodeUri: ./../../CDFAndIoT/Lambdas/CreateJSON/lambda-code
+      Description: "Create json from raw data"
+      MemorySize: 128
+      Timeout: 30
+      Role: !GetAtt 'LambdaDeploymentBasicExecution.Arn'
+      Layers:
+        - !Ref CDFLayer
+      Environment:
+        Variables:
+          CDF_URL: !Ref CDFAPIARN
+          CERT_BKT: !Ref CDFCertStore
+
+  ConsumeCSV:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      FunctionName: ConsumeCSV
+      Handler: ConsumeCSV.lambda_handler
+      Runtime: python3.8
+      CodeUri: ./../../CDFAndIoT/Lambdas/ConsumeCSV/lambda-code
+      Description: "Load CSV file, read row, and pass contents out to Step Function"
+      MemorySize: 128
+      Timeout: 30
+      Role: !GetAtt 'ConsumeCSVRole.Arn'
+      Layers:
+        - !Ref CDFLayer
+
+  ConsumeCSVForDeleteCDF:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      FunctionName: ConsumeCSVForDeleteCDF
+      Handler: ConsumeCSVForDeleteCDF.lambda_handler
+      Runtime: python3.8
+      CodeUri: ./../../CDFAndIoT/Lambdas/ConsumeCSVForDeleteCDF/lambda-code
+      Description: "Read all entities in CSV to allow them to be removed from the system"
+      MemorySize: 128
+      Timeout: 30
+      Role: !GetAtt 'ConsumeCSVForDeleteCDFRole.Arn'
+      Layers:
+        - !Ref CDFLayer
+        
+  PopulateCDF:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      FunctionName: PopulateCDF
+      Handler: PopulateCDF.lambda_handler
+      Runtime: python3.7
+      CodeUri: ./../../CDFAndIoT/Lambdas/PopulateCDF/lambda-code
+      Description: "Create cert(s) and CDF entity from json data"
+      MemorySize: 128
+      Timeout: 30
+      Role: !GetAtt 'PopulateCDFRole.Arn'
+      Layers:
+        - !Ref CDFLayer
+      Environment:
+        Variables:
+          CDF_URL: !Ref CDFAPIARN
+          CERT_BKT: !Ref CDFCertStore
+
+  DeleteCDF:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      FunctionName: DeleteCDF
+      Handler: DeleteCDF.lambda_handler
+      Runtime: python3.7
+      CodeUri: ./../../CDFAndIoT/Lambdas/DeleteCDF/lambda-code
+      Description: "Remove specified entity from CDF"
+      MemorySize: 128
+      Timeout: 30
+      Role: !GetAtt 'DeleteCDFRole.Arn'
+      Layers:
+        - !Ref CDFLayer
+      Environment:
+        Variables:
+          CDF_URL: !Ref CDFAPIARN
+          CERT_BKT: !Ref CDFCertStore
+
+  Process2100Data:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      FunctionName: Process2100Data
+      Handler: Process2100Data.lambda_handler
+      Runtime: python3.8
+      CodeUri: ./../../CDFAndIoT/Lambdas/Process2100Data/lambda-code
+      Description: "Get 2100 message, process it and publish to CMS"
+      MemorySize: 128
+      Timeout: 3
+      Role: !GetAtt 'Process2100DataRole.Arn'
+      Layers:
+        - !Ref CDFLayer
+      Environment:
+        Variables:
+          CDF_URL: !Ref CDFAPIARN
+
+  AllowCDFAPIAccess:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      ManagedPolicyName: AllowCDFAPIAccess
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'execute-api:Invoke'
+              - 'execute-api:ManageConnections'
+            Resource: !Sub 'arn:${AWS::Partition}:execute-api:us-east-1:${AWS::AccountId}:*'
+
+  AllowCDFAPIInvoke:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      ManagedPolicyName: AllowCDFAPIInvoke
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'lambda:InvokeFunction'
+            Resource: !Sub 'arn:${AWS::Partition}:lambda:us-east-1:${AWS::AccountId}:function:cdf-assetlibrary-stage-LambdaFunction*'
+
+  AllowDynamoDBAccess:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      ManagedPolicyName: AllowDynamoDBAccess
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'dynamodb:UpdateTimeToLive'
+              - 'dynamodb:PutItem'
+              - 'dynamodb:GetItem'
+              - 'dynamodb:UpdateItem'
+            Resource: !Sub 'arn:${AWS::Partition}:dynamodb:us-east-1:${AWS::AccountId}:table/CachingTable'
+
+  AllowParameterStoreAccess:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      ManagedPolicyName: AllowParameterStoreAccess
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'ssm:GetParameter'
+            Resource: !Sub 'arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:parameter/SW-API-*'
+
+  AllowIoTPublish:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      ManagedPolicyName: AllowIoTPublish
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'iot:Connect'
+              - 'iot:Publish'
+            Resource:
+              - !Sub 'arn:${AWS::Partition}:iot:*:${AWS::AccountId}:client/*'
+              - !Sub 'arn:${AWS::Partition}:iot:*:${AWS::AccountId}:topic/*'
+
+  CreateCDFEntities:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub create-cdf-entities-${Env}
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: TRUE
+        BlockPublicPolicy: TRUE
+        IgnorePublicAcls: TRUE
+        RestrictPublicBuckets: TRUE
+
+  DeleteCDFEntities:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub delete-cdf-entities-${Env}
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: TRUE
+        BlockPublicPolicy: TRUE
+        IgnorePublicAcls: TRUE
+        RestrictPublicBuckets: TRUE
+
+  CDFCertStore:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub cdf-cert-store-${Env}
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: TRUE
+        BlockPublicPolicy: TRUE
+        IgnorePublicAcls: TRUE
+        RestrictPublicBuckets: TRUE
+
+  InfraeventsCloudtrailStorage:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub infraevents-cloudtrail-storage-${Env}
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: TRUE
+        BlockPublicPolicy: TRUE
+        IgnorePublicAcls: TRUE
+        RestrictPublicBuckets: TRUE
+
+  InfraeventsCloudtrailStoragePolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket:
+        Ref: InfraeventsCloudtrailStorage
+      PolicyDocument:
+        Statement:
+          - Effect: "Allow"
+            Action: "s3:GetBucketAcl"
+            Resource: !GetAtt InfraeventsCloudtrailStorage.Arn
+            Principal:
+              "Service": "cloudtrail.amazonaws.com"
+
+          - Effect: "Allow"
+            Action: "s3:PutObject"
+            Resource: !Sub ${InfraeventsCloudtrailStorage.Arn}/AWSLogs/*
+            Principal:
+              "Service": "cloudtrail.amazonaws.com"
+            Condition:
+              StringEquals:
+                s3:x-amz-acl:
+                  - "bucket-owner-full-control"
+
+  InfraEvents:
+    Type: AWS::CloudTrail::Trail
+    DependsOn: InfraeventsCloudtrailStoragePolicy
+    Properties:
+      TrailName: InfraEvents
+      IsLogging: TRUE
+      S3BucketName: !Sub ${InfraeventsCloudtrailStorage}
+      EventSelectors:
+        - IncludeManagementEvents: FALSE
+          ReadWriteType: WriteOnly
+          DataResources:
+          - Type: AWS::S3::Object
+            Values:
+              - !Sub ${DeleteCDFEntities.Arn}/
+              - !Sub ${CreateCDFEntities.Arn}/
+
+  CDFStepFunctions:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: CDFStepFunctions
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: states.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaRole
+      Policies:
+        - PolicyName: CDFStepFunctionsPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "xray:PutTraceSegments"
+                  - "xray:PutTelemetryRecords"
+                  - "xray:GetSamplingRules"
+                  - "xray:GetSamplingTargets"
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - "logs:CreateLogDelivery"
+                  - "logs:GetLogDelivery"
+                  - "logs:UpdateLogDelivery"
+                  - "logs:DeleteLogDelivery"
+                  - "logs:ListLogDeliveries"
+                  - "logs:PutResourcePolicy"
+                  - "logs:DescribeResourcePolicies"
+                  - "logs:DescribeLogGroups"
+                Resource: '*'
+
+  LambdaDeploymentBasicExecution:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: LambdaDeploymentBasicExecution
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - !Ref 'AllowCDFAPIAccess'
+        - !Ref 'AllowCDFAPIInvoke'
+        - !Ref 'AllowParameterStoreAccess'
+
+  ConsumeCSVRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: ConsumeCSV
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: ConsumeCSVPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "s3:GetObject"
+                  - "s3:ListBucket"
+                Resource: !Sub ${CreateCDFEntities.Arn}/*
+
+  ConsumeCSVForDeleteCDFRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: ConsumeCSVForDeleteCDF
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: ConsumeCSVForDeleteCDFPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "s3:GetObject"
+                  - "s3:ListBucket"
+                Resource: !Sub ${DeleteCDFEntities.Arn}/*
+
+  DeleteCDFRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: DeleteCDF
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - !Ref 'AllowCDFAPIAccess'
+        - !Ref 'AllowCDFAPIInvoke'
+      Policies:
+        - PolicyName: DeleteCDFPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "s3:GetObject"
+                  - "s3:ListBucket"
+                  - "s3:DeleteObject"
+                Resource:
+                  - !Sub ${CDFCertStore.Arn}/*
+                  - !GetAtt CDFCertStore.Arn
+              - Effect: Allow
+                Action:
+                  - "execute-api:Invoke"
+                  - "execute-api:ManageConnections"
+                Resource: !Sub "arn:${AWS::Partition}:execute-api:us-east-1:${AWS::AccountId}:cdf-assetlibrary-stage/*/*/*"
+              - Effect: Allow
+                Action:
+                  - "iot:*"
+                Resource: "*"
+
+  PopulateCDFRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: PopulateCDF
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - !Ref 'AllowCDFAPIAccess'
+        - !Ref 'AllowCDFAPIInvoke'
+      Policies:
+        - PolicyName: PopulateCDFPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "s3:GetObject"
+                  - "s3:PutObject"
+                  - "s3:ListBucket"
+                Resource: !Sub "arn:${AWS::Partition}:s3:::*/*"
+                #Resource:  !Sub ${CDFCertStore.Arn}/*
+              - Effect: Allow
+                Action:
+                  - "iot:RegisterThing"
+                  - "iot:RegisterCACertificate"
+                  - "iot:CreateThing"
+                  - "iot:GetPolicy"
+                  - "iot:AttachPolicy"
+                  - "iot:AttachThingPrincipal"
+                  - "iot:RegisterCertificateWithoutCA"
+                  - "iot:DescribeThing"
+                  - "iot:GetRegistrationCode"
+                  - "iot:RegisterCertificate"
+                  - "iot:ListPolicies"
+                  - "iot:CreatePolicy"
+                  - "iot:ListThings"
+                  - "iot:ListCACertificates"
+                  - "iot:DescribeCertificate"
+                  - "iot:UpdateCACertificate"
+                  - "iot:AcceptCertificateTransfer"
+                  - "iot:DescribeCACertificate"
+                  - "iot:TransferCertificate"
+                  - "iot:UpdateCertificate"
+                  - "iot:ListCertificates"
+                Resource: "*"
+
+  CreateRTRADIOMsgRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: CreateRTRADIOMsg
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - !Ref 'AllowCDFAPIAccess'
+        - !Ref 'AllowCDFAPIInvoke'
+        - !Ref 'AllowIoTPublish'
+        - !Ref 'AllowDynamoDBAccess'
+
+  Process2100DataRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: Process2100Data
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - !Ref 'AllowCDFAPIAccess'
+        - !Ref 'AllowCDFAPIInvoke'
+        - !Ref 'AllowIoTPublish'
+        - !Ref 'AllowDynamoDBAccess'
+
+  S3TriggerForSFEvent:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: S3TriggerForSFEvent
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - events.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: S3TriggerForSFEventPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: "states:StartExecution"
+                Resource:
+                  - !Ref 'ConsumeCSVDeleteCDF'
+                  - !Ref 'ConsumeCSVPopulateCDF'
+
+  S3TriggerForSFDeleteCDF:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: S3TriggerForSFDeleteCDF
+      State: ENABLED
+      RoleArn: !GetAtt 'S3TriggerForSFEvent.Arn'
+      EventPattern:
+        source:
+          - "aws.s3"
+        detail-type:
+          - 'AWS API Call via CloudTrail'
+        detail:
+          eventSource:
+            - 's3.amazonaws.com'
+          eventName:
+            - 'PutObject'
+          requestParameters:
+            bucketName:
+              - !Sub ${DeleteCDFEntities}
+      Targets:
+        - RoleArn: !GetAtt 'S3TriggerForSFEvent.Arn'
+          Arn: !Ref 'ConsumeCSVDeleteCDF'
+          Id: ConsumeCSVDeleteCDF
+
+  S3TriggerForSFPopulateCDF:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: S3TriggerForSFPopulateCDF
+      State: ENABLED
+      RoleArn: !GetAtt 'S3TriggerForSFEvent.Arn'
+      EventPattern:
+        source:
+          - "aws.s3"
+        detail-type:
+          - 'AWS API Call via CloudTrail'
+        detail:
+          eventSource:
+            - 's3.amazonaws.com'
+          eventName:
+            - 'PutObject'
+          requestParameters:
+            bucketName:
+              - !Sub ${CreateCDFEntities}
+      Targets:
+        - RoleArn: !GetAtt 'S3TriggerForSFEvent.Arn'
+          Arn: !Ref 'ConsumeCSVPopulateCDF'
+          Id: ConsumeCSVPopulateCDF
+
+  ConsumeCSVDeleteCDFLogs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/stepfunction/ConsumeCSVDeleteCDFLogs
+      RetentionInDays: 14
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+
+  ConsumeCSVPopulateCDFLogs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/stepfunction/ConsumeCSVPopulateCDFLogs
+      RetentionInDays: 14
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+
+  # Step Function
+  ConsumeCSVDeleteCDF:
+    Type: AWS::StepFunctions::StateMachine
+    Properties:
+      StateMachineName: ConsumeCSVDeleteCDF
+      StateMachineType: STANDARD
+      RoleArn: !GetAtt 'CDFStepFunctions.Arn'
+      LoggingConfiguration:
+        IncludeExecutionData: true
+        Level: ALL
+        Destinations:
+          - CloudWatchLogsLogGroup:
+              LogGroupArn: !GetAtt 'ConsumeCSVDeleteCDFLogs.Arn'
+      DefinitionString: !Sub |-
+        {
+          "Comment": "State machine deletes CDF entities and certs from csv file loaded to S3",
+          "StartAt": "setup",
+          "States": {
+             "setup": {
+              "Comment": "Set up initial values for state machine",
+              "Type": "Pass",
+              "Next": "ConsumeCSVForDeleteCDF"
+            },
+            "ConsumeCSVForDeleteCDF": {
+              "Type": "Task",
+              "Resource": "arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:ConsumeCSVForDeleteCDF",
+              "ResultPath":"$.taskResult-consume-csv",
+              "Next": "DeleteCDF"
+            },
+            "DeleteCDF": {
+              "Type": "Task",
+              "Resource": "arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:DeleteCDF",
+              "ResultPath": "$.taskResult-delete-cdf-entity-and-cert",
+              "Next": "CheckEntityDelete"
+            },
+            "CheckEntityDelete": {
+              "Type": "Choice",
+              "InputPath": "$",
+              "Choices": [
+                {
+                  "Variable": "$.taskResult-delete-cdf-entity-and-cert[0]",
+                  "BooleanEquals": true,
+                  "Next": "done"
+                },
+                {
+                  "Variable": "$.taskResult-delete-cdf-entity-and-cert[0]",
+                  "BooleanEquals": false,
+                  "Next": "fail"
+                }]
+            },
+            "done": {
+              "Type": "Succeed"
+            },
+            "fail": {
+              "Type": "Fail"
+            }
+          }
+        }
+
+  ConsumeCSVPopulateCDF:
+    Type: AWS::StepFunctions::StateMachine
+    Properties:
+      StateMachineName: ConsumeCSVPopulateCDF
+      StateMachineType: STANDARD
+      RoleArn: !GetAtt 'CDFStepFunctions.Arn'
+      LoggingConfiguration:
+        IncludeExecutionData: true
+        Level: ALL
+        Destinations:
+          - CloudWatchLogsLogGroup:
+              LogGroupArn: !GetAtt 'ConsumeCSVPopulateCDFLogs.Arn'
+      DefinitionString: !Sub |-
+        {
+          "Comment": "State machine creates CDF entities and certs from csv file loaded to S3",
+          "StartAt": "setup",
+          "States": {
+             "setup": {
+              "Comment": "Set up initial values for state machine",
+              "Type": "Pass",
+              "Result": {
+                "row_count": 1,
+                "header_row_number": 1
+              },
+              "ResultPath": "$.taskResult-consume-csv",
+              "Next": "ConsumeCSV"
+            },
+            "ConsumeCSV": {
+              "Type": "Task",
+              "Resource": "arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:ConsumeCSV",
+              "ResultPath":"$.taskResult-consume-csv",
+              "Next": "CheckDone"
+            },
+            "CheckDone": {
+              "Type": "Choice",
+              "InputPath": "$",
+              "Choices": [ {
+                  "Variable": "$.taskResult-consume-csv.row_type",
+                  "StringEquals": "header",
+                  "Next": "ConsumeCSV"
+                },
+                {
+                  "Variable": "$.taskResult-consume-csv.row_type",
+                  "StringEquals": "content",
+                  "Next": "CreateJSON"
+                },
+                {
+                  "Variable": "$.taskResult-consume-csv.row_type",
+                  "StringEquals": "done",
+                  "Next": "done"
+                },
+                {
+                  "Variable": "$.taskResult-consume-csv.row_type",
+                  "StringEquals": "unknown",
+                  "Next": "UnknownRowType"
+                } ]
+            },
+            "CreateJSON": {
+              "Type": "Task",
+              "Resource": "arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:CreateJSON",
+              "ResultPath": "$.taskResult-create-json",
+              "Next": "PopulateCDF"
+            },
+            "PopulateCDF": {
+              "Type": "Task",
+              "Resource": "arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:PopulateCDF",
+              "ResultPath": "$.taskResult-create-cdf-entity-and-cert",
+              "Next": "CheckEntityCreate"
+            },
+            "CheckEntityCreate": {
+              "Type": "Choice",
+              "InputPath": "$",
+              "Choices": [
+                {
+                  "Variable": "$.taskResult-create-cdf-entity-and-cert[0]",
+                  "BooleanEquals": true,
+                  "Next": "ConsumeCSV"
+                },
+                {
+                  "Variable": "$.taskResult-create-cdf-entity-and-cert[0]",
+                  "BooleanEquals": false,
+                  "Next": "fail"
+                }]
+            },
+            "done": {
+              "Type": "Succeed"
+            },
+            "fail": {
+              "Type": "Fail"
+            },
+            "UnknownRowType": {
+              "Type": "Fail",
+              "Cause": "Unknown row found in CSV file",
+              "Error": "Error_Unknown_Row"
+            }
+          }
+        }
+
+  CachingTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy : "Delete"
+    UpdateReplacePolicy: "Delete"
+    Properties:
+      TableName: "CachingTable"
+      AttributeDefinitions:
+        - AttributeName: "ID"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "ID"
+          KeyType: "HASH"
+      TimeToLiveSpecification:
+        AttributeName: "ExpirationTime"
+        Enabled: true
+      ProvisionedThroughput:
+        ReadCapacityUnits: 200
+        WriteCapacityUnits: 50
+
+  PostLiveStatusOfIntersectionsPerAgencyQueue:
+    Type: AWS::SQS::Queue
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties:
+      # ContentBasedDeduplication: true
+      QueueName: PostLiveStatusOfIntersectionsPerAgency
+
+  PostLiveStatusOfIntersectionsPerAgencyIoTRole:
+    Type: AWS::IAM::Role
+    Properties: 
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: iot.amazonaws.com
+            Action: sts:AssumeRole
+      Description: "Role to be assumed by AWS IoT Rule to perform the specified action"
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonSQSFullAccess
+      RoleName: PostLiveStatusOfIntersectionsPerAgencyIoTRole
+
+  PostLiveStatusOfIntersectionsPerAgencyLambdaRole:
+    Type: AWS::IAM::Role
+    Properties: 
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Description: "Role to be assumed by PostLiveStatusOfIntersectionsPerAgency Lambda Function"
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonSQSFullAccess
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonElastiCacheFullAccess
+      RoleName: PostLiveStatusOfIntersectionsPerAgencyLambdaRole
+
+  GetLiveStatusOfIntersectionsPerAgencyLambdaRole:
+    Type: AWS::IAM::Role
+    Properties: 
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Description: "Role to be assumed by GetLiveStatusOfIntersectionsPerAgency Lambda Function"
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonSQSFullAccess
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonElastiCacheFullAccess
+      RoleName: GetLiveStatusOfIntersectionsPerAgencyLambdaRole
+
+  PostLiveStatusOfIntersectionsPerAgencyRule:
+    Type: AWS::IoT::TopicRule
+    Properties:
+      RuleName: PostLiveStatusOfIntersectionsPerAgency
+      TopicRulePayload:
+        Description: "Gets message from M/V-764 and posts data into SQS-PostLiveStatusOfIntersectionsPerAgency"
+        RuleDisabled: false
+        AwsIotSqlVersion: "2016-03-23"
+        Sql: >-
+          SELECT * AS data, topic() as topic, timestamp() as timestamp FROM 'GTT/GTT/PS/+/HB'
+        Actions:
+          - Sqs:
+              QueueUrl: !Ref PostLiveStatusOfIntersectionsPerAgencyQueue
+              RoleArn: !GetAtt 'PostLiveStatusOfIntersectionsPerAgencyIoTRole.Arn'
+              UseBase64: false
+
+  PostLiveStatusOfIntersectionsPerAgency:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      FunctionName: PostLiveStatusOfIntersectionsPerAgency
+      Handler: PostLiveStatusOfIntersectionsPerAgency.lambda_handler
+      Runtime: python3.8
+      CodeUri: ./../../CDFAndIoT/Lambdas/PostLiveStatusOfIntersectionsPerAgency/LambdaCode
+      Description: "POST the live status of particular intersection when AgencyID is passed to it"
+      MemorySize: 128
+      Timeout: 5
+      Role: !GetAtt 'PostLiveStatusOfIntersectionsPerAgencyLambdaRole.Arn'
+      Layers:
+        - !Ref CDFLayer
+      Environment:
+        Variables:
+          CDF_URL: !Ref CDFAPIARN
+
+  GetLiveStatusOfIntersectionsPerAgency:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      FunctionName: GetLiveStatusOfIntersectionsPerAgency
+      Handler: GetLiveStatusOfIntersectionsPerAgency.lambda_handler
+      Runtime: python3.8
+      CodeUri: ./../../CDFAndIoT/Lambdas/GetLiveStatusOfIntersectionsPerAgency/LambdaCode
+      Description: "GET the live status of particular intersection when AgencyID is passed to it"
+      MemorySize: 128
+      Timeout: 5
+      Role: !GetAtt 'GetLiveStatusOfIntersectionsPerAgencyLambdaRole.Arn'
+      Layers:
+        - !Ref CDFLayer
+      Environment:
+        Variables:
+          CDF_URL: !Ref CDFAPIARN
+
+  FeaturePersistenceDataModelLambdaLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      CompatibleRuntimes:
+        - python3.8
+        - python3.9
+      ContentUri: ./../../CDFAndIoT/Lambdas/LambdaLayers/FeaturePersistenceDataModelLambdaLayer/FeaturePersistenceDataModelLambdaLayer.zip
+      Description: "Layer containing gtt.feature_persistence.data_model library and dependencies"
+      LayerName: !Sub FeaturePersistenceDataModelLambdaLayer-${CoreName}
+      RetentionPolicy: Delete
+
+  FeaturePersistenceServiceLambdaLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      CompatibleRuntimes:
+        - python3.8
+        - python3.9
+      ContentUri: ./../../CDFAndIoT/Lambdas/LambdaLayers/FeaturePersistenceServiceLambdaLayer/FeaturePersistenceServiceLambdaLayer.zip
+      Description: "Layer containing gtt.feature_persistence.service library and dependencies, including gtt.feature_persistence.data_model"
+      LayerName: !Sub FeaturePersistenceServiceLambdaLayer-${CoreName}
+      RetentionPolicy: Delete
+
+  CDFLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      CompatibleRuntimes:
+        - python3.7
+        - python3.8
+      ContentUri: ./../../CDFAndIoT/Lambdas/LambdaLayers/CDFLambdaLayer/CDFLambdaLayer.zip
+      Description: "Layer containing CDF library and dependencies"
+      LayerName: !Sub CDFLayer-${CoreName}
+      RetentionPolicy: Delete
+
+  RedisLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      CompatibleRuntimes:
+        - python3.7
+        - python3.8
+      ContentUri: ./../../CDFAndIoT/Lambdas/LambdaLayers/redis/redis.zip
+      Description: "Layer containing redis library and dependencies"
+      LayerName: !Sub RedisLayer-${CoreName}
+      RetentionPolicy: Delete
+      
+# FeaturePersistence Resources      
+  FeaturePersistence:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      FunctionName: FeaturePersistence
+      Handler: FeaturePersistence.lambda_handler
+      Runtime: python3.8
+      CodeUri: ./../../CDFAndIoT/Lambdas/FeaturePersistence
+      Description: "CRUD API to handle Feature Persistence"
+      MemorySize: 128
+      Timeout: 5
+      Role: !GetAtt "FeaturePersistenceRole.Arn"
+      Layers:
+        - !Ref FeaturePersistenceDataModelLambdaLayer
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref FeaturePersistenceTable
+          SECONDARY_INDEX: FeatureName-index
+      Events:
+        RequestToEndpoint:
+          Type: HttpApi
+          Properties:
+            Path: /
+            Method: ANY
+
+  FeaturePersistenceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: FeaturePersistenceRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - !Ref "DynamoDBAccessForFeaturePersistenceLambda"
+
+  DynamoDBAccessForFeaturePersistenceLambda:
+    Type: "AWS::IAM::ManagedPolicy"
+    Properties:
+      ManagedPolicyName: DynamoDBAccessForFeaturePersistenceLambda
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - "dynamodb:UpdateTimeToLive"
+              - "dynamodb:PutItem"
+              - "dynamodb:GetItem"
+              - "dynamodb:UpdateItem"
+              - "dynamodb:Query"
+              - "dynamodb:BatchWriteItem"
+              - "dynamodb:DeleteItem"
+            Resource: !Sub "arn:${AWS::Partition}:dynamodb:us-east-1:${AWS::AccountId}:table/FeaturePersistence"
+          - Effect: Allow
+            Action:
+              - "dynamodb:GetItem"
+              - "dynamodb:Query"
+            Resource: !Sub "arn:${AWS::Partition}:dynamodb:us-east-1:${AWS::AccountId}:table/FeaturePersistence/index/FeatureName-index"
+
+  FeaturePersistenceTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: "Delete"
+    UpdateReplacePolicy: "Delete"
+    Properties:
+      TableName: "FeaturePersistence"
+      AttributeDefinitions:
+        - AttributeName: "AgencyGUID"
+          AttributeType: "S"
+        - AttributeName: "FeatureName"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "AgencyGUID"
+          KeyType: "HASH"
+        - AttributeName: "FeatureName"
+          KeyType: "RANGE"
+      GlobalSecondaryIndexes:
+        - IndexName: FeatureName-index
+          KeySchema:
+            - AttributeName: "FeatureName"
+              KeyType: "HASH"
+            - AttributeName: "AgencyGUID"
+              KeyType: "RANGE"
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
+      TimeToLiveSpecification:
+        AttributeName: "ExpirationTime"
+        Enabled: false
+      ProvisionedThroughput:
+        ReadCapacityUnits: 200
+        WriteCapacityUnits: 50
+
+  FeaturePersistenceAPI:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: FeaturePersistenceAPI
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+      FailOnWarnings: True
+      Body:
+        swagger: "2.0"
+        info:
+          description: "Created by AWS Lambda"
+          version: "2022-01-18T14:26:45Z"
+          title: "FeaturePersistence-API"
+        basePath: "/default"
+        schemes:
+        - "https"
+        paths:
+          /:
+            x-amazon-apigateway-any-method:
+              responses:
+                "200":
+                  description: "200 response"
+              x-amazon-apigateway-integration:
+                httpMethod: "POST"
+                uri: !Sub "arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${FeaturePersistence.Arn}/invocations"
+                responses:
+                  ".*":
+                    statusCode: "200"
+                passthroughBehavior: "when_no_match"
+                type: "aws_proxy"
+
+  OptionsMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      RestApiId:  !Ref FeaturePersistenceAPI
+      ResourceId: !GetAtt FeaturePersistenceAPI.RootResourceId
+      HttpMethod: OPTIONS
+      Integration:
+        IntegrationResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+            method.response.header.Access-Control-Allow-Methods: "'HEAD,GET,PUT,DELETE,PATCH,POST,OPTIONS'"
+            method.response.header.Access-Control-Allow-Origin: "'*'"
+        Type: MOCK
+        RequestTemplates:
+          application/json: '{"statusCode": 200}'
+      MethodResponses:
+      - StatusCode: 200
+        ResponseParameters:
+          method.response.header.Access-Control-Allow-Headers: false
+          method.response.header.Access-Control-Allow-Methods: false
+          method.response.header.Access-Control-Allow-Origin: false
+
+  FeaturePersistenceAPIDeploy:
+      Type: AWS::ApiGateway::Deployment
+      Properties: 
+        RestApiId: !Ref FeaturePersistenceAPI
+        StageName: !Ref Env
+
+  FeaturePersistenceRBPolicy:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:invokeFunction
+      FunctionName: !GetAtt FeaturePersistence.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${FeaturePersistenceAPI}/*
+
+  # DownloadMQTTCertsAPI
+  DownloadMQTTCertsAPIRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: DownloadMQTTCertsAPIRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - !Ref AllowCDFAPIAccess
+        - !Ref AllowCDFAPIInvoke
+      Policies:
+        - PolicyName: AllowDownloadMQTTCerts
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: s3:GetObject
+                Resource:
+                  - !Sub ${CDFCertStore.Arn}/*
+              - Effect: Allow
+                Action: apigateway:GET
+                Resource:
+                  - arn:aws:apigateway:*::/restapis
+
+  DownloadMQTTCertsAPI:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: DownloadMQTTCertsAPI
+      Handler: DownloadMQTTCertsAPI.lambda_handler
+      Runtime: python3.9
+      CodeUri: ./../../CDFAndIoT/Lambdas/DownloadMQTTCertsAPI/LambdaCode
+      Description: "Downloads MQTT certificates for MP70 devices from S3"
+      MemorySize: 128
+      Timeout: 15
+      Role: !GetAtt DownloadMQTTCertsAPIRole.Arn
+      Layers:
+        - !Ref AssetLibraryServiceLambdaLayer
+      Environment:
+        Variables:
+          ASSET_LIBRARY_URL: !Ref CDFAPIARN
+          CDF_CERTS_BUCKET_NAME: !Ref CDFCertStore
+      Events:
+        RequestToEndpoint:
+          Type: HttpApi
+          Properties:
+            Path: /{serial}/{device_id}
+            Method: POST
+
+  DownloadMQTTCertsRestAPI:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: DownloadMQTTCertsAPI
+      BinaryMediaTypes:
+        - "*/*"
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+      FailOnWarnings: True
+      Body:
+        swagger: "2.0"
+        info:
+          description: "Download MQTT Certs Rest API"
+          version: "0.0.1"
+          title: "DownloadMQTTCertsAPI"
+        basePath: "/default"
+        schemes:
+        - "https"
+        paths:
+          /{serial}/{filename}:
+            get:
+              produces:
+                - application/zip
+                - application/json
+              responses:
+                "200":
+                  description: "200 response"
+                "400":
+                  description: "Invalid device serial"
+                "404":
+                  description: "Device certs not found"
+                "500":
+                  description: "Internal error"
+              x-amazon-apigateway-integration:
+                httpMethod: "POST"
+                # credentials: !GetAtt AllowDownloadMQTTCertsAPIInvoke.Arn
+                uri: !Sub "arn:${AWS::Partition}:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DownloadMQTTCertsAPI.Arn}/invocations"
+                passthroughBehavior: "when_no_match"
+                type: "aws_proxy"
+                responses:
+                  default:
+                    statusCode: "200"
+
+  DownloadMQTTCertsRestAPIDeployment:
+      Type: AWS::ApiGateway::Deployment
+      Properties: 
+        RestApiId: !Ref DownloadMQTTCertsRestAPI
+        StageName: !Ref Env
+
+  DownloadMQTTCertsRBPolicy:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:invokeFunction
+      FunctionName: !GetAtt DownloadMQTTCertsAPI.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${DownloadMQTTCertsRestAPI}/*
+
+  AssetLibraryServiceLambdaLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      CompatibleRuntimes:
+        - python3.8
+        - python3.9
+      ContentUri: ./../../CDFAndIoT/Lambdas/LambdaLayers/AssetLibraryServiceLambdaLayer/AssetLibraryServiceLambdaLayer.zip
+      Description: Layer containing gtt.asset_library.service library and dependencies, including gtt.asset_library.data_model
+      LayerName: !Sub AssetLibraryServiceLambdaLayer-${CoreName}
+      RetentionPolicy: Delete
+
+  # Shared EC Cluster Resources
+  SharedElastiCacheCluster:
+    Type: AWS::ElastiCache::CacheCluster
+    Properties:
+      # AutoMinorVersionUpgrade: False
+      # AZMode: cross-az
+      CacheNodeType: cache.m4.large
+      CacheSubnetGroupName: !Ref SharedClusterSubnetGroup
+      ClusterName: !Sub SharedCluster-${CoreName}
+      Engine: redis
+      # EngineVersion: 6.2.6
+      # LogDeliveryConfigurations???
+      NumCacheNodes: 1
+      # PreferredAvailabilityZones:
+      #   - us-east-1a
+      #   - us-east-1b
+      # PreferredMaintenanceWindow: sun:23:00-mon:02:00
+      # SnapshotArns: 
+      # SnapshotName
+      # SnapshotRetentionLimit
+      # SnapshotWindow
+      VpcSecurityGroupIds:
+        - !GetAtt SharedClusterSecurityGroup.GroupId
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+
+  # SharedElastiCacheClusterReplicationGroup:
+  #   Type: AWS::ElastiCache::ReplicationGroup
+  #   Properties:
+  #   # In Progress
+
+  SharedClusterSubnetGroup:
+    Type: AWS::ElastiCache::SubnetGroup
+    Properties:
+      CacheSubnetGroupName: !Sub SharedCluster-SubnetGroup-${CoreName}
+      Description: Subnet Group for shared elasticache cluster
+      SubnetIds:
+        - !ImportValue SharedResourcesPrivateSubnetA
+        - !ImportValue SharedResourcesPrivateSubnetB
+
+  SharedClusterSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for shared elasticache cluster
+      GroupName: !Sub SharedCluster-SecurityGroup-${CoreName}
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 6379
+          ToPort: 6379
+          SourceSecurityGroupId: !Ref IBRFullRTRadioMsgSecurityGroup
+        - IpProtocol: tcp
+          FromPort: 6379
+          ToPort: 6379
+          SourceSecurityGroupId: !ImportValue TeletracGPIOMsgAndRTRadioMsgSG
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          FromPort: -1
+          ToPort: -1
+          CidrIp: 0.0.0.0/0
+      VpcId: !ImportValue InternalVPC
+
+  # IBR Resources
+  IBRFullRTRadioMsgRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub IBRFullRTRadioMsgRole-${CoreName}
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::${AWS::Partition}:policy/CloudWatchLogsFullAccess
+        - !Sub arn:${AWS::Partition}:iam::${AWS::Partition}:policy/AmazonElastiCacheFullAccess
+        - !Sub arn:${AWS::Partition}:iam::${AWS::Partition}:policy/AmazonSQSFullAccess
+        - !Sub arn:${AWS::Partition}:iam::${AWS::Partition}:policy/AmazonKinesisFirehoseFullAccess
+        - !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:policy/AllowIoTPublish
+        - !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:policy/AllowCDFAPIInvoke
+        - !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:policy/AllowCDFAPIAccess
+        - !Sub arn:${AWS::Partition}:iam::${AWS::Partition}:policy/service-role/AWSLambdaBasicExecutionRole
+        - !Ref 'IBRFullExecutionRole'
+        - !Ref 'IBRFullAccessToDynamoDB'
+
+  IBRFullAccessToDynamoDB:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      ManagedPolicyName: !Sub IBRFullAccessToDynamoDB-${CoreName}
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'dynamodb:UpdateTimeToLive'
+              - 'dynamodb:PutItem'
+              - 'dynamodb:GetItem'
+              - 'dynamodb:UpdateItem'
+              - 'dynamodb:UpdateTableReplicaAutoScaling'
+              - 'dynamodb:UpdateTable'
+            Resource: '*'
+
+  IBRFullExecutionRole:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      ManagedPolicyName: !Sub IBRFullExecutionRole-${CoreName}
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'mq:DescribeBroker'
+              - 'secretsmanager:GetSecretValue'
+              - 'ec2:CreateNetworkInterface'
+              - 'ec2:DescribeNetworkInterfaces'
+              - 'ec2:DescribeVpcs'
+              - 'ec2:DeleteNetworkInterface'
+              - 'ec2:DescribeSubnets'
+              - 'ec2:DescribeSecurityGroups'
+              - 'logs:CreateLogGroup'
+              - 'logs:CreateLogStream'
+              - 'logs:PutLogEvents'
+            Resource: '*'
+
+  IBRFullRTRadioMsgSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for IBRFullRTRadioMsg
+      GroupName: !Sub IBRFullRTRadioMsg-SecurityGroup-${CoreName}
+      # GroupName: !Sub IBRFullRTRadioMsg-SecurityGroup
+      # SecurityGroupIngress:
+      #   - IpProtocol: tcp
+      #     FromPort: 80
+      #     ToPort: 80
+      #     CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          FromPort: -1
+          ToPort: -1
+          CidrIp: 0.0.0.0/0
+      VpcId: !ImportValue InternalVPC
+
+  IBRFullRTRadioMsg:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub IBRFullRTRadioMsg-${CoreName}
+      CodeUri: ./../../IBRIntegration/Lambdas/IBRRTRadioMsg/LambdaCode
+      Timeout: 30
+      MemorySize: 128
+      Handler: IBRRTRadioMsg.lambda_handler
+      Runtime: python3.8
+      Role: !GetAtt IBRFullRTRadioMsgRole.Arn
+      Layers:
+          - !Ref RedisLayer
+          - !Ref CDFLayer
+      Environment:
+        Variables:
+          CDF_URL: !Ref CDFAPIARN
+          REDIS_URL: !GetAtt SharedElastiCacheCluster.RedisEndpoint.Address
+          REDIS_PORT: !GetAtt SharedElastiCacheCluster.RedisEndpoint.Port
+      Events:
+        IoTRule1:
+          Type: IoTRule
+          Properties:
+            Sql: 'SELECT *, topic() AS topic FROM ''GP/GTT/TSP/IBR900-600M/+/STATE'''
+            AwsIotSqlVersion: "2016-03-23"
+        IoTRule2:
+          Type: IoTRule
+          Properties:
+            Sql: 'SELECT *, topic() AS topic FROM ''GP/GTT/TSP/IBR1700-1200M/+/STATE'''
+            AwsIotSqlVersion: "2016-03-23"
+        IoTRule3:
+          Type: IoTRule
+          Properties:
+            Sql: 'SELECT *, topic() AS topic FROM ''GP/GTT/TSP/R1900-5GB/+/STATE'''
+            AwsIotSqlVersion: "2016-03-23"
+        IoTRule4:
+          Type: IoTRule
+          Properties:
+            Sql: 'SELECT *, topic() AS topic FROM ''GP/GTT/EVP/IBR900-600M/+/STATE'''
+            AwsIotSqlVersion: "2016-03-23"
+        IoTRule5:
+          Type: IoTRule
+          Properties:
+            Sql: 'SELECT *, topic() AS topic FROM ''GP/GTT/EVP/IBR1700-1200M/+/STATE'''
+            AwsIotSqlVersion: "2016-03-23"
+        IoTRule6:
+          Type: IoTRule
+          Properties:
+            Sql: 'SELECT *, topic() AS topic FROM ''GP/GTT/EVP/R1900-5GB/+/STATE'''
+            AwsIotSqlVersion: "2016-03-23"
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref IBRFullRTRadioMsgSecurityGroup
+        SubnetIds:
+          - !ImportValue SharedResourcesPrivateSubnetA
+          - !ImportValue SharedResourcesPrivateSubnetB
+      Policies:
+        - Statement:
+          - Effect: Allow
+            Resource: '*'
+            Action:
+            - mq:DescribeBroker
+            - secretsmanager:GetSecretValue
+            - ec2:CreateNetworkInterface
+            - ec2:DescribeNetworkInterfaces
+            - ec2:DescribeVpcs
+            - ec2:DeleteNetworkInterface
+            - ec2:DescribeSubnets
+            - ec2:DescribeSecurityGroups
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+            
+  IBRDynamicSettings:
+      Type: AWS::Serverless::Function
+      Properties:
+        FunctionName: !Sub IBRDynamicSettings-${CoreName}
+        CodeUri: ./../../IBRIntegration/Lambdas/IBRSettings/LambdaCode
+        Timeout: 30
+        MemorySize: 128
+        Handler: IBRSettings.lambda_handler
+        Runtime: python3.8
+        Role: !GetAtt IBRFullRTRadioMsgRole.Arn
+        Environment:
+          Variables:
+            CDF_URL: !Ref CDFAPIARN
+        Events:
+          IoTRule1:
+            Type: IoTRule
+            Properties:
+              Sql: 'SELECT *, topic() AS topic FROM ''CP/GTT/+/+/SETTINGS/REQ'''
+              AwsIotSqlVersion: "2016-03-23"
+        Policies:
+          - Statement:
+            - Effect: Allow
+              Resource: '*'
+              Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+
+  # MAC Generation Resources
+  IntegrationMACRecordTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties: 
+      KeySchema: 
+        - 
+          AttributeName: "MACRecord"
+          KeyType: "HASH"
+      AttributeDefinitions:
+        -
+          AttributeName: "MACRecord"
+          AttributeType: "S"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      TableName: "IntegrationMACRecordTable"
+
+  IntegrationMACGenLambdaPermission:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt IntegrationMACGenLambda.Arn
+      Principal: apigateway.amazonaws.com
+
+  IntegrationMACGenRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: IntegrationMACGenRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess 
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+
+  IntegrationMACGenCognitoPool:
+    Type: AWS::Cognito::UserPool
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties: 
+      UserPoolName: !Sub "IntegrationMACGenAccessPool-${Env}"
+  
+  IntegrationMACGenUserPoolResourceServer:
+    Type: AWS::Cognito::UserPoolResourceServer
+    Properties: 
+        Identifier: MACGenAccessServer
+        Name: Integration MACGen Access Server
+        UserPoolId: !Ref IntegrationMACGenCognitoPool
+        Scopes: 
+            - ScopeName: "get_mac"
+              ScopeDescription: "get mac value"
+
+  IntegrationUserPoolDomain: 
+    Type: AWS::Cognito::UserPoolDomain 
+    Properties:
+      UserPoolId: !Ref IntegrationMACGenCognitoPool 
+      Domain: !Sub "integration-macgen-access-${Env}"
+  
+  IntegrationMACGenUserClient:
+    Type: AWS::Cognito::UserPoolClient
+    DependsOn: IntegrationMACGenUserPoolResourceServer
+    Properties:
+      AllowedOAuthScopes:
+        - MACGenAccessServer/get_mac
+      AllowedOAuthFlows: 
+        - client_credentials
+      AllowedOAuthFlowsUserPoolClient: true
+      ClientName: "MACGenAccess"
+      GenerateSecret: True
+      RefreshTokenValidity: 3650
+      SupportedIdentityProviders:
+        - COGNITO
+      UserPoolId: !Ref IntegrationMACGenCognitoPool
+        
+  IntegrationMACGenLambda:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName: IntegrationMACGenLambda
+      Handler: MacGen.lambda_handler
+      Runtime: python3.8
+      CodeUri: ./../../CDFAndIoT/Lambdas/IntegrationMACMgmt/LambdaCode/
+      Description: 'Gets Incoming MAC Address Value'
+      MemorySize: 128
+      Timeout: 10
+      Role: !GetAtt IntegrationMACGenRole.Arn
+      Events:
+        Api1:
+          Type: Api
+          Properties:
+            Path: /mac
+            Method: GET
+            RestApiId: !Ref IntegrationMACGenApiGateway
+
+  IntegrationMACGenApiGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: !Ref Env
+      Name: IntegrationMACGenerationAPI
+      Description: IntegrationMACGeneration API creation
+      EndpointConfiguration:
+        Type: EDGE
+      DefinitionBody:
+        swagger: "2.0"
+        info:
+          version: "1.0"
+          title: "Integration MAC Generation API"
+        basePath: "/production"
+        schemes:
+        - "https"
+        paths:
+          /mac:
+            get:
+              responses: {}
+              x-amazon-apigateway-integration:
+                httpMethod: "POST"
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${IntegrationMACGenLambda.Arn}/invocations"
+                passthroughBehavior: "when_no_match"
+                type: "aws_proxy"
+
+# Aurora Postgres Cluster
+
+  PostgresSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Description: !Sub Secret for Aurora Postgres in ${Env} environment
+      Name: !Sub PostgresSecret-${CoreName}
+      GenerateSecretString:
+        SecretStringTemplate: !Sub |
+          {
+            "username": "opticomgtt${Env}"
+          }
+        GenerateStringKey: password
+        PasswordLength: 30
+        ExcludeCharacters: \"@/\\
+     
+  PostgresCluster:
+    Type: "AWS::RDS::DBCluster"
+    Properties:
+      DBSubnetGroupName: !Ref "PostgresClusterSubnetGroup"
+      MasterUsername: !Join ['', ['{{resolve:secretsmanager:', !Ref PostgresSecret, ':SecretString:username}}' ]]
+      MasterUserPassword: !Join ['', ['{{resolve:secretsmanager:', !Ref PostgresSecret, ':SecretString:password}}' ]]
+      DBClusterIdentifier: !Sub opticom-${Env}
+      DatabaseName: "gtfs"
+      Engine: "aurora-postgresql"
+      EngineMode: "serverless"
+      EngineVersion: '11.13'
+      DeletionProtection: !FindInMap [PostgresClusterScalingConfigMap, !Ref Env, DeletionProtection]
+      EnableHttpEndpoint: true
+      BackupRetentionPeriod: 7
+      VpcSecurityGroupIds:
+      - !Ref "PostgresClusterSecurityGroup"
+      ScalingConfiguration:
+        AutoPause: true
+        MinCapacity: !FindInMap [PostgresClusterScalingConfigMap, !Ref Env, MinCapacity]
+        MaxCapacity: !FindInMap [PostgresClusterScalingConfigMap, !Ref Env, MaxCapacity]
+
+  PostgresClusterSubnetGroup:
+    Type: "AWS::RDS::DBSubnetGroup"
+    Properties:
+      DBSubnetGroupName: !Sub PostgresClusterSubnetGroup-${CoreName}
+      DBSubnetGroupDescription: "ACM PostgresCluster SubnetGroup"
+      SubnetIds:
+      - !ImportValue SharedResourcesPrivateSubnetA
+      - !ImportValue SharedResourcesPrivateSubnetB
+
+  PostgresClusterSecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupName: !Sub PostgresClusterSecurityGroup-${CoreName}
+      GroupDescription: "Aurora Postgres traffic"
+      VpcId: !ImportValue InternalVPC
+      SecurityGroupEgress:
+      - IpProtocol: "-1"
+        CidrIp: "0.0.0.0/0"
+
+  PostgresClusterSecurityGroupIngress:
+    Type: "AWS::EC2::SecurityGroupIngress"
+    Properties:
+      GroupId: !Ref "PostgresClusterSecurityGroup"
+      IpProtocol: tcp
+      FromPort: 5432
+      ToPort: 5432
+      SourceSecurityGroupId: !Ref "PostgresClusterSecurityGroup"
+
+  PostgresAuroraSecret:
+    Type: AWS::SecretsManager::Secret
+    DependsOn: PostgresCluster
+    Properties:
+      Description: !Sub Secret for Aurora Postgres in ${Env} environment
+      Name: !FindInMap [PostgresClusterScalingConfigMap, !Ref Env, SecretName]
+      SecretString: !Sub |-
+          {"username": "{{resolve:secretsmanager:PostgresSecret-${CoreName}:SecretString:username}}","password":"{{resolve:secretsmanager:PostgresSecret-${CoreName}:SecretString:password}}","engine": "postgres","host": "${PostgresCluster.Endpoint.Address}","port": "${PostgresCluster.Endpoint.Port}",
+          "dbClusterIdentifier": "opticom-${Env}"}
+
+# CDF APIDeployment Lambda, Roles and Access policy, APIGateway
+
+  ApiDeploymentAccess:
+    Type: "AWS::IAM::ManagedPolicy"
+    Properties:
+      ManagedPolicyName: !Sub ApiDeploymentAccess-${CoreName}
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - "codepipeline:PutJobFailureResult"
+              - "codepipeline:PutJobSuccessResult"
+            Resource: "*"
+          - Effect: Allow
+            Action:
+              - "apigateway:*"
+            Resource: !Sub "arn:aws:apigateway:${AWS::Region}::/restapis/${IntegrationMACGenApiGateway}/*"
+
+  APIDeploymentRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub APIDeploymentRole-${CoreName}
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - !Ref "ApiDeploymentAccess"
+
+  APIDeploymentLambda:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      FunctionName: !Sub APIDeployment-${CoreName}
+      Handler: ApiDeployment.lambda_handler
+      Runtime: python3.8
+      CodeUri: ./../../CDFAndIoT/Lambdas/ApiDeployment/LambdaCode
+      Description: "Deploy API Gateway"
+      MemorySize: 128
+      Timeout: 5
+      Role: !GetAtt 'APIDeploymentRole.Arn'
+      Layers:
+        - !Ref CDFLayer
+      Environment:
+        Variables:
+          STAGE_NAME: !Sub ${Env}
+          REST_API_ID: !Ref IntegrationMACGenApiGateway
+
+# ACM certificate, DomainConfiguration and CNAME record in the R53 for IOT Core.
+
+  IOTCoreCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties: 
+      DomainName: !FindInMap [PostgresClusterScalingConfigMap, !Ref Env, DomainName]
+      DomainValidationOptions: 
+        - DomainName: !FindInMap [PostgresClusterScalingConfigMap, !Ref Env, DomainName]
+          HostedZoneId: !FindInMap [PostgresClusterScalingConfigMap, !Ref Env, HostedZoneId]
+      ValidationMethod: DNS
+      Tags: 
+        - Key: Name
+          Value: !Sub IOTCoreCertificate-${CoreName}
+    
+  IOTCoreDomainConfig:
+    Type: AWS::IoT::DomainConfiguration
+    Properties:
+      DomainConfigurationName: !Sub IOTCoreDomainConfig-${CoreName}
+      DomainConfigurationStatus: ENABLED
+      DomainName: !FindInMap [PostgresClusterScalingConfigMap, !Ref Env, DomainName]
+      ServerCertificateArns: 
+        - !Ref IOTCoreCertificate
+      ServiceType: DATA
+      Tags: 
+        - Key: Name
+          Value: !Sub IOTCoreDomainConfig-${CoreName}
+          
+  IOTCoreRecordSet:
+    Type: AWS::Route53::RecordSetGroup
+    Properties:
+      HostedZoneId: !FindInMap [PostgresClusterScalingConfigMap, !Ref Env, HostedZoneId]
+      RecordSets:
+      - Name: !FindInMap [PostgresClusterScalingConfigMap, !Ref Env, DomainName]
+        Type: CNAME
+        TTL: '300'
+        ResourceRecords:
+        - !Ref 'IOTCoreEndpoint'
+
+# ACM certificate, ApiGWCustomDomain and A record in the R53 for API Gateway.
+
+  AcmCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties: 
+      DomainName: !FindInMap [PostgresClusterScalingConfigMap, !Ref Env, APIDomainName]
+      DomainValidationOptions: 
+        - DomainName: !FindInMap [PostgresClusterScalingConfigMap, !Ref Env, APIDomainName]
+          HostedZoneId: !FindInMap [PostgresClusterScalingConfigMap, !Ref Env, HostedZoneId]
+      ValidationMethod: DNS
+      Tags: 
+        - Key: Name
+          Value: !Sub AcmCertificate-${CoreName}
+
+  ApiGWCustomDomain:
+    Type: AWS::ApiGateway::DomainName
+    Properties: 
+      DomainName: !FindInMap [PostgresClusterScalingConfigMap, !Ref Env, APIDomainName]
+      RegionalCertificateArn: !Ref AcmCertificate
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+      SecurityPolicy: TLS_1_2
+      Tags: 
+        - Key: Name
+          Value: !Sub ApiGWCustomDomain-${CoreName}
+          
+  Route53RecordSetGroup:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      Name: !FindInMap [PostgresClusterScalingConfigMap, !Ref Env, APIDomainName]
+      Type: A
+      HostedZoneId: !FindInMap [PostgresClusterScalingConfigMap, !Ref Env, HostedZoneId]
+      AliasTarget:
+        DNSName: !GetAtt ApiGWCustomDomain.RegionalDomainName
+        EvaluateTargetHealth: false
+        HostedZoneId: !GetAtt ApiGWCustomDomain.RegionalHostedZoneId
+
+  FeaturePersistenceAPIMapping:
+    Type: AWS::ApiGateway::BasePathMapping
+    DependsOn: ApiGWCustomDomain
+    Properties: 
+      BasePath: features
+      DomainName: !FindInMap [PostgresClusterScalingConfigMap, !Ref Env, APIDomainName]
+      RestApiId: !Ref FeaturePersistenceAPI
+      Stage: !Ref Env 
+
+  ManageCDFEntitiesUIAPIMapping:
+    Type: AWS::ApiGateway::BasePathMapping
+    DependsOn: ApiGWCustomDomain
+    Properties: 
+      BasePath: assets
+      DomainName: !FindInMap [PostgresClusterScalingConfigMap, !Ref Env, APIDomainName]
+      RestApiId: !Ref ManageCDFEntitiesAPI
+      Stage: !Ref Env
+
+  CEIAPIMapping:
+    Type: AWS::ApiGateway::BasePathMapping
+    DependsOn: ApiGWCustomDomain
+    Properties: 
+      BasePath: cei
+      DomainName: !FindInMap [PostgresClusterScalingConfigMap, !Ref Env, APIDomainName]
+      RestApiId: !Ref CEICADAPI
+      Stage: !Ref Env
+
+Outputs:
+  FeaturePersistenceURL:
+    Description: URL to access FeaturePersistence API
+    Value: !Sub https://${FeaturePersistenceAPI}.execute-api.${AWS::Region}.amazonaws.com/${Env}
+    Export:
+      Name: FeaturePersistenceURL
+
+  FeaturePersistenceDataModelLambdaLayer:
+    Description: Lambda Layer for FeaturePersistence DataModel
+    Value: !Ref FeaturePersistenceDataModelLambdaLayer
+    Export:
+      Name: FeaturePersistenceDataModelLambdaLayer
+
+  FeaturePersistenceServiceLambdaLayer:
+    Description: Lambda Layer for FeaturePersistence Service, including DataModel
+    Value: !Ref FeaturePersistenceServiceLambdaLayer
+    Export:
+      Name: FeaturePersistenceServiceLambdaLayer
+
+  RDSClusterEndpoint:
+    Description: RDS Cluster endpoint
+    Value: !GetAtt
+      - PostgresCluster
+      - Endpoint.Address
+    Export:
+      Name: RDSClusterEndpoint
+
+  RDSClusterPort:
+    Description: RDS Cluster port
+    Value: !GetAtt
+      - PostgresCluster
+      - Endpoint.Port
+    Export:
+      Name: RDSClusterPort
+
+  SharedElastiCacheClusterAddress:
+    Description: Endpoint address for shared EC cluster
+    Value: !GetAtt SharedElastiCacheCluster.RedisEndpoint.Address
+    Export:
+      Name: SharedElastiCacheClusterAddress
+
+  SharedElastiCacheClusterPort:
+    Description: Endpoint port for shared EC cluster
+    Value: !GetAtt SharedElastiCacheCluster.RedisEndpoint.Port
+    Export:
+      Name: SharedElastiCacheClusterPort

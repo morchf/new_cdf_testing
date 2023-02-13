@@ -1,0 +1,48 @@
+{
+  "properties": {
+    "name": {"type":"string"},
+    "description":{"type":"string"},
+    "type": {"type":"string"},
+    "priority": {
+		    "type": "string",
+        "enum": ["High", "Low"]
+    },
+    "class": { "type": ["null", "string"]},
+    "VID": { "type": ["null", "string"]},
+    "uniqueId": {"type":"string"},
+    "auxiliaryIo": { "type": ["null", "string"]},
+    "CEIDeviceID":{ "type": "string"},
+    "CEIIncidentStatus":{"type":["null","string"]},
+    "CEIIncidentAction":{"type":["null","string"]},
+    "CEIIncidentStatusDateandTime":{"type":["null","string"]},
+    "CEIIncidentTypeCode":{"type":["null","string"]},
+    "CEIIncidentPriority":{"type":["null","string"]},
+    "CEIIncidentActionDateandTime":{ "type":["null", "string"]},
+    "CEIIncidentLocationName":{ "type":["null", "string"]},
+    "CEIIncidentLocationCrossStreet":{ "type":["null", "string"]},
+    "CEIIncidentLocationStreet1":{ "type":["null", "string"]},
+    "CEIIncidentLocationStreet2":{ "type":["null", "string"]},
+    "CEIIncidentLocationCity":{ "type":["null", "string"]},
+    "CEIIncidentLocationState":{ "type":["null", "string"]},
+    "CEIIncidentLocationCounty":{ "type":["null", "string"]},
+    "CEIIncidentLocationZip":{ "type":["null", "string"]},
+    "CEIIncidentLocationDirections":{ "type":["null", "string"]},
+    "CEIIncidentLocationCoordinates":{ "type":["null", "string"]},
+    "CEIUnitID":{ "type": ["null","string"]},
+    "CEIDispatchDateandTime":{ "type":["null", "string"]},
+    "CEIUnitTypeID":{ "type":["null", "string"]},
+    "CEIUnitStatus":{ "type":["null", "string"]},
+    "CEIUnitStatusDateandTime":{ "type":["null", "string"]},
+    "CEIUnitLocationLatitudeandLongitude":{ "type":["null", "string"]},
+    "CEIUnitLocationDateandTime":{"type":["null", "string"]},
+    "CEIVehicleActive":{"type": "boolean"},
+    "CEILastReferenced":{"type": ["null", "string"]}
+  },
+  "required": ["priority",
+        "uniqueId"], 
+    "relations": {
+        "in": {
+            "installedat": ["ceicom"]
+        }
+    }
+}

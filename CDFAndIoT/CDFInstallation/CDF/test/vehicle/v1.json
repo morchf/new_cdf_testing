@@ -1,0 +1,22 @@
+{
+    "deviceId": "v1",
+    "templateId": "vehicle",
+    "state": "active",
+    "attributes": {
+        "agency": "a1",
+        "fieldSerial": "123456",
+        "numberGTT": "99",
+        "serial": "abcdefg",
+        "numberMACLocal": "02:02:02:02:02:02",
+        "IP": "10.1.1.0/32", 
+        "addressIP": "10.1.1.20",
+        "addressIMEI": "9234adsf-1231251",
+        "auxiliary_io": "",
+        "dev_cert_id": "NULL_CERT"
+    },
+    "groups": {
+        "in": {
+            "owns": ["/agency/a1"]
+        }
+    }
+}

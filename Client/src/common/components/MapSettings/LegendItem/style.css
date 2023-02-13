@@ -1,0 +1,14 @@
+.route__legend-item {
+  display: flex;
+  align-items: center;
+  margin: 4px 0;
+}
+
+.route__legend-item .route__legend-item__color-indicator {
+  width: 16px;
+  height: 16px;
+}
+
+.route__legend-item span {
+  margin-left: 8px;
+}

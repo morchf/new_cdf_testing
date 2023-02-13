@@ -1,0 +1,31 @@
+{
+  "properties": {
+    "description": { "type": ["string","null"]},
+	"serial": { "type": "string"},
+    "gttSerial": { "type": "string"},
+    "addressMAC": { "type": ["null", "string"]},
+    "addressLAN": {
+        "type": "string",
+        "format": "ipv4"
+    },
+    "addressWAN": {
+        "type": "string",
+        "format": "ipv4"
+    },
+    "IMEI": { "type": "string"},
+    "devCertId": { "type": ["string"]},
+    "make": { "type": ["null", "string"],"enum": [
+                        "GTT",
+                        "Sierra Wireless"
+                    ]},
+    "model": {"type": ["string"],"enum": [
+                        "MP-70",
+                        "2100",
+                        "2101",
+                        "2120",
+                        "2151"
+                    ]},
+    "uniqueId": { "type": "string"}
+    },
+    "required": ["devCertId","uniqueId", "addressWAN","addressLAN","serial"]  
+}

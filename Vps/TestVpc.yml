@@ -1,0 +1,34 @@
+AWSTemplateFormatVersion: 2010-09-09
+Parameters:
+  AGENCYNAME:
+    Type: "String"
+    Default: "GLOBALINFRA"
+  LambdafunctionName:
+    Type: "String"
+    Default: "gttvpsdeploy"
+Resources:
+  ScheduledRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: "ScheduledRule"
+      ScheduleExpression: "rate(30 minutes)"
+      Name: !Ref AGENCYNAME
+      State: "ENABLED"
+      Targets:
+        - Arn: !Sub
+            - "arn:aws:lambda:us-east-1:083011521439:function:${FunName}"
+            - { FunName: !Ref LambdafunctionName }
+          Id: "1"
+          Input: !Sub
+            - '{"customerName":"${agency}"}'
+            - { agency: !Ref AGENCYNAME }
+  PermissionForEventsToInvokeLambda:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref LambdafunctionName
+      Action: "lambda:InvokeFunction"
+      Principal: "events.amazonaws.com"
+      SourceArn:
+        Fn::GetAtt:
+          - "ScheduledRule"
+          - "Arn"

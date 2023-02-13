@@ -1,0 +1,10 @@
+.performance-summary {
+  display: flex;
+  flex-wrap: wrap;
+  grid-gap: 1rem;
+}
+
+.performance-summary > * {
+  min-width: fit-content;
+  flex-grow: 1;
+}

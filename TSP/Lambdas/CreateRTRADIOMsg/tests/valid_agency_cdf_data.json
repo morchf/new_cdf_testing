@@ -1,0 +1,19 @@
+{
+    "attributes": {
+        "description": "Next to Woodbury",
+        "city": "Oakdale",
+        "state": "Mn",
+        "timezone": "Central",
+        "agencyCode": 100,
+        "agencyID": "F9843B40-464A-4747-A428-A41DF950948E",
+        "caCertId": "NULL_CA",
+        "vpsCertId": "NULL_CERT",
+        "priority": "Low",
+        "CMSId": "F9843B40-464A-4747-A428-A41DF950948E"
+    },
+    "category": "group",
+    "templateId": "agency",
+    "parentPath": "/regUnitTest",
+    "name": "agyUnitTest",
+    "groupPath": "/regUnitTest/agyUnitTest"
+}

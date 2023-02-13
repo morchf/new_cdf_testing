@@ -1,0 +1,36 @@
+{
+    "taskResult-create-json": {
+        "entity_json": {
+            "groups": {
+                "ownedby": ["/r1/a1"]
+            },
+            "attributes": {
+              "description": "a vehicle",
+              "gttSerial": "123456",
+              "addressMAC": "02:02:02:02:02:02",
+              "addressLAN": "10.1.1.0",
+              "addressWAN": "10.1.1.20",
+              "IMEI": "9234adsf-1231251",
+              "auxiliaryIo": 0,
+              "devCertId": "NULL_CERT",
+              "make": "GTT",
+              "model": "2100",
+              "priority": "High",
+              "class": 10,
+              "VID": "1234",
+              "lat": 0,
+              "long": 0,
+              "heading": "",
+              "speed": 0,
+              "fixStatus": "",
+              "numFixSat": 0,
+              "lastGPSMsgTimestamp": "",
+              "lastGPIOMsgTimestamp": ""
+            },
+            "category": "device",
+            "templateId": "invalid",
+            "state": "active",
+            "deviceId": "v1"
+        }
+    }
+}

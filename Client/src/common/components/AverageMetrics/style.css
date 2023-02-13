@@ -1,0 +1,82 @@
+.avg-metrics-container {
+  --item-width: 200px;
+  --spacer-width: 1rem;
+  --grid-template: repeat(auto-fit, minmax(var(--item-width), 300px));
+
+  grid-template-columns: var(--grid-template);
+  grid-gap: 1rem;
+  display: grid;
+  width: 100%;
+}
+
+.avg-metrics-container--spacers {
+  grid-template-columns: minmax(var(--item-width), 1fr) repeat(
+      auto-fit,
+      var(--spacer-width) minmax(var(--item-width), 1fr)
+    );
+}
+
+.avg-metrics-container > * {
+  flex-grow: 1;
+}
+
+.avg-metrics__skeleton {
+  height: 176px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--item-width), 1fr));
+}
+
+/* Remove math symbols when loading */
+.avg-metrics-container--loading {
+  display: flex !important;
+}
+
+.avg-metrics-container--spacers .avg-metrics__skeleton {
+  grid-gap: calc(2rem + var(--spacer-width));
+}
+
+@media only screen and (max-width: 1400px) {
+  .avg-metrics-container {
+    grid-template-columns: repeat(auto-fit, minmax(var(--item-width), 1fr));
+  }
+
+  .avg-metrics-container--large {
+    display: grid;
+    grid-template-columns: auto var(--spacer-width);
+    margin-bottom: 1rem;
+  }
+
+  .avg-metrics-container--large > .avg-metrics__skeleton {
+    display: flex;
+    flex-direction: column;
+    height: calc(4 * 176px);
+    grid-gap: 1rem;
+  }
+}
+
+.avg-metrics_skeleton-container {
+  display: flex;
+  flex-basis: 100%;
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
+.avg-metrics_skeleton-container .ant-skeleton-button {
+  width: 100%;
+}
+
+.avg-empty-container {
+  height: 130px;
+  width: 100%;
+}
+
+.avg-metrics-skeleton__button.ant-skeleton-element {
+  flex-grow: 1;
+  margin: 0;
+  height: 130px;
+}
+
+.avg-metrics-skeleton__button.ant-skeleton-button {
+  height: inherit !important;
+}

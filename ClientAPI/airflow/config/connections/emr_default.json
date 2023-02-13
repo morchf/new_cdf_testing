@@ -1,0 +1,58 @@
+{
+    "extra": {
+        "Name": "TSP dataset cluster",
+        "ReleaseLabel": "emr-5.29.0",
+        "Applications": [
+            {
+                "Name": "Spark"
+            }
+        ],
+        "Configurations": [
+            {
+                "Classification": "spark-env",
+                "Configurations": [
+                    {
+                        "Classification": "export",
+                        "Properties": {
+                            "PYSPARK_PYTHON": "/usr/bin/python3"
+                        }
+                    }
+                ]
+            },
+            {
+                "Classification": "spark-defaults",
+                "Properties": {
+                    "spark.eventLog.enabled": "true",
+                    "spark.eventLog.compress": "true",
+                    "spark.eventLog.dir": "s3://gtt-spark-logs-prod/sparkhistory",
+                    "spark.history.fs.logDirectory": "s3://gtt-spark-logs-prod/sparkhistory"
+                }
+            }
+        ],
+        "Instances": {
+            "InstanceGroups": [
+                {
+                    "Name": "Master",
+                    "Market": "ON_DEMAND",
+                    "InstanceRole": "MASTER",
+                    "InstanceType": "m5.xlarge",
+                    "InstanceCount": 1
+                },
+                {
+                    "Name": "Core",
+                    "Market": "ON_DEMAND",
+                    "InstanceRole": "CORE",
+                    "InstanceType": "m5.xlarge",
+                    "InstanceCount": 2
+                }
+            ],
+            "KeepJobFlowAliveWhenNoSteps": true,
+            "TerminationProtected": false,
+            "Ec2KeyName": "savetisyan"
+        },
+        "JobFlowRole": "EMR_EC2_DefaultRole",
+        "ServiceRole": "EMR_DefaultRole",
+        "VisibleToAllUsers": true,
+        "LogUri": "s3://gtt-spark-logs-prod/emr"
+    }
+}

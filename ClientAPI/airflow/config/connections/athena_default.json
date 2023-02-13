@@ -1,0 +1,7 @@
+{
+    "conn_type": "aws",
+    "extra": {
+        "output_location": "${output_location}",
+        "workgroup": "${workgroup}"
+    }
+}

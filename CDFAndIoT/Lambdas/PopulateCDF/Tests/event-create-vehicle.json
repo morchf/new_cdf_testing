@@ -1,0 +1,31 @@
+{
+    "taskResult-create-json": {
+        "entity_json": {
+            "groups": {
+                "ownedby": ["/r1/a1"]
+            },
+            "attributes": {
+              "name": "v1",
+              "description": "a vehicle",
+              "type": "car",
+              "auxiliaryIo": 0,
+              "priority": "High",
+              "class": 10,
+              "VID": "1234",
+              "lat": 0,
+              "long": 0,
+              "heading": "",
+              "speed": 0,
+              "fixStatus": "",
+              "numFixSat": 0,
+              "lastGPSMsgTimestamp": "",
+              "lastGPIOMsgTimestamp": "",
+              "uniqueId": "NULL_GUID"
+            },
+            "category": "device",
+            "templateId": "vehicleV2",
+            "state": "active",
+            "deviceId": "v1"
+        }
+    }
+}

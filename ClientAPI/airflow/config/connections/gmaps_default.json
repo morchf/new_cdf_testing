@@ -1,0 +1,6 @@
+{
+    "conn_type": "http",
+    "extra": {
+        "gmaps": "${gmaps_key}"
+    }
+}

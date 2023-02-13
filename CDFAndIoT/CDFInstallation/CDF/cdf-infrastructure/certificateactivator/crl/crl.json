@@ -1,0 +1,15 @@
+{
+  "revokedCertificates": [
+    {
+      "certificateId":"revoked-cert-1",
+      "revokedOn":1551796535,
+      "revokedReason":1
+    },
+    {
+      "certificateId":"not-08cb2447e811922b6dfd89b645b161646aeeccdeeff8728a3c7cbcd7ed308cef",
+      "revokedOn":1551796535,
+      "revokedReason":1
+    }
+  ],
+  "lastUpdate":1551796535
+}

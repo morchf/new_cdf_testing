@@ -1,0 +1,8 @@
+DO NOT DELETE THIS ROW Entities to be created. Headers must come before all entities of that type. If no entities of a type will be made remove that header. No blank rows,,,,,,,,,,,,,
+region,name,regionDNS,description,,,,,,,,,,
+region,UticaRome,10.11.1.2,Utica-Rome,,,,,,,,,,
+agency,name,region,description,city,state,timezone,agencyCode,priority,agencyID,,,,
+agency,ClintonFireDept,UticaRome,Clinton NY Fire Dept,Clinton,NY,Eastern,100,High,NULL_GUID,,,,
+phaseselector,deviceId,region,agency,description,gttSerial,addressMAC,addressLAN,addressWAN,IMEI,make,model,lat,long
+phaseselector,mp705520,UticaRome,ClintonFireDept,ClintonPhaseSelector1,1331,10:10:10:10:10:10,10.10.10.10,10.10.10.10,956135154684157,Sierra Wireless,MP-70,47.0001,-91
+Done,,,,,,,,,,,,,

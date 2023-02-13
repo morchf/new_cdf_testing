@@ -1,0 +1,19 @@
+{
+    "agency_id":"e9851fb9-0973-4d9f-b430-36b59ccbf908", 
+    "vehicle_id":"177c0f1d-8f94-40a9-9992-acb9990e96ff", 
+    "description":"Insert com 21xx", 
+    "serial":"868685552200", 
+    "imei":"223342FRGDSERFQ121",
+    "gtt_serial":"999999998", 
+    "address_mac":"189.3.6.5", 
+    "make":"Sierra Wireless", 
+    "model":"IBR900",
+    "state":"GA",
+    "address_wan" : "196.1.3.5",
+    "address_lan" : "190.7.3.5",
+    "preemption_license" : "active",
+    "integration" : "Teletrac",
+    "devcert_id" : "6defb1241bcd0638017b9329c35ca6b1444248e6ebb2bfcd18ff3763df8d"
+
+
+}

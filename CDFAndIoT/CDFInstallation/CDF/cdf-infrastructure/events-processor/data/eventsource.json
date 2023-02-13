@@ -1,0 +1,12 @@
+{
+    "name": "Example Event Source",
+    "sourceType": "IoTCore",
+    "principal": "vin",
+    "iotCore": {
+        "mqttTopic": "dt/cdf/telemetry",
+        "attributes": {
+            "event_id": "event_id",
+            "vin": "vin"
+        }
+    }
+}

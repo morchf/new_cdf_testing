@@ -1,0 +1,29 @@
+{
+  "groups": {
+    "ownedby": [
+      "/r1/a1_ir"
+    ]
+  },
+  "attributes": {
+    "name": "veh123",
+    "description": "a vehicle",
+    "type": "Ladder Truck",
+    "priority": "High",
+    "class": 10,
+    "VID": 234,
+    "lat": 44.9512963,
+    "long": -92.9453703,
+    "heading": 3,
+    "speed": 20,
+    "fixStatus": 1,
+    "numFixSat": 3,
+    "lastGPSMsgTimestamp": "1576175734002",
+    "auxiliaryIo": 0,
+    "lastGPIOMsgTimestamp": "1576175734002",
+    "uniqueId": "NULL_GUID"
+  },
+  "category": "device",
+  "templateId": "vehicleV2",
+  "state": "active",
+  "deviceId": "v1"
+}

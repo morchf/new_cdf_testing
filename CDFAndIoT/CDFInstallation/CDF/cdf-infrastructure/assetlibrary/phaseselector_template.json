@@ -1,0 +1,43 @@
+{
+    "properties": {
+        "description": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "gttSerial": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "addressMAC": {
+            "type": "string"
+        },
+        "addressLAN": {
+            "type": ["null","string"],
+            "format": "ipv4"
+        },
+        "addressWAN": {
+            "type": ["null","string"],
+            "format": "ipv4"
+        },
+        "make": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "model": {
+            "type": [
+                "null",
+                "string"
+            ]
+        }
+    },
+    "required": [
+        "make",
+        "model"
+    ]
+}

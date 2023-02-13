@@ -1,0 +1,10 @@
+{
+    "aggTravelTimePerPeriodEndpoint": {
+        "route": "8",
+        "end_date": "2022-03-22",
+        "start_date": "2022-03-22",
+        "period": "week",
+        "agency": "sfmta",
+        "region": "sfmtademo"
+    }
+}

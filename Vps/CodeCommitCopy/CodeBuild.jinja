@@ -1,0 +1,62 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Resources:
+  {{customerName}}:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: {{customerName}}
+
+{% for item in items %}
+  {{item[0]}}:
+    DependsOn: {{customerName}}mnttarget
+    Properties:
+      IamInstanceProfile: {{instanceProfile}}
+      ImageId: {{amiId}}
+      InstanceType: {{ 'm5a.xlarge' if item[1]>100 else 'm5a.large' }}
+      KeyName:  {{customerName}}
+      NetworkInterfaces:
+        - DeviceIndex: "0"
+          GroupSet:
+{% for SGitem in secGroup -%}
+    {{"            - "+SGitem+"\n"}}
+{%- endfor %}
+          SubnetId: {{subID}}
+          PrivateIpAddress: {{item[2]}}
+      Tags:
+        - Key: serverName
+          Value: {{item[0]}}
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash -xe
+          yum update -y
+          yum install -y aws-cfn-bootstrap amazon-efs-utils aws-cli python3.x86_64 git
+          yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
+          python3 -m pip install boto3 requests docker tenacity
+          mkdir -m 777 efs
+          echo -e {{"'${"~customerName~"efs}"}}:/ /efs efs defaults,_netdev 0 0 {{"'"}} >> /etc/fstab
+          mount -a
+          echo ECS_CLUSTER={{"${"~customerName~"}"}} >> /etc/ecs/ecs.config
+          cd /home/ec2-user
+          sudo -u ec2-user git config --global credential.helper '!aws codecommit credential-helper $@'
+          sudo -u ec2-user git config --global credential.UseHttpPath true
+          if cd GTTVPSDEPLOYMENT; then sudo -u ec2-user git pull; else sudo -u ec2-user git clone https://git-codecommit.us-east-1.amazonaws.com/v1/repos/GTTVPSDEPLOYMENT; cd GTTVPSDEPLOYMENT; fi
+          python3 DockerCreate.py
+    Type: AWS::EC2::Instance
+{% endfor %}
+  {{customerName}}efs:
+    Type: AWS::EFS::FileSystem
+    Properties:
+      FileSystemTags:
+        - Key: CUSTOMEREFS
+          Value: {{customerName}}
+        - Key: Name
+          Value: {{customerName}}-EFS
+  {{customerName}}mnttarget:
+    Properties:
+      FileSystemId: !Ref {{customerName}}efs
+      SecurityGroups:
+{% for SGitem in secGroup -%}
+    {{"          - "+SGitem+"\n"}}
+{%- endfor %}
+      SubnetId: {{subID}}
+    Type: AWS::EFS::MountTarget

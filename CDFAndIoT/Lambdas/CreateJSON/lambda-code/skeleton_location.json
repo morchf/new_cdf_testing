@@ -1,0 +1,15 @@
+{
+    "attributes": {
+        "description": "",
+        "locationId": "",
+        "displayName": "",
+        "address": "",
+        "latitude": "",
+        "longitude": ""
+    },
+    "category": "group",
+    "templateId": "location",
+    "parentPath": "",
+    "name": "",
+    "groupPath": ""
+}

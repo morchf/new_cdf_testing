@@ -1,0 +1,3 @@
+-- TSPA-1760
+DROP MATERIALIZED VIEW mv_travel_time;
+

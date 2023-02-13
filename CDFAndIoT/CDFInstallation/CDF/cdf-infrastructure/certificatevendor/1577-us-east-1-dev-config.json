@@ -1,0 +1,23 @@
+{
+  "aws": {
+    "s3": {
+      "certificates": {
+        "bucket": "cdf-157731826412-us-east-1",
+        "prefix": "certificates/",
+        "suffix": ".zip"
+      }
+    },
+    "iot": {
+      "endpoint": "aofuby49j6efy-ats.iot.us-east-1.amazonaws.com",
+      "thingGroup": {
+        "rotateCertificates": "cdfRotateCertificates"
+      }
+    }
+  },
+  "registry": {
+    "mode": "AssetLibrary"
+  },
+  "assetLibrary": {
+    "apiFunctionName": "cdf-assetlibrary-1577-us-east-1-dev-LambdaFunction-1VKA17OBB5DMN"
+  }
+}

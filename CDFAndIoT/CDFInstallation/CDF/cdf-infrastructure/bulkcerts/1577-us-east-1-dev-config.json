@@ -1,0 +1,25 @@
+{
+  "aws": {
+    "s3": {
+      "certificates": {
+        "bucket": "cdf-157731826412-us-east-1",
+        "prefix": "certificates/"
+      }
+    }
+  },
+  "cors": {
+    "origin": "*"
+  },
+  "deviceCertificateInfo": {
+    "commonName": "connecteddeviceframework.com",
+    "organization": "Connected Device Framework",
+    "organizationalUnit": "CDF",
+    "locality": "Denver",
+    "stateName": "CO",
+    "country": "US",
+    "emailAddress": "info@connecteddeviceframework.com"
+  },
+  "supplierRootCa": {
+    "demodevicesupplier": "9e7c15a303f32d597109f5ac42be6c52c742c1baa799665fd3975107beba0dba"
+  }
+}

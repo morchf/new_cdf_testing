@@ -1,0 +1,42 @@
+.map-item-chart_container {
+  background-color: #FFFFFF;
+  margin-top: 2px;
+  width: 580px;
+}
+
+.map-item-chart_title {
+  margin-bottom: 24px;
+}
+
+.map-item-chart_title > div {
+  display: flex;
+  align-items: center;
+}
+
+.map-item-chart_title .map-item-chart_status_top-row > span {
+  color: #4F4F64;
+  font-size: 14px;
+  line-height: 24px;
+  margin-right: 8px;
+  margin-top: 4px;
+}
+
+.map-item-chart_title .map-item-chart_status_bottom-row > span {
+  color: #323140;
+  font-size: 18px;
+  line-height: 31px;
+  margin-left: 8px;
+}
+
+.map-item_chart-header_skeleton {
+  margin-top: 14px;
+  width: 580px;
+}
+
+.map-item_chart_skeleton {
+  width: 580px;
+}
+
+.ant-skeleton-element span.ant-skeleton-button {
+  width: 100%;
+}

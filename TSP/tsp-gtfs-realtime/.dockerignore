@@ -1,0 +1,23 @@
+.vscode
+.python-version
+# Deployment
+# !Deployment/docker
+# tsp_gtfs_realtime/config/agencies
+config
+.redis-data
+**/output
+**/*.pem*
+**/*_bak
+**/*.ipynb
+**/.ipynb_checkpoints
+.git
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env
+wheels
+*.egg-info
+*.md
+**/.*

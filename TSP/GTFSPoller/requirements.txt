@@ -1,0 +1,10 @@
+boto3
+pydantic
+sqlalchemy
+pandas
+urllib3
+requests
+psycopg2-binary
+pyarrow
+smart-city-platform/CDFAndIoT/Service/AssetLibrary
+smart-city-platform/CDFAndIoT/Service/FeaturePersistence

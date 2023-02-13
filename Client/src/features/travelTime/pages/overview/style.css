@@ -1,0 +1,15 @@
+.overview-content {
+  display: grid;
+  grid-gap: 1rem;
+  margin-top: 1rem;
+}
+
+.overview-content__table {
+  grid-column: 1 / -1;
+}
+
+.overview-page__info {
+  position: absolute;
+  right: 1em;
+  top: 0rem;
+}

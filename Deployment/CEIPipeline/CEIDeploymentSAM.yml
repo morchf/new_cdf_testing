@@ -1,0 +1,1162 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: 'This template deploys CEI resources'
+
+
+Metadata:
+  cfn-lint:
+    config:
+      ignore_checks:
+      - I3042
+
+
+Parameters:
+  Env:
+    Type: String
+    AllowedValues:
+      - develop
+      - test
+      - production
+      - pilot
+    Description: "Provide the environment you are deploying this on. Allowed values: develop, test, production, or pilot"
+
+  CDFAPIARN:
+    Type: String
+    Description: "CDF Asset Library API endpoint required by the SAM template"
+
+  CoreName:
+    Type: String
+    Default: CEIPipeline
+    Description: "Base name for CEIPipeline resources"
+
+
+Resources:
+  # DynamoDB Tables
+  CEIIncidentTracking:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties: 
+      KeySchema: 
+        - 
+          AttributeName: "IncidentID"
+          KeyType: "HASH"
+      AttributeDefinitions:
+        -
+          AttributeName: "IncidentID"
+          AttributeType: "S"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      TableName: "CEI-IncidentTracking"
+      TimeToLiveSpecification: 
+          AttributeName: "ceittl"
+          Enabled: true
+
+  CEIUnitAssignmentTracking:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties: 
+      KeySchema: 
+        - 
+          AttributeName: "CEIID"
+          KeyType: "HASH"
+      AttributeDefinitions:
+        -
+          AttributeName: "CEIID"
+          AttributeType: "S"
+        -
+          AttributeName: "IncidentID"
+          AttributeType: "S"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      TableName: "CEI-UnitAssignmentTracking"
+      GlobalSecondaryIndexes:
+        -
+          IndexName: "IncidentID-index"
+          KeySchema: 
+            -
+              AttributeName: "IncidentID"
+              KeyType: "HASH"
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
+      TimeToLiveSpecification: 
+          AttributeName: "CEITTL"
+          Enabled: true
+
+  CEIIoTMsgIdx:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties: 
+      KeySchema: 
+        - 
+          AttributeName: "siteId"
+          KeyType: "HASH"
+      AttributeDefinitions:
+        -
+          AttributeName: "siteId"
+          AttributeType: "S"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      TableName: "cei-iot-msg-idx"
+
+  CEIIoTMsgLog:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties:
+      AttributeDefinitions:
+        -
+          AttributeName: "msgId"
+          AttributeType: "S"
+      KeySchema: 
+        - 
+          AttributeName: "msgId"
+          KeyType: "HASH"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      TableName: "cei-iot-msg-log"
+      
+  CEIIoTPubConfirm:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties:
+      AttributeDefinitions:
+        -
+          AttributeName: "id"
+          AttributeType: "S"
+      KeySchema: 
+        - 
+          AttributeName: "id"
+          KeyType: "HASH"
+      ProvisionedThroughput: 
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      TableName: "cei-iot-pub-confirm"
+      
+  CEICacheTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties: 
+      KeySchema: 
+        - 
+          AttributeName: "CDFID"
+          KeyType: "HASH"
+      AttributeDefinitions:
+        -
+          AttributeName: "CDFID"
+          AttributeType: "S"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      TableName: "CEI-CDF-Cache"
+      TimeToLiveSpecification: 
+          AttributeName: "TTL"
+          Enabled: true
+  # SQS
+  CEISQS:
+    Type: 'AWS::SQS::Queue'
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties:
+      ContentBasedDeduplication: False
+      DelaySeconds: 0
+      FifoQueue: True
+      MessageRetentionPeriod: 600
+      QueueName: cei-sqs.fifo
+      VisibilityTimeout: 300
+
+  # S3 Logging Bucket  
+  CEILogging:
+    Type: AWS::S3::Bucket
+    Properties: 
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      BucketName: !Sub 'cei-logging-${Env}'
+      VersioningConfiguration: 
+        Status: Enabled
+
+  # Lambda Resource Based Policies      
+  ConfigLambdaPermission:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt CEIEVPQueue.Arn
+      Principal: apigateway.amazonaws.com
+        
+  IncidentLambdaPermission:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt CEIConfiguration.Arn
+      Principal: apigateway.amazonaws.com
+  
+  AllowCDFAPIAccess:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      ManagedPolicyName: !Sub 'CEI-AllowCDFAPIAccess-${Env}'
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'execute-api:Invoke'
+              - 'execute-api:ManageConnections'
+            Resource: !Sub 'arn:${AWS::Partition}:execute-api:us-east-1:${AWS::AccountId}:*'
+
+  AllowCDFAPIInvoke:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      ManagedPolicyName: !Sub 'CEI-AllowCDFAPIInvoke-${Env}'
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'lambda:InvokeFunction'
+            Resource: !Sub 'arn:${AWS::Partition}:lambda:us-east-1:${AWS::AccountId}:function:cdf-assetlibrary-stage-LambdaFunction*'
+
+
+
+  # IAM Roles
+  CEIPublicationConfirmationRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: CEIPublicationConfirmation
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess 
+        - arn:aws:iam::aws:policy/AWSIoTFullAccess 
+        - arn:aws:iam::aws:policy/AmazonKinesisFirehoseFullAccess
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+        - !Ref 'AllowCDFAPIInvoke'
+        - !Ref 'AllowCDFAPIAccess'
+
+  CEIConfigurationRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: CEIConfiguration
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess 
+        - arn:aws:iam::aws:policy/AmazonKinesisFirehoseFullAccess
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+        - !Ref 'AllowCDFAPIInvoke'
+        - !Ref 'AllowCDFAPIAccess'
+
+  CEIQueueRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: CEIQueue
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess 
+        - arn:aws:iam::aws:policy/AmazonSQSFullAccess 
+        - arn:aws:iam::aws:policy/AmazonKinesisFirehoseFullAccess
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+        - !Ref 'AllowCDFAPIInvoke'
+        - !Ref 'AllowCDFAPIAccess'
+
+  CEIEVPDequeueRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: CEIEVPDequeue
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+        - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess 
+        - arn:aws:iam::aws:policy/AWSIoTFullAccess
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole 
+        - arn:aws:iam::aws:policy/AmazonSQSFullAccess
+        - arn:aws:iam::aws:policy/AmazonKinesisFirehoseFullAccess
+        - !Ref 'AllowCDFAPIInvoke'
+        - !Ref 'AllowCDFAPIAccess'
+
+  CEIRTRadioMsgRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: CEIRTRadioMsgRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess 
+        - arn:aws:iam::aws:policy/AWSIoTFullAccess
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole 
+        - arn:aws:iam::aws:policy/AmazonSQSFullAccess
+        - arn:aws:iam::aws:policy/AmazonKinesisFirehoseFullAccess
+        - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+        - !Ref 'AllowCDFAPIInvoke'
+        - !Ref 'AllowCDFAPIAccess'
+
+  CEIDeliveryRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: ''
+            Effect: Allow
+            Principal:
+              Service: firehose.amazonaws.com
+            Action: 'sts:AssumeRole'
+            Condition:
+              StringEquals:
+                'sts:ExternalId': !Ref 'AWS::AccountId'
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/AWSGlueConsoleFullAccess
+        
+  CEIDeliveryPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: firehose_delivery_policy
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - 's3:AbortMultipartUpload'
+              - 's3:GetBucketLocation'
+              - 's3:GetObject'
+              - 's3:ListBucket'
+              - 's3:ListBucketMultipartUploads'
+              - 's3:PutObject'
+            Resource:
+              - !Sub ${CEILogging.Arn}
+              - !Sub ${CEILogging.Arn}/*
+      Roles:
+        - !Ref CEIDeliveryRole
+
+  # Cognito
+  CEICognitoPool:
+    Type: AWS::Cognito::UserPool
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties: 
+      UserPoolName: !Sub "CEIAccessPool-${Env}"
+  
+  CEIUserPoolResourceServer:
+    Type: AWS::Cognito::UserPoolResourceServer
+    Properties: 
+        Identifier: ceiAccessServer
+        Name: CEI Access Server
+        UserPoolId: !Ref CEICognitoPool
+        Scopes: 
+            - ScopeName: "post_incident"
+              ScopeDescription: "post incident data"
+            - ScopeName: "post_config"
+              ScopeDescription: "post config data"
+  
+  UserPoolDomain: 
+    Type: AWS::Cognito::UserPoolDomain 
+    Properties:
+      UserPoolId: !Ref CEICognitoPool 
+      Domain: !Sub "cei-access-${Env}"
+  
+  ceiUserClient:
+    Type: AWS::Cognito::UserPoolClient
+    DependsOn: CEIUserPoolResourceServer
+    Properties:
+      AllowedOAuthScopes:
+        - ceiAccessServer/post_incident
+        - ceiAccessServer/post_config
+      AllowedOAuthFlows: 
+        - client_credentials
+      AllowedOAuthFlowsUserPoolClient: true
+      ClientName: "ceiDevAccess"
+      GenerateSecret: True
+      RefreshTokenValidity: 3650
+      SupportedIdentityProviders:
+        - COGNITO
+      UserPoolId: 
+        !Ref CEICognitoPool
+
+  # Kinesis Firehose
+  CEILogGroup: 
+    Type: AWS::Logs::LogGroup
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties: 
+      LogGroupName: CEILogGroup
+      RetentionInDays: 7
+
+  CEILogStream: 
+    Type: AWS::Logs::LogStream
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties: 
+      LogGroupName: !Ref CEILogGroup
+      LogStreamName: CEILogStream
+
+  CEILogHose:
+    Type: AWS::KinesisFirehose::DeliveryStream
+    Properties: 
+      DeliveryStreamName: 'CEI-logStream'
+      DeliveryStreamType: DirectPut 
+      ExtendedS3DestinationConfiguration:
+        RoleARN: !GetAtt CEIDeliveryRole.Arn
+        BucketARN: !GetAtt CEILogging.Arn
+        BufferingHints:
+          SizeInMBs: 128
+          IntervalInSeconds: 300
+        CompressionFormat: UNCOMPRESSED
+        EncryptionConfiguration:
+          NoEncryptionConfig: NoEncryption
+        CloudWatchLoggingOptions:
+          Enabled: true
+          LogGroupName: !Ref CEILogGroup
+          LogStreamName: !Ref CEILogStream
+        S3BackupMode: Disabled
+        DataFormatConversionConfiguration:
+          SchemaConfiguration:
+            CatalogId: !Ref AWS::AccountId
+            RoleARN: !GetAtt CEIDeliveryRole.Arn
+            DatabaseName: !Ref CEIGlueDatabase
+            TableName: !Ref CEIGlueLogging
+            Region: !Ref AWS::Region
+            VersionId: LATEST
+          InputFormatConfiguration:
+            Deserializer:
+              OpenXJsonSerDe: {}
+          OutputFormatConfiguration:
+            Serializer:
+              ParquetSerDe: {}
+          Enabled: True
+      
+  # Glue
+  CEIGlueLogging:
+    Type: AWS::Glue::Table
+    Properties: 
+      CatalogId: !Ref AWS::AccountId
+      DatabaseName: !Ref CEIGlueDatabase
+      TableInput:
+        Owner: owner
+        Retention: 0
+        StorageDescriptor:
+          Columns:
+          - Name: timestamp
+            Type: timestamp
+          - Name: siteid
+            Type: string
+          - Name: agencyid
+            Type: string
+          - Name: agencyname
+            Type: string
+          - Name: deviceid
+            Type: string
+          - Name: devicename
+            Type: string
+          - Name: cadmessageid
+            Type: string
+          - Name: category
+            Type: string
+          - Name: subtype
+            Type: string
+          - Name: source
+            Type: string
+          - Name: message
+            Type: string
+          StoredAsSubDirectories: false
+          InputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat
+          OutputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat
+          Compressed: false
+          NumberOfBuckets: -1
+          SerdeInfo:
+            SerializationLibrary: org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe
+            Parameters:
+              serialization.format: '1'
+          BucketColumns: []
+          SortColumns: []
+        Description: "Handles all logging for the CEI functionality"
+        Name: "cei-logging"
+        PartitionKeys:
+          - Name: logid
+            Type: string
+        TableType: EXTERNAL_TABLE
+  
+  CEIGlueDatabase:
+    Type: AWS::Glue::Database
+    Properties: 
+      CatalogId: !Ref AWS::AccountId
+      DatabaseInput: {}
+
+  # Lambdas
+  CDFLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      CompatibleRuntimes:
+        - python3.7
+        - python3.8
+      ContentUri: ./../../CDFAndIoT/Lambdas/LambdaLayers/CDFLambdaLayer/CDFLambdaLayer.zip
+      Description: "Layer containing CDF library and dependencies"
+      LayerName: !Sub CDFLayer-${CoreName}
+      RetentionPolicy: Delete
+
+
+  CEIConfiguration:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName: CEIConfiguration
+      Handler: CEI_Configuration.configurationHandler
+      Runtime: python3.8
+      CodeUri: ./../../CEI/Lambdas/CEIConfiguration/LambdaCode
+      Description: 'Handles the update mechanism for the CEI CDF Agency Configuration call'
+      MemorySize: 128
+      Timeout: 3
+      Role: !GetAtt CEIConfigurationRole.Arn
+      Layers:
+        - !Ref CDFLayer
+      Environment:
+        Variables:
+          CDF_URL: !Ref CDFAPIARN
+      Events:
+        api1:
+          Type: Api
+          Properties:
+            Path: /cad/configuration
+            Method: POST
+            RestApiId: !Ref ceiApiGateway 
+
+  CEIEVPQueue:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName: CEIEVPQueue
+      Handler: CEI_EVP_Queue.queue_process
+      Runtime: python3.8
+      CodeUri: ./../../CEI/Lambdas/CEIEVPQueue/LambdaCode
+      Description: 'Adds incoming incident messages to SQS for processing'
+      MemorySize: 128
+      Timeout: 3
+      Role: !GetAtt CEIQueueRole.Arn
+      Layers:
+        - !Ref CDFLayer        
+      Environment:
+        Variables:
+          CDF_URL: !Ref CDFAPIARN
+      Events:
+        Api1:
+          Type: Api
+          Properties:
+            Path: /cad/incidents
+            Method: POST
+            RestApiId: !Ref ceiApiGateway 
+
+  CEIEVPDequeue:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName: CEIEVPDequeue
+      Handler: CEI_EVP_DequeueProcess.queueHandler
+      Runtime: python3.8
+      CodeUri: ./../../CEI/Lambdas/CEIEVPDequeue/LambdaCode
+      Description: 'Dequeues incidents from SQS, processes them to update CEI CDF statuses, computes EVP eligibility, and handles vehicle activation/deactivation as necessary'
+      MemorySize: 256
+      Timeout: 20
+      Role: !GetAtt CEIEVPDequeueRole.Arn
+      Layers:
+        - !Ref CDFLayer        
+      Environment:
+        Variables:
+          CDF_URL: !Ref CDFAPIARN
+      Events:
+        ceiSQSdequeue:
+          Type: SQS
+          Properties:
+            Queue:
+              'Fn::GetAtt':
+                - CEISQS
+                - Arn
+            BatchSize: 10
+  
+  CEIPublicationConfirmation:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName: CEIPublicationConfirmation
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.8
+      CodeUri: ./../../CEI/Lambdas/CEIPublicationConfirmation/LambdaCode
+      Description: 'SUBJECT TO CHANGE - Pushes records of outgoing IoT Publications to dynamoDB'
+      MemorySize: 128
+      Timeout: 3
+      Role: !GetAtt CEIPublicationConfirmationRole.Arn
+      Events:
+        IoTRule:
+          Type: IoTRule
+          Properties:
+            AwsIotSqlVersion: "2016-03-23"
+            Sql: "SELECT topic() as topic FROM 'GTT/+/SVR/EVP/2100/+/STATE'"
+
+  CEIRTRadioMsg:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName: CEIRTRadioMsg
+      Handler: CEI_RTRadio_Processing.lambda_handler
+      Runtime: python3.8
+      CodeUri: ./../../CEI/Lambdas/CEIRTRadioMsg/LambdaCode
+      Description: 'TBD'
+      MemorySize: 128
+      Timeout: 9
+      Role: !GetAtt CEIRTRadioMsgRole.Arn
+      Layers:
+        - !Ref CDFLayer
+      Environment:
+        Variables:
+          CDF_URL: !Ref CDFAPIARN
+      Events:
+        IoTRule:
+          Type: IoTRule
+          Properties:
+            AwsIotSqlVersion: "2016-03-23"
+            Sql: "SELECT *, topic() AS topic FROM 'SW/+/GTT/CEI/RTVEHDATA'"
+              
+  # APIGateway
+  ceiApiGateway:
+      DependsOn: CEICognitoPool
+      Type: AWS::Serverless::Api
+      Properties:
+        StageName: !Ref Env
+        DefinitionBody:
+          openapi: 3.0.1
+          info:
+            title: GTT CAD EVP Interface (CEI)
+            description: 'This is the GTT CAD EVP Interface - an API designed to facilitate
+              messages produced from a CommSys orchestrated CAD system to control and enable
+              Opticom based preemption operations for Law Enforcement and similar CAD managed
+              Agencies. '
+            termsOfService: https://www.gtt.com/terms-of-use/
+            license:
+              name: Apache 2.0
+              url: http://www.apache.org/licenses/LICENSE-2.0.html
+            version: 1.0.1
+          servers:
+          - url: /v1
+          tags:
+          - name: incident
+            description: Preemption Message - The CAD shall send the following incident and status information when a vehicle is dispatched to an incident. 
+          - name: configuration
+            description: Configuration data - The CAD shall send the following administrative information describing the configuration and setup of the CAD interface. 
+          paths:
+            /cad/incidents:
+              post:
+                tags:
+                - incident
+                summary: Post a new preemption message to the GTT CEI.
+                description: This is the primay message provided by the CAD system for determining
+                  EVP eligibility for a given vehicle. It contains both incident and unit status
+                  information for processing and logging.
+                operationId: incidents
+                requestBody:
+                  description: incident/vehicle status data
+                  content:
+                    application/json:
+                      schema:
+                        $ref: '#/components/schemas/incidentDetails'
+                  required: true
+                  responses:
+                    '400':
+                      description: "400 response"
+                      content: {}
+                    '202':
+                      description: "202 response"
+                      headers:
+                        Access-Control-Allow-Origin:
+                          schema:
+                            type: "string"
+                      content:
+                        application/json:
+                          schema:
+                            $ref: "#/components/schemas/incidentAccepted"
+                    '500':
+                      description: "500 response"
+                      content: {}
+                security:
+                  - cei-authorizer: ["ceiAccessServer/post_incident"]
+                x-amazon-apigateway-integration:
+                  httpMethod: POST
+                  type: aws_proxy
+                  uri:
+                    Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CEIEVPQueue.Arn}/invocations
+            /cad/configuration:
+              post:
+                tags:
+                - configuration
+                summary: Post an agency configuration message to the CEI.
+                description: This is the base configuration message provided by the CAD, designed
+                  to populate the known and expected fields the CAD will be providing for the
+                  GTT message. This is intended for change tracking and notification against
+                  unrecognized results.
+                operationId: configuration
+                requestBody:
+                  description: CEI Agency Configuration Data data
+                  content:
+                    application/json:
+                      schema:
+                        $ref: '#/components/schemas/configuration'
+                  required: true
+                  responses:
+                    '400':
+                      description: "400 response"
+                      content: {}
+                    '500':
+                      description: "500 response"
+                      content: {}
+                    '200':
+                      description: "200 response"
+                      headers:
+                        Access-Control-Allow-Origin:
+                          schema:
+                            type: "string"
+                      content: {}
+                security:
+                  - cei-authorizer: ["ceiAccessServer/post_config"]
+                x-amazon-apigateway-integration:
+                  httpMethod: POST
+                  type: aws_proxy
+                  uri:
+                    Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CEIConfiguration.Arn}/invocations
+          components:
+            schemas:
+              incidents:
+                required:
+                - id
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: Guid
+                    description: "Unique identifier for this incident"
+                  action:
+                    type: string
+                    description: "Indicates the action that occurred that caused the incident to be sent. Possibly values are: CREATE, UPDATE, CLOSE"
+                  actionDateTime:
+                    type: string
+                    format: UTCDateTime
+                    description: "The date and time the incident was created/updated/closed.  Include year, month, day, hours, minutes, seconds, time zone"
+                  status:
+                    type: string
+                    description: "Current status of the incident.  Possible values are: PENDING, ACTIVE, CLOSED"
+                  statusDateTime:
+                    type: string
+                    format: UTCDateTime
+                    description: "The date and time of the incident’s status.  Include year, month, day, hours, minutes, seconds, time zone"
+                  type:
+                    type: string
+                    description: "Indicates the current type of the incident"
+                  priority:
+                    type: string
+                    description: "Indicates the assigned priority level of the incident"
+                  location:
+                    type: object
+                    description: "Indicates the location of the incident"
+                    properties:
+                      name:
+                        type: string
+                        description: "Description of the incident location"
+                      address:
+                        type: object
+                        description: "Address of the incident"
+                        properties:
+                          crossStreet:
+                            type: string
+                            description: "Intersecting road relevant to the location"
+                          street1:
+                            type: string
+                            description: "Street Address pt 1"
+                          street2:
+                            type: string
+                            description: "Street Address pt 2"
+                          city:
+                            type: string
+                            description: "City of the incident"
+                          State:
+                            type: string
+                            description: "State of the incident"
+                          County:
+                            type: string
+                            description: "County of the incident"
+                          Zip:
+                            type: string
+                            description: "Zip code of the incident"
+                            format: '##### or #####-####'
+                          Directions:
+                            type: string
+                            description: "Directions to the location of the incident"
+                      geometry:
+                        type: object
+                        description: "Latitude and longitude of incident"
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                            - Point
+                            description: "Fixed value - Point"
+                          coordinates:
+                            type: array
+                            description: "Coordinates expressed in degrees decimal (GeoJSON)"
+                            items:
+                              type: number
+                              format: float
+                  units:
+                    type: array
+                    description: "Units assigned to /involved with the incident"
+                    items:
+                      $ref: '#/components/schemas/unit'
+              unit:
+                required:
+                - deviceId
+                type: object
+                description: "Unit associated with an incident"
+                properties:
+                  deviceId:
+                    type: string
+                    format: Guid
+                    description: "CAD Value used to associate the incoming message to a GTT based device/modem"
+                  unitId:
+                    type: string
+                    description: "Indicates the unit ID assigned to respond to the incident"
+                  dispatchDateTime:
+                    type: string
+                    format: UTCDateTime
+                    description: "The date and time the unit was was dispatched - include year, month, day, hours, minutes, seconds, time zone"
+                  type:
+                    type: string
+                    description: "Type of unit - ie PATROL"
+                  status:
+                    type: string
+                    description: "Indicates the current status of the unit"
+                  statusDateTime:
+                    type: string
+                    description: "The date and time of the unit’s status - include year, month, day, hours, minutes, seconds, time zone"
+                  location:
+                    type: object
+                    description: "Current known location of vehicle"
+                    properties:
+                      updateDateTime:
+                        type: string
+                        format: UTCDateTime
+                        description: "The date and time of the unit’s location - include year, month, day, hours, minutes, seconds, time zone"
+                      geometry:
+                        type: object
+                        description: "Latitude and longitude of unit"
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                            - Point
+                            description: "Fixed value - Point"
+                          coordinates:
+                            type: array
+                            description: "Coordinates expressed in degrees decimal (GeoJSON)"
+                            items:
+                              type: number
+                              format: float
+              incidentDetails:
+                description: "Details of CAD reported incident"
+                required:
+                - messageId
+                type: object
+                properties:
+                  messageId:
+                    type: string
+                    format: Guid
+                    description: "Unique identifier for this message"
+                  siteId:
+                    type: string
+                    format: Guid
+                    description: "Unique identifier for this installation (region)"
+                  agencyId:
+                    type: string
+                    format: Guid
+                    description: "Unique identifier for this agency"
+                  incidents:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/incidents'
+                    description: "Incidents within this preemptionaction"
+              configuration:
+                type: object
+                description: "Configuration parameters for the given agency"
+                properties:
+                  messageId:
+                    type: string
+                    format: Guid
+                    description: "Unique identifier for this message"
+                  siteId:
+                    type: string
+                    format: Guid
+                    description: "Unique identifier for this installation (region)"
+                  agencyId:
+                    type: string
+                    format: Guid
+                    description: "Unique identifier for this agency"          
+                  unitTypeConfig:
+                    type: array
+                    items:
+                      type: string
+                    description: "Indicates the valid unit types provided by the CAD"
+                  unitIDConfig:
+                    type: array
+                    items:
+                      type: string
+                    description: "Indicates the valid unit IDs setup in the CAD"
+                  incidentTypeConfig:
+                    type: array
+                    items:
+                      type: string
+                    description: "Indicates the valid incident types provided by the CAD"
+                  incidentStatusConfig:
+                    type: array
+                    items:
+                      type: string
+                    description: "Indicates the valid incident status values provided by the CAD"
+                  incidentPriorityConfig:
+                    type: array
+                    items:
+                      type: string
+                    description: "Indicates the valid incident priority values provided by the CAD"
+                  unitStatusConfig:
+                    type: array
+                    items:
+                      type: string
+                    description: "Indidates the valiid Unit Status values provided by the CAD"
+              incidentAccepted:
+                type: object
+                description: "Returns when posted incident is successfully queued for processing (response 202)"
+                properties:
+                  statusCode:
+                    type: number
+                    description: "202"
+                  body:
+                    type: string
+                    format: "Incident [incidentId] for [siteId]:[agencyId] queued for processing"
+              configurationUpdated:
+                type: object
+                description: "Returns when the posed configuration successfully updated for the targeted agency (response 200)"
+                properties:
+                  statusCode:
+                    type: number
+                    description: "200"
+                  body:
+                    type: string
+                    format: "Incident [incidentId] for [siteId]:[agencyId] queued for processing"
+              malformedRequest:
+                type: object
+                description: "Returns when posted incident isn't properly formatted for processing (response 400)"
+                properties:
+                  statusCode:
+                    type: number
+                    description: "400"
+                  body:
+                    type: string
+                    format: "Message Format Error - [KeyValue broken/missing]"
+              internalError:
+                type: object
+                description: "Returns when posted call fails due to an internal exception (response 500)"
+                properties:
+                  statusCode:
+                    type: number
+                    description: "500"
+                  body:
+                    type: string
+                    format: "[Error Type] Error - [Error Text]"
+            securitySchemes:
+              cei-authorizer:
+                type: apiKey
+                name: Authorization
+                in: header
+                x-amazon-apigateway-authtype: cognito_user_pools
+                x-amazon-apigateway-authorizer:
+                  type: cognito_user_pools
+                  providerARNs:
+                    - !Sub
+                       - arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${userpoolid}
+                       - {userpoolid: !Ref CEICognitoPool}
+
+# CEI APIDeployment Lambda, Roles and Access policy, APIGateway
+
+  ApiDeploymentAccess:
+    Type: "AWS::IAM::ManagedPolicy"
+    Properties:
+      ManagedPolicyName: !Sub ApiDeploymentAccess-${CoreName}
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - "codepipeline:PutJobFailureResult"
+              - "codepipeline:PutJobSuccessResult"
+            Resource: "*"
+          - Effect: Allow
+            Action:
+              - "apigateway:*"
+            Resource: !Sub "arn:aws:apigateway:${AWS::Region}::/restapis/${ceiApiGateway}/*"
+
+  APIDeploymentRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub APIDeploymentRole-${CoreName}
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - !Ref "ApiDeploymentAccess"
+
+  APIDeploymentLambda:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      FunctionName: !Sub APIDeployment-${CoreName}
+      Handler: ApiDeployment.lambda_handler
+      Runtime: python3.8
+      CodeUri: ./../../CDFAndIoT/Lambdas/ApiDeployment/LambdaCode
+      Description: "Deploy API Gateway"
+      MemorySize: 128
+      Timeout: 5
+      Role: !GetAtt 'APIDeploymentRole.Arn'
+      Layers:
+        - !Ref CDFLayer
+      Environment:
+        Variables:
+          STAGE_NAME: !Sub ${Env}
+          REST_API_ID: !Ref ceiApiGateway
+
+#WAF Componants
+  CEIWAF:
+    Type: AWS::WAFv2::WebACL
+    Properties:
+      Name: CEIWAF
+      Scope: REGIONAL
+      Description: CEI WAF Settings - General AWS Groups
+      DefaultAction:
+        Allow: {}
+      VisibilityConfig:
+        SampledRequestsEnabled: true
+        CloudWatchMetricsEnabled: true
+        MetricName: MetricForWebACLWithAMR
+      Tags:
+        - Key: sampleapple
+          Value: sampleorange
+      Rules:
+        - Name: AWS-AWSManagedRulesCommonRuleSet
+          Priority: 4
+          OverrideAction:
+            None: {}
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: MetricForCEIWAF
+          Statement:
+            ManagedRuleGroupStatement:
+              VendorName: AWS
+              Name: AWSManagedRulesCommonRuleSet
+              ExcludedRules:
+                - Name: NoUserAgent_HEADER
+        - Name: AWS-AWSManagedRulesAmazonIpReputationList
+          Priority: 3
+          OverrideAction:
+            None: {}
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: MetricForCEIWAF
+          Statement:
+            ManagedRuleGroupStatement:
+              VendorName: AWS
+              Name: AWSManagedRulesAmazonIpReputationList
+        - Name: AWS-AWSManagedRulesAnonymousIpList
+          Priority: 2
+          OverrideAction:
+            None: {}
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: MetricForCEIWAF
+          Statement:
+            ManagedRuleGroupStatement:
+              VendorName: AWS
+              Name: AWSManagedRulesAnonymousIpList
+              ExcludedRules:
+                - Name: NoUserAgent_HEADER
+        - Name: AWS-AWSManagedRulesKnownBadInputsRuleSet
+          Priority: 1
+          OverrideAction:
+            None: {}
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: MetricForCEIWAF
+          Statement:
+            ManagedRuleGroupStatement:
+              VendorName: AWS
+              Name: AWSManagedRulesKnownBadInputsRuleSet
+        - Name: AWS-AWSManagedRulesAdminProtectionRuleSet
+          Priority: 0
+          OverrideAction:
+            None: {}
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: MetricForCEIWAF
+          Statement:
+            ManagedRuleGroupStatement:
+              VendorName: AWS
+              Name: AWSManagedRulesAdminProtectionRuleSet
+
+  CEIWebACLAssociation:
+    Type: 'AWS::WAFv2::WebACLAssociation'
+    Properties:
+      WebACLArn: !GetAtt CEIWAF.Arn
+      ResourceArn: !Sub arn:aws:apigateway:${AWS::Region}::/restapis/${ceiApiGateway}/stages/${Env}
+

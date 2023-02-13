@@ -1,0 +1,34 @@
+[
+  {
+    "intersection": "Avenue & Street1",
+    "serial": "string",
+    "coordinates": ["37.7673332", "-122.43867471"],
+    "unitId": 1010,
+    "lastComm": "04/23/22",
+    "makeModel": ["GTT", "v764"]
+  },
+  {
+    "intersection": "Avenue & Street2",
+    "serial": "string",
+    "coordinates": ["42.356432", "45.366993"],
+    "unitId": 1015,
+    "lastComm": "03/16/22",
+    "makeModel": ["GTT", "v764"]
+  },
+  {
+    "intersection": "Avenue & Street3",
+    "serial": "string",
+    "coordinates": ["38.356432", "29.366993"],
+    "unitId": 1020,
+    "lastComm": "08/13/21",
+    "makeModel": ["Miovision", "Core"]
+  },
+  {
+    "intersection": "Avenue & Street4",
+    "serial": "string",
+    "coordinates": ["60.356432", "37.366993"],
+    "unitId": 1025,
+    "lastComm": "05/04/22",
+    "makeModel": ["GTT", "m764"]
+  }
+]

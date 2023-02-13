@@ -1,0 +1,53 @@
+version: 0.2
+
+
+env:
+  exported-variables:
+    - Env
+    - CDFAPIARN
+
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.8
+
+  pre_build:
+    commands:
+      # Updating packages on container, installing AWSCLI and PyTest, and checking home path and python version for logging purposes.
+      - ls -l
+      - pwd=`pwd`
+      - echo $pwd
+      - yum -y update --skip-broken
+      - python -V
+      - python3 -V
+      - pip -V
+      - pip3 -V
+      - python3 -m pip -V
+      - pip3 install --upgrade pip
+      - npm -v
+      - node -v
+      - yum install -y sudo
+      - pip3 install pyopenssl
+      - pip3 install pytest
+      - pip3 install pytest-cov
+
+  build:
+    commands:
+      # CDF Asset Library API endpoint required by the UI
+      - CDFAPIID=`aws apigateway get-rest-apis --query "items[?name=='cdf-assetlibrary-stage'].id" --output text`
+      - CDFAPIARN=https://$CDFAPIID.execute-api.us-east-1.amazonaws.com/Prod
+      - CDF_URL=$CDFAPIARN
+      
+      # Executing Unit Tests
+      - cd $pwd/CEI/Lambdas/CEIConfiguration/Tests
+      - python3 -B -m pytest -v test_CEIConfiguration.py --cov=.
+      - cd $pwd/CEI/Lambdas/CEIRTRadioMsg/Tests
+      - python3 -B -m pytest -v test_CEI_RTRadio_Processing.py --cov=.
+      - cd $pwd/CEI/CEIBackend
+      - python3 -B -m pytest -v test_CEI_Logging.py --cov=.
+      
+artifacts:
+  files:
+    - '**/*'
+  base-directory: .

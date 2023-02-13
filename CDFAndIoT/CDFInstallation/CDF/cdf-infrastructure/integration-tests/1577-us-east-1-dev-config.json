@@ -1,0 +1,29 @@
+{
+  "aws": {
+    "region": ""
+  },
+  "assetLibrary": {
+    "baseUrl": ""
+  },
+  "assetLibraryHistory": {
+    "baseUrl": ""
+  },
+  "commands": {
+    "baseUrl": ""
+  },
+  "provisioning": {
+    "baseUrl": "",
+    "templates": {
+      "bucket": "cdf-157731826412-us-east-1",
+      "prefix": "provisioning/templates/",
+      "suffix": ".json"
+    }
+  },
+  "bulkCerts": {
+    "baseUrl": ""
+  },
+  "thing": {
+    "name": "cdf_integration_test",
+    "arn": "arn:aws:iot:us-west-2:157731826412:thing/cdf_integration_test"
+  }
+}

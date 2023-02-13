@@ -1,0 +1,1034 @@
+{
+    "intersectionName": "",
+    "locationType": "ntcip",
+    "latitude": 0,
+    "longitude": 0,
+    "timezone": "CST",
+    "approachMap": [],
+    "thresholds": {
+        "lowPriority": [
+            {
+                "channelName": "North Bound",
+                "channel": "0",
+                "maxCallTime": 360,
+                "lostSignalHold": 6,
+                "classes": [
+                    {
+                        "class": "1",
+                        "name": "Not used",
+                        "active": true,
+                        "eta": 0,
+                        "distance": 0
+                    },
+                    {
+                        "class": "2",
+                        "name": "Express Transit",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "3",
+                        "name": "Paratransit",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "4",
+                        "name": "Light Rail",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "5",
+                        "name": "Trolley",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "6",
+                        "name": "Snow Plows",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "7",
+                        "name": "Supervisor",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "8",
+                        "name": "Pavement Marking",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "9",
+                        "name": "Installer/Set-up",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "10",
+                        "name": "Bus Rapid Transit",
+                        "active": false,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "11",
+                        "name": "Not used",
+                        "active": false,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "12",
+                        "name": "Not used",
+                        "active": false,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "13",
+                        "name": "Not used",
+                        "active": false,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "14",
+                        "name": "Not used",
+                        "active": false,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "15",
+                        "name": "Not used",
+                        "active": false,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "16",
+                        "name": "Not used",
+                        "active": false,
+                        "eta": 30,
+                        "distance": 1000
+                    }
+                ]
+            },
+            {
+                "channelName": "South Bound",
+                "channel": "1",
+                "maxCallTime": 360,
+                "lostSignalHold": 6,
+                "classes": [
+                    {
+                        "class": "1",
+                        "name": "Not used",
+                        "active": true,
+                        "eta": 0,
+                        "distance": 0
+                    },
+                    {
+                        "class": "2",
+                        "name": "Express Transit",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "3",
+                        "name": "Paratransit",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "4",
+                        "name": "Light Rail",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "5",
+                        "name": "Trolley",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "6",
+                        "name": "Snow Plows",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "7",
+                        "name": "Supervisor",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "8",
+                        "name": "Pavement Marking",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "9",
+                        "name": "Installer/Set-up",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "10",
+                        "name": "Bus Rapid Transit",
+                        "active": false,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "11",
+                        "name": "Not used",
+                        "active": false,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "12",
+                        "name": "Not used",
+                        "active": false,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "13",
+                        "name": "Not used",
+                        "active": false,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "14",
+                        "name": "Not used",
+                        "active": false,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "15",
+                        "name": "Not used",
+                        "active": false,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "16",
+                        "name": "Not used",
+                        "active": false,
+                        "eta": 30,
+                        "distance": 1000
+                    }
+                ]
+            },
+            {
+                "channelName": "East Bound",
+                "channel": "2",
+                "maxCallTime": 360,
+                "lostSignalHold": 6,
+                "classes": [
+                    {
+                        "class": "1",
+                        "name": "Not used",
+                        "active": true,
+                        "eta": 0,
+                        "distance": 0
+                    },
+                    {
+                        "class": "2",
+                        "name": "Express Transit",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "3",
+                        "name": "Paratransit",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "4",
+                        "name": "Light Rail",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "5",
+                        "name": "Trolley",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "6",
+                        "name": "Snow Plows",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "7",
+                        "name": "Supervisor",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "8",
+                        "name": "Pavement Marking",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "9",
+                        "name": "Installer/Set-up",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "10",
+                        "name": "Bus Rapid Transit",
+                        "active": false,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "11",
+                        "name": "Not used",
+                        "active": false,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "12",
+                        "name": "Not used",
+                        "active": false,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "13",
+                        "name": "Not used",
+                        "active": false,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "14",
+                        "name": "Not used",
+                        "active": false,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "15",
+                        "name": "Not used",
+                        "active": false,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "16",
+                        "name": "Not used",
+                        "active": false,
+                        "eta": 30,
+                        "distance": 1000
+                    }
+                ]
+            },
+            {
+                "channelName": "West Bound",
+                "channel": "3",
+                "maxCallTime": 360,
+                "lostSignalHold": 6,
+                "classes": [
+                    {
+                        "class": "1",
+                        "name": "Not used",
+                        "active": true,
+                        "eta": 0,
+                        "distance": 0
+                    },
+                    {
+                        "class": "2",
+                        "name": "Express Transit",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "3",
+                        "name": "Paratransit",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "4",
+                        "name": "Light Rail",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "5",
+                        "name": "Trolley",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "6",
+                        "name": "Snow Plows",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "7",
+                        "name": "Supervisor",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "8",
+                        "name": "Pavement Marking",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "9",
+                        "name": "Installer/Set-up",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "10",
+                        "name": "Bus Rapid Transit",
+                        "active": false,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "11",
+                        "name": "Not used",
+                        "active": false,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "12",
+                        "name": "Not used",
+                        "active": false,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "13",
+                        "name": "Not used",
+                        "active": false,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "14",
+                        "name": "Not used",
+                        "active": false,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "15",
+                        "name": "Not used",
+                        "active": false,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "16",
+                        "name": "Not used",
+                        "active": false,
+                        "eta": 30,
+                        "distance": 1000
+                    }
+                ]
+            }
+        ],
+        "highPriority": [
+            {
+                "channelName": "North Bound",
+                "channel": "0",
+                "maxCallTime": 360,
+                "lostSignalHold": 6,
+                "classes": [
+                    {
+                        "class": "1",
+                        "name": "Not used",
+                        "active": true,
+                        "eta": 0,
+                        "distance": 0
+                    },
+                    {
+                        "class": "2",
+                        "name": "Engine/Pumper",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "3",
+                        "name": "Ladder/Arial/Snorkel",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "4",
+                        "name": "Brush",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "5",
+                        "name": "Miscellaneous",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "6",
+                        "name": "Fire Chief/Captain",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "7",
+                        "name": "Supervisor",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "8",
+                        "name": "Maintenance",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "9",
+                        "name": "Installer/Set-up",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "10",
+                        "name": "Police/Sheriff Cars",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "11",
+                        "name": "Miscellaneous Police/Sheriff",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "12",
+                        "name": "Police Chief/Supervisor",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "13",
+                        "name": "Private Ambulance",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "14",
+                        "name": "Not Used",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "15",
+                        "name": "Base Station",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "16",
+                        "name": "Not Used",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    }
+                ]
+            },
+            {
+                "channelName": "South Bound",
+                "channel": "1",
+                "maxCallTime": 360,
+                "lostSignalHold": 6,
+                "classes": [
+                    {
+                        "class": "1",
+                        "name": "Not used",
+                        "active": true,
+                        "eta": 0,
+                        "distance": 0
+                    },
+                    {
+                        "class": "2",
+                        "name": "Engine/Pumper",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "3",
+                        "name": "Ladder/Arial/Snorkel",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "4",
+                        "name": "Brush",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "5",
+                        "name": "Miscellaneous",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "6",
+                        "name": "Fire Chief/Captain",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "7",
+                        "name": "Supervisor",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "8",
+                        "name": "Maintenance",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "9",
+                        "name": "Installer/Set-up",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "10",
+                        "name": "Police/Sheriff Cars",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "11",
+                        "name": "Miscellaneous Police/Sheriff",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "12",
+                        "name": "Police Chief/Supervisor",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "13",
+                        "name": "Private Ambulance",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "14",
+                        "name": "Not Used",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "15",
+                        "name": "Base Station",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "16",
+                        "name": "Not Used",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    }
+                ]
+            },
+            {
+                "channelName": "East Bound",
+                "channel": "2",
+                "maxCallTime": 360,
+                "lostSignalHold": 6,
+                "classes": [
+                    {
+                        "class": "1",
+                        "name": "Not used",
+                        "active": true,
+                        "eta": 0,
+                        "distance": 0
+                    },
+                    {
+                        "class": "2",
+                        "name": "Engine/Pumper",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "3",
+                        "name": "Ladder/Arial/Snorkel",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "4",
+                        "name": "Brush",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "5",
+                        "name": "Miscellaneous",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "6",
+                        "name": "Fire Chief/Captain",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "7",
+                        "name": "Supervisor",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "8",
+                        "name": "Maintenance",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "9",
+                        "name": "Installer/Set-up",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "10",
+                        "name": "Police/Sheriff Cars",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "11",
+                        "name": "Miscellaneous Police/Sheriff",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "12",
+                        "name": "Police Chief/Supervisor",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "13",
+                        "name": "Private Ambulance",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "14",
+                        "name": "Not Used",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "15",
+                        "name": "Base Station",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "16",
+                        "name": "Not Used",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    }
+                ]
+            },
+            {
+                "channelName": "West Bound",
+                "channel": "3",
+                "maxCallTime": 360,
+                "lostSignalHold": 6,
+                "classes": [
+                    {
+                        "class": "1",
+                        "name": "Not used",
+                        "active": true,
+                        "eta": 0,
+                        "distance": 0
+                    },
+                    {
+                        "class": "2",
+                        "name": "Engine/Pumper",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "3",
+                        "name": "Ladder/Arial/Snorkel",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "4",
+                        "name": "Brush",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "5",
+                        "name": "Miscellaneous",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "6",
+                        "name": "Fire Chief/Captain",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "7",
+                        "name": "Supervisor",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "8",
+                        "name": "Maintenance",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "9",
+                        "name": "Installer/Set-up",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "10",
+                        "name": "Police/Sheriff Cars",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "11",
+                        "name": "Miscellaneous Police/Sheriff",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "12",
+                        "name": "Police Chief/Supervisor",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "13",
+                        "name": "Private Ambulance",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "14",
+                        "name": "Not Used",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "15",
+                        "name": "Base Station",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    },
+                    {
+                        "class": "16",
+                        "name": "Not Used",
+                        "active": true,
+                        "eta": 30,
+                        "distance": 1000
+                    }
+                ]
+            }
+        ]
+    },
+    "outputs": {
+        "lowPriority": {
+            "type": "NTCIP 1211",
+            "channels": [
+                {
+                    "channel": "0",
+                    "straight": 1,
+                    "left": 1,
+                    "right": 1
+                },
+                {
+                    "channel": "1",
+                    "straight": 2,
+                    "left": 2,
+                    "right": 2
+                },
+                {
+                    "channel": "2",
+                    "straight": 3,
+                    "left": 3,
+                    "right": 3
+                },
+                {
+                    "channel": "3",
+                    "straight": 4,
+                    "left": 4,
+                    "right": 4
+                }
+            ]
+        },
+        "highPriority": {
+            "type": "NTCIP 1211",
+            "channels": [
+                {
+                    "channel": "0",
+                    "straight": 1,
+                    "left": 1,
+                    "right": 1
+                },
+                {
+                    "channel": "1",
+                    "straight": 2,
+                    "left": 2,
+                    "right": 2
+                },
+                {
+                    "channel": "2",
+                    "straight": 3,
+                    "left": 3,
+                    "right": 3
+                },
+                {
+                    "channel": "3",
+                    "straight": 4,
+                    "left": 4,
+                    "right": 4
+                }
+            ]
+        }
+    }
+}

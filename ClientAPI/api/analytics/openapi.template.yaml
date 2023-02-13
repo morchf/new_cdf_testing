@@ -1,0 +1,1494 @@
+components:
+  parameters:
+    agency:
+      in: query
+      name: agency
+      required: false
+      schema:
+        default: sfmta
+        type: string
+    end_date:
+      in: query
+      name: end_date
+      required: true
+      schema:
+        format: date
+        type: string
+    period:
+      in: query
+      name: period
+      required: true
+      schema:
+        enum:
+          - day
+          - month
+          - quarter
+          - week
+          - year
+        type: string
+    route:
+      in: query
+      name: route
+      required: true
+      schema:
+        type: string
+    start_date:
+      in: query
+      name: start_date
+      required: true
+      schema:
+        format: date
+        type: string
+  requestBodies:
+    LatenessFilter:
+      content:
+        application/json:
+          schema:
+            additionalProperties: false
+            nullable: false
+            properties:
+              on_time_range:
+                items:
+                  type: number
+                maxLength: 2
+                minLength: 2
+                nullable: false
+                type: array
+              selected_direction:
+                items:
+                  example:
+                    - inbound
+                    - outbound
+                  type: string
+                  uniqueItems: true
+                nullable: false
+                type: array
+              selected_timeperiod:
+                items:
+                  example:
+                    - offpeak
+                    - peak_am
+                    - peak_pm
+                    - weekend
+                  type: string
+                  uniqueItems: true
+                nullable: false
+                type: array
+              timeperiod:
+                items:
+                  additionalProperties: false
+                  nullable: false
+                  properties:
+                    end_time:
+                      format: time
+                      type: string
+                    label:
+                      example:
+                        - peak_am
+                        - peak_pm
+                      type: string
+                    start_time:
+                      format: time
+                      type: string
+                  required:
+                    - end_time
+                    - label
+                    - start_time
+                  type: object
+                nullable: false
+                type: array
+            required:
+              - on_time_range
+              - selected_direction
+              - selected_timeperiod
+              - timeperiod
+            title: LatenessFilter
+            type: object
+      required: true
+    Timeperiod:
+      content:
+        application/json:
+          schema:
+            additionalProperties: false
+            nullable: false
+            properties:
+              selected_direction:
+                items:
+                  example:
+                    - inbound
+                    - outbound
+                  type: string
+                  uniqueItems: true
+                nullable: false
+                type: array
+              selected_timeperiod:
+                items:
+                  example:
+                    - offpeak
+                    - peak_am
+                    - peak_pm
+                    - weekend
+                  type: string
+                  uniqueItems: true
+                nullable: false
+                type: array
+              timeperiod:
+                items:
+                  additionalProperties: false
+                  nullable: false
+                  properties:
+                    end_time:
+                      format: time
+                      type: string
+                    label:
+                      example:
+                        - peak_am
+                        - peak_pm
+                      type: string
+                    start_time:
+                      format: time
+                      type: string
+                  required:
+                    - end_time
+                    - label
+                    - start_time
+                  type: object
+                nullable: false
+                type: array
+            required:
+              # - selected_direction
+              # - selected_timeperiod
+              - timeperiod
+            title: Timeperiod
+            type: object
+      required: true
+    RouteIntersectionsRequestBody:
+      content:
+        application/json:
+          schema:
+            additionalProperties: false
+            nullable: false
+            properties:
+              selected_direction:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Direction"
+                  uniqueItems: true
+                nullable: false
+            required:
+              - selected_direction
+            title: RouteIntersectionsRequestBody
+            type: object
+      required: true
+    MapRequestBody:
+      content:
+        application/json:
+          schema:
+            additionalProperties: false
+            nullable: false
+            properties:
+              selected_direction:
+                items:
+                  example:
+                    - inbound
+                    - outbound
+                  type: string
+                  uniqueItems: true
+                nullable: false
+                type: array
+            required:
+              - selected_direction
+            title: MapRequestBody
+            type: object
+      required: true
+  schemas:
+    # Enums
+    Timeframe:
+      type: string
+      enum:
+        - peak_am
+        - peak_pm
+        - offpeak
+        - weekdays
+        - weekend
+    Direction:
+      type: string
+      enum:
+        - inbound
+        - outbound
+
+    # Responses
+    Status:
+      additionalProperties: false
+      nullable: false
+      type: object
+      required:
+        - availability
+      properties:
+        availability:
+          additionalProperties: false
+          nullable: false
+          type: object
+          required:
+            - start_date
+            - end_date
+          properties:
+            start_date:
+              format: date
+              type: string
+            end_date:
+              format: date
+              type: string
+    AggLatenessPerRoute:
+      items:
+        additionalProperties: false
+        nullable: false
+        properties:
+          # Location
+          stopstartlatitude:
+            format: number
+            type: string
+          stopendlatitude:
+            format: number
+            type: string
+          stopstartlongitude:
+            format: number
+            type: string
+          stopendlongitude:
+            format: number
+            type: string
+          stopstartname:
+            type: string
+          stopendname:
+            type: string
+
+          # Time
+          period:
+            format: date
+            type: string
+
+          # Metrics
+          latenessreduction:
+            $ref: "#/components/schemas/MetricDatum"
+          stopstartlateness:
+            $ref: "#/components/schemas/MetricDatum"
+          stopendlateness:
+            $ref: "#/components/schemas/MetricDatum"
+          ontimepercentage:
+            $ref: "#/components/schemas/MetricDatumPercent"
+          earlypercentage:
+            $ref: "#/components/schemas/MetricDatumPercent"
+          latepercentage:
+            $ref: "#/components/schemas/MetricDatumPercent"
+        required:
+          # Location
+          - stopstartlatitude
+          - stopendlatitude
+          - stopstartlongitude
+          - stopendlongitude
+          - stopstartname
+          - stopendname
+
+          # Time
+          - period
+
+          # Metrics
+          - latenessreduction
+          - stopstartlateness
+          - stopendlateness
+          - ontimepercentage
+          - earlypercentage
+          - latepercentage
+        type: object
+      nullable: false
+      type: array
+    AggLatenessPerRouteDay:
+      items:
+        additionalProperties: false
+        nullable: false
+        properties:
+          latenessreduction:
+            $ref: "#/components/schemas/MetricDatum"
+          period:
+            format: date
+            type: string
+          stopendlateness:
+            $ref: "#/components/schemas/MetricDatum"
+          stopstartlateness:
+            $ref: "#/components/schemas/MetricDatum"
+          ontimepercentage:
+            $ref: "#/components/schemas/MetricDatumPercent"
+          earlypercentage:
+            $ref: "#/components/schemas/MetricDatumPercent"
+          latepercentage:
+            $ref: "#/components/schemas/MetricDatumPercent"
+        required:
+          - latenessreduction
+          - period
+          - stopendlateness
+          - stopstartlateness
+          - ontimepercentage
+          - earlypercentage
+          - latepercentage
+        type: object
+      nullable: false
+      type: array
+    AggLatenessReduction:
+      items:
+        additionalProperties: false
+        nullable: false
+        properties:
+          avgScheduleDeviation:
+            type: string
+          direction:
+            example:
+              - inbound
+              - outbound
+            type: string
+          earlyPercentage:
+            format: number
+            type: string
+          latePercentage:
+            format: number
+            type: string
+          numIntersections:
+            format: integer
+            type: string
+          numRequests:
+            format: integer
+            type: string
+          onTimePercentage:
+            format: number
+            type: string
+          route:
+            type: string
+          vehiclePassThrough:
+            format: integer
+            type: string
+        required:
+          - avgScheduleDeviation
+          - direction
+          - earlyPercentage
+          - latePercentage
+          - numIntersections
+          - numRequests
+          - onTimePercentage
+          - route
+          - vehiclePassThrough
+        type: object
+      nullable: false
+      type: array
+    AggTravelTime:
+      type: object
+      additionalProperties: false
+      nullable: false
+      required:
+        - routes
+      properties:
+        routes:
+          items:
+            additionalProperties: false
+            properties:
+              direction:
+                $ref: "#/components/schemas/Direction"
+              drivetime:
+                format: number
+                type: string
+              dwelltime:
+                format: number
+                type: string
+              route:
+                type: string
+              signaldelay:
+                format: number
+                type: string
+              traveltime:
+                format: number
+                type: string
+              tspsavings:
+                format: number
+                type: string
+            required:
+              - route
+              - drivetime
+              - dwelltime
+              - signaldelay
+              - traveltime
+              - tspsavings
+            type: object
+          nullable: false
+          type: array
+    AggTravelTimePerPeriod:
+      items:
+        additionalProperties: false
+        properties:
+          direction:
+            $ref: "#/components/schemas/Direction"
+          drivetime:
+            $ref: "#/components/schemas/MetricDatum"
+          dwelltime:
+            $ref: "#/components/schemas/MetricDatum"
+          label:
+            example:
+              - offpeak
+              - peak_am
+              - peak_pm
+              - weekend
+            type: string
+          period:
+            format: date
+            type: string
+          route:
+            type: string
+          signaldelay:
+            $ref: "#/components/schemas/MetricDatum"
+          traveltime:
+            $ref: "#/components/schemas/MetricDatum"
+          tspsavings:
+            $ref: "#/components/schemas/MetricDatum"
+        required:
+          - drivetime
+          - dwelltime
+          - label
+          - period
+          - route
+          - signaldelay
+          - traveltime
+          - tspsavings
+        type: object
+      nullable: false
+      type: array
+    AggTravelTimePerRoute:
+      items:
+        additionalProperties: false
+        nullable: false
+        properties:
+          drivetime:
+            $ref: "#/components/schemas/MetricDatum"
+          dwelltime:
+            $ref: "#/components/schemas/MetricDatum"
+          period:
+            format: date
+            type: string
+          signaldelay:
+            $ref: "#/components/schemas/MetricDatum"
+          stopendlatitude:
+            format: number
+            type: string
+          stopendlongitude:
+            format: number
+            type: string
+          stopendname:
+            type: string
+          stopstartlatitude:
+            format: number
+            type: string
+          stopstartlongitude:
+            format: number
+            type: string
+          stopstartname:
+            type: string
+          traveltime:
+            $ref: "#/components/schemas/MetricDatum"
+          tspsavings:
+            $ref: "#/components/schemas/MetricDatum"
+        required:
+          - drivetime
+          - dwelltime
+          - period
+          - signaldelay
+          - stopendlatitude
+          - stopendlongitude
+          - stopendname
+          - stopstartlatitude
+          - stopstartlongitude
+          - stopstartname
+          - traveltime
+          - tspsavings
+        type: object
+      nullable: false
+      type: array
+    AggTravelTimePerRouteStopDay:
+      items:
+        additionalProperties: false
+        nullable: false
+        properties:
+          drivetime:
+            $ref: "#/components/schemas/MetricDatum"
+          dwelltime:
+            $ref: "#/components/schemas/MetricDatum"
+          period:
+            format: date
+            type: string
+          signaldelay:
+            $ref: "#/components/schemas/MetricDatum"
+          stopendlatitude:
+            format: number
+            type: string
+          stopendlongitude:
+            format: number
+            type: string
+          stopendname:
+            type: string
+          stopstartlatitude:
+            format: number
+            type: string
+          stopstartlongitude:
+            format: number
+            type: string
+          stopstartname:
+            type: string
+          traveltime:
+            $ref: "#/components/schemas/MetricDatum"
+          tspsavings:
+            $ref: "#/components/schemas/MetricDatum"
+        required:
+          - drivetime
+          - dwelltime
+          - period
+          - signaldelay
+          - stopendlatitude
+          - stopendlongitude
+          - stopendname
+          - stopstartlatitude
+          - stopstartlongitude
+          - stopstartname
+          - traveltime
+          - tspsavings
+        type: object
+      nullable: false
+      type: array
+    AggTravelTimePerRouteDay:
+      items:
+        additionalProperties: false
+        nullable: false
+        properties:
+          drivetime:
+            $ref: "#/components/schemas/MetricDatum"
+          dwelltime:
+            $ref: "#/components/schemas/MetricDatum"
+          signaldelay:
+            $ref: "#/components/schemas/MetricDatum"
+          traveltime:
+            $ref: "#/components/schemas/MetricDatum"
+          tspsavings:
+            $ref: "#/components/schemas/MetricDatum"
+        required:
+          - drivetime
+          - dwelltime
+          - signaldelay
+          - traveltime
+          - tspsavings
+        type: object
+      nullable: false
+      type: array
+    AggSignalDelayPerRouteIntersection:
+      items:
+        additionalProperties: false
+        nullable: false
+        properties:
+          SignalDelay:
+            type: string
+          LocationId:
+            type: string
+          LocationName:
+            type: string
+        required:
+          - SignalDelay
+          - LocationId
+          - LocationName
+        type: object
+      nullable: false
+      type: array
+    RouteIntersectionsResponse:
+      items:
+        additionalProperties: false
+        nullable: false
+        properties:
+          route_id:
+            type: string
+          route:
+            type: string
+          direction:
+            type: string
+          intersections:
+            items:
+              additionalProperties: false
+              nullable: false
+              properties:
+                device_id:
+                  type: string
+                location_id:
+                  type: string
+                location_name:
+                  type: string
+                latitude:
+                  format: number
+                  type: string
+                longitude:
+                  format: number
+                  type: string
+              required:
+                - device_id
+                - location_id
+                - location_name
+                - latitude
+                - longitude
+              type: object
+            nullable: false
+            type: array
+        required:
+          - route_id
+          - route
+          - direction
+          - intersections
+        type: object
+      nullable: false
+      type: array
+    LatenessColumnChart:
+      additionalProperties: false
+      nullable: true
+      properties:
+        chart:
+          items:
+            additionalProperties: false
+            nullable: false
+            properties:
+              label:
+                enum:
+                  - early
+                  - late
+                  - onTime
+                type: string
+              type:
+                format: number
+                type: string
+              value:
+                format: integer
+                type: string
+            required:
+              - label
+              - type
+              - value
+            type: object
+          nullable: false
+          type: array
+        onTimeRange:
+          items:
+            type: number
+          maxLength: 2
+          minLength: 2
+          nullable: false
+          type: array
+      required:
+        - chart
+        - onTimeRange
+      type: object
+    MetricDatum:
+      additionalProperties: false
+      nullable: false
+      properties:
+        change:
+          format: number
+          nullable: true
+          type: string
+        isBetter:
+          nullable: true
+          type: boolean
+        secs:
+          format: number
+          nullable: true
+          type: string
+        percentage:
+          format: number
+          nullable: true
+          type: string
+      required:
+        - change
+        - isBetter
+        - secs
+        - percentage
+      type: object
+    MetricDatumPercent:
+      additionalProperties: false
+      nullable: false
+      properties:
+        change:
+          format: number
+          nullable: true
+          type: string
+        isBetter:
+          nullable: true
+          type: boolean
+        percent:
+          format: number
+          nullable: true
+          type: string
+      required:
+        - change
+        - isBetter
+        - percent
+      type: object
+    Routes:
+      items:
+        additionalProperties: false
+        nullable: false
+        properties:
+          route:
+            type: string
+        required:
+          - route
+        type: object
+      nullable: false
+      type: array
+    RoutesMapData:
+      items:
+        additionalProperties: false
+        nullable: false
+        properties:
+          date:
+            format: date
+            type: string
+          route:
+            type: string
+          segments:
+            items:
+              additionalProperties: false
+              nullable: false
+              properties:
+                points:
+                  items:
+                    additionalProperties: false
+                    nullable: false
+                    properties:
+                      label:
+                        type: string
+                      lat:
+                        format: number
+                        type: string
+                      lon:
+                        format: number
+                        type: string
+                      progress:
+                        format: number
+                        type: string
+                    required:
+                      - lat
+                      - lon
+                      - progress
+                    type: object
+                  type: array
+                stopendname:
+                  type: string
+                stopstartname:
+                  type: string
+              required:
+                - points
+                - stopendname
+                - stopstartname
+              type: object
+            nullable: false
+            type: array
+          shape:
+            format: integer
+            type: string
+        required:
+          - date
+          - route
+          - segments
+          - shape
+        type: object
+      nullable: false
+      type: array
+  securitySchemes:
+    grid-dynamics-api-authorizer:
+      in: header
+      name: Authorization
+      type: apiKey
+      x-amazon-apigateway-authorizer:
+        providerARNs:
+          - $$ARN_COGNITO_USER_POOL
+        type: cognito_user_pools
+      x-amazon-apigateway-authtype: cognito_user_pools
+info:
+  title: grid-dynamics-api
+  version: 0.0.1
+openapi: 3.0.1
+paths:
+  /metrics/status:
+    options: $$OPTIONS
+    post:
+      operationId: status
+      parameters:
+        - $ref: "#/components/parameters/agency"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+          description: 200 response
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+      security:
+        - grid-dynamics-api-authorizer: []
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        passthroughBehavior: when_no_templates
+        requestParameters:
+          integration.request.querystring.agency: method.request.querystring.agency
+        requestTemplates:
+          application/json: |
+            {
+              "agency": "$util.escapeJavaScript($input.params('agency'))"
+            }
+        responses:
+          default:
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            statusCode: "200"
+        type: aws
+        uri: $$ARN_LAMBDA_INVOCATION_STATUS
+      x-amazon-apigateway-request-validator: parameters
+  /metrics/lateness/agg_lateness_per_route:
+    options: $$OPTIONS
+    post:
+      operationId: agg_lateness_per_route
+      parameters:
+        - $ref: "#/components/parameters/agency"
+        - $ref: "#/components/parameters/end_date"
+        - $ref: "#/components/parameters/period"
+        - $ref: "#/components/parameters/route"
+        - $ref: "#/components/parameters/start_date"
+      requestBody:
+        $ref: "#/components/requestBodies/LatenessFilter"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AggLatenessPerRoute"
+          description: 200 response
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+      security:
+        - grid-dynamics-api-authorizer: []
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        passthroughBehavior: when_no_templates
+        requestParameters:
+          integration.request.querystring.agency: method.request.querystring.agency
+          integration.request.querystring.end_date: method.request.querystring.end_date
+          integration.request.querystring.period: method.request.querystring.period
+          integration.request.querystring.route: method.request.querystring.route
+          integration.request.querystring.start_date: method.request.querystring.start_date
+        requestTemplates:
+          application/json: |
+            {
+              "agency": "$util.escapeJavaScript($input.params('agency'))",
+              "route": "$util.escapeJavaScript($input.params('route'))",
+              "start_date": "$util.escapeJavaScript($input.params('start_date'))",
+              "end_date": "$util.escapeJavaScript($input.params('end_date'))",
+              "on_time_range": $input.path('$.on_time_range'),
+              "selected_direction": $input.path('$.selected_direction'),
+              "period": "$util.escapeJavaScript($input.params('period'))",
+              "selected_timeperiod": $input.path('$.selected_timeperiod'),
+              "timeperiod": $input.path('$.timeperiod')
+            }
+        responses:
+          default:
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            statusCode: "200"
+        type: aws
+        uri: $$ARN_LAMBDA_INVOCATION_AGG_LATENESS_PER_ROUTE
+      x-amazon-apigateway-request-validator: body+parameters
+  /metrics/lateness/agg_lateness_per_route_day:
+    options: $$OPTIONS
+    post:
+      operationId: agg_lateness_per_route_day
+      parameters:
+        - $ref: "#/components/parameters/agency"
+        - $ref: "#/components/parameters/end_date"
+        - $ref: "#/components/parameters/period"
+        - $ref: "#/components/parameters/route"
+        - $ref: "#/components/parameters/start_date"
+      requestBody:
+        $ref: "#/components/requestBodies/LatenessFilter"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AggLatenessPerRouteDay"
+          description: 200 response
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+      security:
+        - grid-dynamics-api-authorizer: []
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        passthroughBehavior: when_no_templates
+        requestParameters:
+          integration.request.querystring.agency: method.request.querystring.agency
+          integration.request.querystring.end_date: method.request.querystring.end_date
+          integration.request.querystring.period: method.request.querystring.period
+          integration.request.querystring.route: method.request.querystring.route
+          integration.request.querystring.start_date: method.request.querystring.start_date
+        requestTemplates:
+          application/json: |
+            {
+              "agency": "$util.escapeJavaScript($input.params('agency'))",
+              "start_date": "$util.escapeJavaScript($input.params('start_date'))",
+              "end_date": "$util.escapeJavaScript($input.params('end_date'))",
+              "on_time_range": $input.path('$.on_time_range'),
+              "period": "$util.escapeJavaScript($input.params('period'))",
+              "route": "$util.escapeJavaScript($input.params('route'))",
+              "selected_direction": $input.path('$.selected_direction'),
+              "selected_timeperiod": $input.path('$.selected_timeperiod'),
+              "timeperiod": $input.path('$.timeperiod')
+            }
+        responses:
+          default:
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            statusCode: "200"
+        type: aws
+        uri: $$ARN_LAMBDA_INVOCATION_AGG_LATENESS_PER_ROUTE_DAY
+      x-amazon-apigateway-request-validator: body+parameters
+  /metrics/lateness/agg_lateness_reduction:
+    options: $$OPTIONS
+    post:
+      operationId: agg_lateness_reduction
+      parameters:
+        - $ref: "#/components/parameters/agency"
+        - $ref: "#/components/parameters/end_date"
+        - $ref: "#/components/parameters/start_date"
+      requestBody:
+        $ref: "#/components/requestBodies/LatenessFilter"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AggLatenessReduction"
+          description: 200 response
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+      security:
+        - grid-dynamics-api-authorizer: []
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        passthroughBehavior: when_no_templates
+        requestParameters:
+          integration.request.querystring.agency: method.request.querystring.agency
+          integration.request.querystring.end_date: method.request.querystring.end_date
+          integration.request.querystring.start_date: method.request.querystring.start_date
+        requestTemplates:
+          application/json: |
+            {
+              "agency": "$util.escapeJavaScript($input.params('agency'))",
+              "start_date": "$util.escapeJavaScript($input.params('start_date'))",
+              "end_date": "$util.escapeJavaScript($input.params('end_date'))",
+              "on_time_range": $input.path('$.on_time_range'),
+              "selected_direction": $input.path('$.selected_direction'),
+              "period": "$util.escapeJavaScript($input.params('period'))",
+              "timeperiod": $input.path('$.timeperiod'),
+              "selected_timeperiod": $input.path('$.selected_timeperiod')
+            }
+        responses:
+          default:
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            statusCode: "200"
+        type: aws
+        uri: $$ARN_LAMBDA_INVOCATION_AGG_LATENESS_REDUCTION
+      x-amazon-apigateway-request-validator: parameters
+  /metrics/lateness/lateness_column_chart:
+    options: $$OPTIONS
+    post:
+      operationId: lateness_column_chart
+      parameters:
+        - $ref: "#/components/parameters/agency"
+        - $ref: "#/components/parameters/end_date"
+        - $ref: "#/components/parameters/start_date"
+      requestBody:
+        $ref: "#/components/requestBodies/LatenessFilter"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LatenessColumnChart"
+          description: 200 response
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+      security:
+        - grid-dynamics-api-authorizer: []
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        passthroughBehavior: when_no_templates
+        requestParameters:
+          integration.request.querystring.agency: method.request.querystring.agency
+          integration.request.querystring.end_date: method.request.querystring.end_date
+          integration.request.querystring.start_date: method.request.querystring.start_date
+        requestTemplates:
+          application/json: |
+            {
+              "agency": "$util.escapeJavaScript($input.params('agency'))",
+              "start_date": "$util.escapeJavaScript($input.params('start_date'))",
+              "end_date": "$util.escapeJavaScript($input.params('end_date'))",
+              "on_time_range": $input.path('$.on_time_range'),
+              "selected_direction": $input.path('$.selected_direction'),
+              "period": "$util.escapeJavaScript($input.params('period'))",
+              "timeperiod": $input.path('$.timeperiod'),
+              "selected_timeperiod": $input.path('$.selected_timeperiod')
+            }
+        responses:
+          default:
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            statusCode: "200"
+        type: aws
+        uri: $$ARN_LAMBDA_INVOCATION_LATENESS_COLUMN_CHART
+      x-amazon-apigateway-request-validator: body+parameters
+
+  /metrics/travel_time/agg_travel_time:
+    options: $$OPTIONS
+    post:
+      operationId: agg_travel_time
+      parameters:
+        - $ref: "#/components/parameters/agency"
+        - $ref: "#/components/parameters/end_date"
+        - $ref: "#/components/parameters/start_date"
+        - $ref: "#/components/parameters/period"
+      requestBody:
+        $ref: "#/components/requestBodies/Timeperiod"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AggTravelTime"
+          description: 200 response
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+      security:
+        - grid-dynamics-api-authorizer: []
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        passthroughBehavior: when_no_templates
+        requestParameters:
+          integration.request.querystring.agency: method.request.querystring.agency
+          integration.request.querystring.end_date: method.request.querystring.end_date
+          integration.request.querystring.start_date: method.request.querystring.start_date
+          integration.request.querystring.period: method.request.querystring.period
+        requestTemplates:
+          application/json: |
+            {
+              "agency": "$util.escapeJavaScript($input.params('agency'))",
+              "end_date": "$util.escapeJavaScript($input.params('end_date'))",
+              "period": "$util.escapeJavaScript($input.params('period'))",
+              "selected_direction": $input.path('$.selected_direction'),
+              "selected_timeperiod": $input.path('$.selected_timeperiod'),
+              "start_date": "$util.escapeJavaScript($input.params('start_date'))",
+              "timeperiod": $input.path('$.timeperiod')
+            }
+        responses:
+          default:
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            statusCode: "200"
+        type: aws
+        uri: $$ARN_LAMBDA_INVOCATION_AGG_TRAVEL_TIME
+      x-amazon-apigateway-request-validator: body+parameters
+  /metrics/travel_time/agg_travel_time_per_period:
+    options: $$OPTIONS
+    post:
+      operationId: agg_travel_time_per_period
+      parameters:
+        - $ref: "#/components/parameters/agency"
+        - $ref: "#/components/parameters/end_date"
+        - $ref: "#/components/parameters/period"
+        - $ref: "#/components/parameters/start_date"
+        - $ref: "#/components/parameters/route"
+      requestBody:
+        $ref: "#/components/requestBodies/Timeperiod"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AggTravelTimePerPeriod"
+          description: 200 response
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+      security:
+        - grid-dynamics-api-authorizer: []
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        passthroughBehavior: when_no_templates
+        requestParameters:
+          integration.request.querystring.agency: method.request.querystring.agency
+          integration.request.querystring.route: method.request.querystring.route
+          integration.request.querystring.end_date: method.request.querystring.end_date
+          integration.request.querystring.period: method.request.querystring.period
+          integration.request.querystring.start_date: method.request.querystring.start_date
+        requestTemplates:
+          application/json: |
+            {
+              "agency": "$util.escapeJavaScript($input.params('agency'))",
+              "route": "$util.escapeJavaScript($input.params('route'))",
+              "end_date": "$util.escapeJavaScript($input.params('end_date'))",
+              "period": "$util.escapeJavaScript($input.params('period'))",
+              "selected_direction": $input.path('$.selected_direction'),
+              "selected_timeperiod": $input.path('$.selected_timeperiod'),
+              "start_date": "$util.escapeJavaScript($input.params('start_date'))",
+              "timeperiod": $input.path('$.timeperiod')
+            }
+        responses:
+          default:
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            statusCode: "200"
+        type: aws
+        uri: $$ARN_LAMBDA_INVOCATION_AGG_TRAVEL_TIME_PER_PERIOD
+      x-amazon-apigateway-request-validator: body+parameters
+  /metrics/travel_time/agg_travel_time_per_route:
+    options: $$OPTIONS
+    post:
+      operationId: agg_travel_time_per_route
+      parameters:
+        - $ref: "#/components/parameters/agency"
+        - $ref: "#/components/parameters/end_date"
+        - $ref: "#/components/parameters/period"
+        - $ref: "#/components/parameters/route"
+        - $ref: "#/components/parameters/start_date"
+      requestBody:
+        $ref: "#/components/requestBodies/Timeperiod"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AggTravelTimePerRoute"
+          description: 200 response
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+      security:
+        - grid-dynamics-api-authorizer: []
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        passthroughBehavior: when_no_templates
+        requestParameters:
+          integration.request.querystring.agency: method.request.querystring.agency
+          integration.request.querystring.end_date: method.request.querystring.end_date
+          integration.request.querystring.period: method.request.querystring.period
+          integration.request.querystring.route: method.request.querystring.route
+          integration.request.querystring.start_date: method.request.querystring.start_date
+        requestTemplates:
+          application/json: |
+            {
+              "agency": "$util.escapeJavaScript($input.params('agency'))",
+              "end_date": "$util.escapeJavaScript($input.params('end_date'))",
+              "period": "$util.escapeJavaScript($input.params('period'))",
+              "route": "$util.escapeJavaScript($input.params('route'))",
+              "selected_direction": $input.path('$.selected_direction'),
+              "selected_timeperiod": $input.path('$.selected_timeperiod'),
+              "start_date": "$util.escapeJavaScript($input.params('start_date'))",
+              "timeperiod": $input.path('$.timeperiod')
+            }
+        responses:
+          default:
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            statusCode: "200"
+        type: aws
+        uri: $$ARN_LAMBDA_INVOCATION_AGG_TRAVEL_TIME_PER_ROUTE
+      x-amazon-apigateway-request-validator: body+parameters
+  /metrics/travel_time/agg_travel_time_per_route_stop_day:
+    options: $$OPTIONS
+    post:
+      operationId: agg_travel_time_per_route_stop_day
+      parameters:
+        - $ref: "#/components/parameters/agency"
+        - $ref: "#/components/parameters/end_date"
+        - $ref: "#/components/parameters/period"
+        - $ref: "#/components/parameters/route"
+        - $ref: "#/components/parameters/start_date"
+      requestBody:
+        $ref: "#/components/requestBodies/Timeperiod"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AggTravelTimePerRouteStopDay"
+          description: 200 response
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+      security:
+        - grid-dynamics-api-authorizer: []
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        passthroughBehavior: when_no_templates
+        requestParameters:
+          integration.request.querystring.agency: method.request.querystring.agency
+          integration.request.querystring.end_date: method.request.querystring.end_date
+          integration.request.querystring.period: method.request.querystring.period
+          integration.request.querystring.route: method.request.querystring.route
+          integration.request.querystring.start_date: method.request.querystring.start_date
+        requestTemplates:
+          application/json: |
+            {
+              "agency": "$util.escapeJavaScript($input.params('agency'))",
+              "end_date": "$util.escapeJavaScript($input.params('end_date'))",
+              "period": "$util.escapeJavaScript($input.params('period'))",
+              "route": "$util.escapeJavaScript($input.params('route'))",
+              "selected_direction": $input.path('$.selected_direction'),
+              "selected_timeperiod": $input.path('$.selected_timeperiod'),
+              "start_date": "$util.escapeJavaScript($input.params('start_date'))",
+              "timeperiod": $input.path('$.timeperiod')
+            }
+        responses:
+          default:
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            statusCode: "200"
+        type: aws
+        uri: $$ARN_LAMBDA_INVOCATION_AGG_TRAVEL_TIME_PER_ROUTE_STOP_DAY
+      x-amazon-apigateway-request-validator: body+parameters
+  /metrics/travel_time/agg_travel_time_per_route_day:
+    options: $$OPTIONS
+    post:
+      operationId: agg_travel_time_per_route_day
+      parameters:
+        - $ref: "#/components/parameters/agency"
+        - $ref: "#/components/parameters/end_date"
+        - $ref: "#/components/parameters/period"
+        - $ref: "#/components/parameters/route"
+        - $ref: "#/components/parameters/start_date"
+      requestBody:
+        $ref: "#/components/requestBodies/Timeperiod"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AggTravelTimePerRouteDay"
+          description: 200 response
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+      security:
+        - grid-dynamics-api-authorizer: []
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        passthroughBehavior: when_no_templates
+        requestParameters:
+          integration.request.querystring.agency: method.request.querystring.agency
+          integration.request.querystring.end_date: method.request.querystring.end_date
+          integration.request.querystring.period: method.request.querystring.period
+          integration.request.querystring.route: method.request.querystring.route
+          integration.request.querystring.start_date: method.request.querystring.start_date
+        requestTemplates:
+          application/json: |
+            {
+              "agency": "$util.escapeJavaScript($input.params('agency'))",
+              "end_date": "$util.escapeJavaScript($input.params('end_date'))",
+              "period": "$util.escapeJavaScript($input.params('period'))",
+              "route": "$util.escapeJavaScript($input.params('route'))",
+              "selected_direction": $input.path('$.selected_direction'),
+              "selected_timeperiod": $input.path('$.selected_timeperiod'),
+              "start_date": "$util.escapeJavaScript($input.params('start_date'))",
+              "timeperiod": $input.path('$.timeperiod')
+            }
+        responses:
+          default:
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            statusCode: "200"
+        type: aws
+        uri: $$ARN_LAMBDA_INVOCATION_AGG_TRAVEL_TIME_PER_ROUTE_DAY
+      x-amazon-apigateway-request-validator: body+parameters
+  /metrics/travel_time/agg_signal_delay_per_route_intersection:
+    options: $$OPTIONS
+    post:
+      operationId: agg_signal_delay_per_route_intersection
+      parameters:
+        - $ref: "#/components/parameters/agency"
+        - $ref: "#/components/parameters/end_date"
+        - $ref: "#/components/parameters/period"
+        - $ref: "#/components/parameters/route"
+        - $ref: "#/components/parameters/start_date"
+      requestBody:
+        $ref: "#/components/requestBodies/Timeperiod"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AggSignalDelayPerRouteIntersection"
+          description: 200 response
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+      security:
+        - grid-dynamics-api-authorizer: []
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        passthroughBehavior: when_no_templates
+        requestParameters:
+          integration.request.querystring.agency: method.request.querystring.agency
+          integration.request.querystring.end_date: method.request.querystring.end_date
+          integration.request.querystring.period: method.request.querystring.period
+          integration.request.querystring.route: method.request.querystring.route
+          integration.request.querystring.start_date: method.request.querystring.start_date
+        requestTemplates:
+          application/json: |
+            {
+              "agency": "$util.escapeJavaScript($input.params('agency'))",
+              "end_date": "$util.escapeJavaScript($input.params('end_date'))",
+              "period": "$util.escapeJavaScript($input.params('period'))",
+              "route": "$util.escapeJavaScript($input.params('route'))",
+              "selected_direction": $input.path('$.selected_direction'),
+              "selected_timeperiod": $input.path('$.selected_timeperiod'),
+              "start_date": "$util.escapeJavaScript($input.params('start_date'))",
+              "timeperiod": $input.path('$.timeperiod')
+            }
+        responses:
+          default:
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            statusCode: "200"
+        type: aws
+        uri: $$ARN_LAMBDA_INVOCATION_AGG_SIGNAL_DELAY_PER_ROUTE_INTERSECTION
+      x-amazon-apigateway-request-validator: body+parameters
+  /metrics/travel_time/route_intersections:
+    options: $$OPTIONS
+    post:
+      operationId: route_intersections
+      parameters:
+        - $ref: "#/components/parameters/agency"
+        - $ref: "#/components/parameters/end_date"
+        - $ref: "#/components/parameters/route"
+        - $ref: "#/components/parameters/start_date"
+      requestBody:
+        $ref: "#/components/requestBodies/RouteIntersectionsRequestBody"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RouteIntersectionsResponse"
+          description: 200 response
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+      security:
+        - grid-dynamics-api-authorizer: []
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        passthroughBehavior: when_no_templates
+        requestParameters:
+          integration.request.querystring.agency: method.request.querystring.agency
+          integration.request.querystring.end_date: method.request.querystring.end_date
+          integration.request.querystring.route: method.request.querystring.route
+          integration.request.querystring.start_date: method.request.querystring.start_date
+        requestTemplates:
+          application/json: |
+            {
+              "agency": "$util.escapeJavaScript($input.params('agency'))",
+              "end_date": "$util.escapeJavaScript($input.params('end_date'))",
+              "route": "$util.escapeJavaScript($input.params('route'))",
+              "selected_direction": $input.path('$.selected_direction'),
+              "start_date": "$util.escapeJavaScript($input.params('start_date'))"
+            }
+        responses:
+          default:
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            statusCode: "200"
+        type: aws
+        uri: $$ARN_LAMBDA_INVOCATION_ROUTE_INTERSECTIONS
+      x-amazon-apigateway-request-validator: body+parameters
+  /routes_map_data:
+    options: $$OPTIONS
+    post:
+      operationId: routes_map_data
+      parameters:
+        - $ref: "#/components/parameters/agency"
+        - $ref: "#/components/parameters/end_date"
+        - $ref: "#/components/parameters/start_date"
+        - $ref: "#/components/parameters/route"
+      requestBody:
+        $ref: "#/components/requestBodies/MapRequestBody"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoutesMapData"
+          description: 200 response
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+      security:
+        - grid-dynamics-api-authorizer: []
+      x-amazon-apigateway-integration:
+        httpMethod: POST
+        passthroughBehavior: when_no_templates
+        requestParameters:
+          integration.request.querystring.agency: method.request.querystring.agency
+          integration.request.querystring.end_date: method.request.querystring.end_date
+          integration.request.querystring.start_date: method.request.querystring.start_date
+          integration.request.querystring.route: method.request.querystring.route
+        requestTemplates:
+          application/json: |
+            {
+              "agency": "$util.escapeJavaScript($input.params('agency'))",
+              "end_date": "$util.escapeJavaScript($input.params('end_date'))",
+              "selected_direction": $input.path('$.selected_direction'),
+              "start_date": "$util.escapeJavaScript($input.params('start_date'))",
+              "route": "$util.escapeJavaScript($input.params('route'))"
+            }
+        responses:
+          default:
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            statusCode: "200"
+        type: aws
+        uri: $$ARN_LAMBDA_INVOCATION_ROUTES_MAP_DATA
+      x-amazon-apigateway-request-validator: body+parameters
+x-amazon-apigateway-request-validators:
+  body:
+    validateRequestBody: true
+    validateRequestParameters: false
+  body+parameters:
+    validateRequestBody: true
+    validateRequestParameters: true
+  parameters:
+    validateRequestBody: false
+    validateRequestParameters: true

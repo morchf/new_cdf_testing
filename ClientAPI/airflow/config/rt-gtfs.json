@@ -1,0 +1,9 @@
+{
+  "schedule_interval": "@daily",
+  "pattern": [
+    0,
+    1,
+    2,
+    3
+  ]
+}

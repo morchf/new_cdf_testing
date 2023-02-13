@@ -1,0 +1,11 @@
+{
+    "attributes": {
+        "caCertId": "NULL_CERT",
+        "regionGUID": "CEI_EtE_TestRegion"
+    },
+    "category": "group",
+    "templateId": "region",
+    "parentPath": "/",
+    "name": "CEI_EtE_TestRegion",
+    "groupPath": "/CEI_EtE_TestRegion"
+}

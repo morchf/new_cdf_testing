@@ -1,0 +1,6 @@
+[default]
+region = <AWS Region>
+output = <Output Type>
+
+## Provide credentials for AWS account in which CDF is to be installed ##
+## WARNING - DO NOT MAKE SENSITIVE INFORMATION PUBLIC BY PUSHING IT TO GITHUB OR OTHERWISE ##

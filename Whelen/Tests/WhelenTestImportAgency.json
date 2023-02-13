@@ -1,0 +1,19 @@
+{
+  "attributes": {
+    "city": "Whelensville",
+    "state": "CA",
+    "timezone": "Pacific",
+    "agencyCode": 23,
+    "agencyID": "6dee280a-09ce-11ed-87aa-42e419a585ab",
+    "caCertId": "NULL_CA",
+    "vpsCertId": "NULL_CERT",
+    "CMSId": "WhelenTestImportAgency",
+    "priority": "High"
+  },
+  "category": "group",
+  "templateId": "agency",
+  "description": "WhelenTestImportAgency",
+  "parentPath": "/WhelenTestImportRegion",
+  "name": "WhelenTestImportAgency",
+  "groupPath": "/WhelenTestImportRegion/WhelenTestImportAgency"
+}

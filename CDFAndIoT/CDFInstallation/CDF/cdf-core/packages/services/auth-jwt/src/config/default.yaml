@@ -1,0 +1,9 @@
+aws:
+  region: 
+  accountId: 
+  
+token:
+  issuer:
+
+logging:
+  level: debug

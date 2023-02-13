@@ -1,0 +1,25 @@
+{
+  "onTimeRange": ["-6", "6"],
+  "chart": [
+    { "value": "51", "type": "-13" },
+    { "value": "88", "type": "-12" },
+    { "value": "83", "type": "-11" },
+    { "value": "15", "type": "-10" },
+    { "value": "30", "type": "-3" },
+    { "value": "20", "type": "-2" },
+    { "value": "24", "type": "-1" },
+    { "value": "80", "type": "0" },
+    { "value": "71", "type": "1" },
+    { "value": "94", "type": "2" },
+    { "value": "96", "type": "3" },
+    { "value": "83", "type": "4" },
+    { "value": "36", "type": "5" },
+    { "value": "90", "type": "6" },
+    { "value": "48", "type": "7" },
+    { "value": "1", "type": "8" },
+    { "value": "79", "type": "9" },
+    { "value": "27", "type": "10" },
+    { "value": "35", "type": "13" },
+    { "value": "95", "type": "14" }
+  ]
+}

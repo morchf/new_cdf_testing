@@ -1,0 +1,29 @@
+{
+  "groups": {
+    "ownedby": [
+      "/CEI_EtE_TestRegion/CEI_EtE_TestAgencyTwo"
+    ]
+  },
+  "devices": {
+    "installedat": [
+      "/CEI_EtE_TestRegion/CEI_EtE_TestAgencyTwo/CEI_Vehicle_V2"
+    ]
+  },
+  "attributes": {
+    "description": "Created for CDF Config Proofing",
+    "serial": "2100PR0034",
+    "gttSerial": "2100PR0034",
+    "addressMAC": "None",
+    "addressLAN": "0.0.0.0",
+    "addressWAN": "0.0.0.0",
+    "IMEI": "None",
+    "devCertId": "None",
+    "make": "GTT",
+    "model": "2100",
+    "uniqueId": "CEI_EtE_Com"
+  },
+  "category": "device",
+  "templateId": "ceicom",
+  "state": "active",
+  "deviceId": "CEI_EtE_Com"
+}

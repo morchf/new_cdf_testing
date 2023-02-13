@@ -1,0 +1,52 @@
+#map {
+  height: var(--map-height);
+  width: 100%;
+  overflow: hidden;
+}
+
+.ol-zoom {
+  top: unset;
+  left: unset;
+  bottom: 16px;
+  right: 12px;
+}
+
+.ol-control {
+  background-color: #FFFFFF;
+  border-radius: 8px;
+}
+
+.ol-control button {
+  background-color: #1890FF;
+  font-size: 1.3em;
+  height: 1.8em;
+  width: 1.8em;
+}
+
+.ol-control button:hover,
+.ol-control button:focus {
+  background-color: #40A9FF;
+}
+
+.ol-zoom .ol-zoom-in {
+  border-radius: 6px 6px 0 0;
+}
+
+.ol-zoom .ol-zoom-out {
+  border-radius: 0 0 6px 6px;
+}
+
+.ant-skeleton-element {
+  display: block;
+}
+
+.ant-skeleton-element .ant-skeleton-image {
+  display: block;
+  width: auto;
+}
+
+.tooltip-base {
+  background-color: white;
+  padding: 16px 24px;
+  font-size: 12px;
+}

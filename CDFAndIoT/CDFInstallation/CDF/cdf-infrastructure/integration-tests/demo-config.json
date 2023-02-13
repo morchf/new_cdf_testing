@@ -1,0 +1,24 @@
+{
+  "assetLibrary": {
+    "baseUrl": ""
+  },
+  "assetLibraryHistory": {
+    "baseUrl": ""
+  },
+  "commands": {
+      "baseUrl": ""
+  },
+  "provisioning": {
+    "baseUrl": "",
+    "templates": {
+      "bucket": "cdf-957905153352-us-west-2",
+      "prefix": "provisioning/templates/",
+      "suffix": ".json"
+    }
+  },
+  "thing": {
+    "name": "cdf_integration_test",
+    "arn": "arn:aws:iot:us-west-2:957905153352:thing/cdf_integration_test"
+  }
+}
+

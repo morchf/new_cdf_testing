@@ -1,0 +1,29 @@
+{
+    "attributes": {
+        "IMEI": "911323000095958",
+        "gttSerial": "MP70JH7777",
+        "serial": "123456",
+        "addressMAC": "03:22:42:88:02:30",
+        "addressLAN": "10.2.2.114",
+        "addressWAN": "10.2.3.14",
+        "model": "Sierra Wireless",
+        "make": "MP-70",
+        "devCertId": "NULL_CERT",
+        "uniqueId": "NULL_GUID"
+    },
+    "groups": {
+        "ownedby": [
+            "/regUnitTest/agyUnitTest"
+        ]
+    },
+    "devices": {
+        "installedat": [
+            "unitTestVeh"
+        ]
+    },
+    "category": "device",
+    "templateId": "communicator",
+    "description": "modem",
+    "deviceId": "unitTestModem",
+    "state": "active"
+}

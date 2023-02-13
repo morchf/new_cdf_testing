@@ -1,0 +1,36 @@
+{
+  "properties": {
+    "ecmCodes": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "sourceAddress": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "make": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "model": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "relations": {
+    "out": {
+      "installed_in": [
+        "vehicle"
+      ]
+    }
+  },
+  "required": []
+}

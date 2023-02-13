@@ -1,0 +1,40 @@
+.filters-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.filters-container__button {
+  height: 2rem !important;
+}
+
+.filters-container__ok {
+  float: right;
+  margin: 0.5rem 0;
+}
+
+.labeled-select {
+  flex: 1 1 0;
+  margin: 0 8px;
+}
+
+.labeled-select > span {
+  margin-bottom: 8px;
+}
+
+/* Align date range labels */
+.ant-picker-range > .ant-picker-input > input {
+  /* text-align: center; */
+}
+
+/* Remove 'x' on single-value */
+.filters-container__time--single-value .ant-select-selection-item-remove {
+  display: none;
+}
+
+/* Fix height of date picker arrow and icon */
+.ant-picker-separator {
+  display: grid;
+}
+.ant-picker-suffix {
+  display: grid;
+}

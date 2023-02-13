@@ -1,0 +1,13 @@
+{
+    "attributes": {
+        "description": "uniqueness test region",
+        "caCertId": "NULL_CA",
+        "regionGUID": "NULL_GUID",
+        "regionDNS": "0.7.1.9"
+    },
+    "category": "group",
+    "templateId": "region",
+    "parentPath": "/",
+    "name": "ulyss1",
+    "groupPath": "/ulyss1"
+}

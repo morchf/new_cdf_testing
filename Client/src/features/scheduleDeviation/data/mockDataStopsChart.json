@@ -1,0 +1,34 @@
+[
+  {
+    "stopname": "1st & 5th",
+    "lateness": "1"
+  },
+  {
+    "stopname": "1st & 9th",
+    "lateness": "-1"
+  },
+  {
+    "stopname": "1st & 12th",
+    "lateness": "2"
+  },
+  {
+    "stopname": "Well St",
+    "lateness": "0"
+  },
+  {
+    "stopname": "Thames Ave",
+    "lateness": "5"
+  },
+  {
+    "stopname": "Wall St",
+    "lateness": "-3"
+  },
+  {
+    "stopname": "City Centers Extra Long Text for Diagnosing Graph Issues",
+    "lateness": "2"
+  },
+  {
+    "stopname": "35th",
+    "lateness": "1"
+  }
+]

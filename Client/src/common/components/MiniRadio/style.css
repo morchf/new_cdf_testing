@@ -1,0 +1,20 @@
+.mini-radio {
+  gap: 0.5rem;
+  display: flex;
+}
+
+.mini-radio__button {
+  border-radius: 2px !important;
+  border-left-width: 1px;
+  border-right-width: 1px;
+}
+
+.mini-radio__button.ant-radio-button-wrapper-checked {
+  color: #fff;
+  background: #8c8c8c !important;
+  border-color: #595959 !important;
+}
+
+.mini-radio__button::before {
+  display: none !important;
+}

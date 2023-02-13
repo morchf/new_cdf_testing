@@ -1,0 +1,21 @@
+{
+    "schedule_interval": "@daily",
+    "job_flow_overrides": {},
+    "pattern": [
+        0,
+        1,
+        2,
+        3
+    ],
+    "metrics": [
+        "lateness",
+        "travel-time",
+        "signal-delay",
+        "metrics-route-to-intersection"
+    ],
+    "input_bucket_trip_data": "s3a://backup-gtt-etl-data-dev/sfmta-etl-data/CVP/TRIPDATAS/PARTITION/date_ran=",
+    "input_bucket_trip_log": "s3a://backup-gtt-etl-data-dev/sfmta-etl-data/CVP/TRIPLOGS/PARTITION/date_ran=",
+    "input_bucket_opticom_log": "s3a://backup-gtt-etl-data-dev/sfmta-etl-data/CMS/OPTICOMDEVICELOG/PARTITION/starttime=",
+    "input_bucket_device_config": "s3a://backup-gtt-etl-data-dev/sfmta-etl-data/CMS/DEVICECONFIGURATION/PARTITION/date_ran=",
+    "input_bucket_intersection_status_report": "s3a://backup-gtt-etl-data-dev/sfmta-etl-data/CMS/INTERSECTIONSTATUSREPORT/PARTITION/date_ran="
+}

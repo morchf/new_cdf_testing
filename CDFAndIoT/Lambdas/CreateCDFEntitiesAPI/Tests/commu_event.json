@@ -1,0 +1,27 @@
+{
+    "body": {
+        "groups": {
+            "ownedby": [
+                "/zoe_reg/zoe_agy"
+            ]
+        },
+        "attributes": {
+            "serial": "123456",
+            "gttSerial": "MP70io6524zoe",
+            "addressMAC": "",
+            "addressLAN": "10.1.1.0",
+            "addressWAN": "10.1.1.20",
+            "IMEI": "",
+            "devCertId": "NULL_CERT",
+            "make": "GTT",
+            "model": "2100",
+            "uniqueId": "NULL_GUID"
+        },
+        "category": "device",
+        "templateId": "communicator",
+        "description": "modem",
+        "state": "active",
+        "deviceId": "zoe_2100",
+        "vehicle": "zoe_veh"
+    }
+}

@@ -1,0 +1,12 @@
+{
+  "neptuneUrl": "",
+  "aws": {
+    "iot": {
+      "endpoint": ""
+    }
+  },
+  "cors": {
+    "origin": "*"
+  },
+  "mode": "full"
+}

@@ -1,0 +1,1103 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: "AWS::Serverless-2016-10-31"
+Description: Lambdas
+
+Metadata:
+  cfn-lint:
+    config:
+      ignore_checks:
+        - I3042
+
+Parameters:
+  CoreName:
+    Type: String
+    Default: UIPipeline
+    Description: Base name for UI resources
+
+  CDFIoTCertificatesS3:
+    Type: String
+    Description: S3 bucket for storing IoT and CDF certificates
+
+  CertARN:
+    Type: String
+    Description: ARN of the certificate to be used by UI CDN
+
+  CDFAPIARN:
+    Type: String
+    Description: CDF Asset Library API endpoint required by the UI
+
+  UIDomain:
+    Type: String
+    Description: URL to access the UI
+
+  CognitoDomain:
+    Type: String
+    Description: Domain name for Cognito
+
+  HostedZoneName:
+    Type: String
+    Description: Route53 Hosted Zone name
+
+  CallbackURL:
+    Type: String
+    Description: Cognito callback URL for the UI
+
+  LogoutURL:
+    Type: String
+    Description: Cognito logout URL for the UI
+
+  Env:
+    Type: String
+    AllowedValues:
+      - develop
+      - test
+      - production
+      - pilot
+    Description: "Environment in which the deployment is happening. Allowed values: develop, test, production, or pilot"
+
+Resources:
+  ################ UI Backend Components ###################
+
+  BatchNotificationSns:
+    Type: AWS::SNS::Topic
+    Properties:
+      DisplayName: "CDF Entities Batch Creation Report"
+      TopicName: CDFEntitiesBatchReport
+
+  CreateBatchLambdaSnsPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:invokeFunction
+      FunctionName: !GetAtt "CreateCDFEntitiesBatchAPI.Arn"
+      Principal: sns.amazonaws.com
+      SourceArn: !Sub arn:aws:sns:${AWS::Region}:${AWS::AccountId}:*
+
+  CreateBatchLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:invokeFunction
+      FunctionName: !GetAtt "CreateCDFEntitiesBatchAPI.Arn"
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${LambdaAPIGateway}/*"
+
+  CreateLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:invokeFunction
+      FunctionName:
+        Fn::GetAtt: [CreateCDFEntitiesAPI, Arn]
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Sub: arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${LambdaAPIGateway}/*
+
+  DeleteLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:invokeFunction
+      FunctionName:
+        Fn::GetAtt: [DeleteCDFEntitiesAPI, Arn]
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${LambdaAPIGateway}/*
+
+  UpdateLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:invokeFunction
+      FunctionName:
+        Fn::GetAtt: [UpdateCDFEntitiesAPI, Arn]
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${LambdaAPIGateway}/*
+
+  GetLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:invokeFunction
+      FunctionName:
+        Fn::GetAtt: [GetCDFEntitiesAPI, Arn]
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${LambdaAPIGateway}/*
+
+  AllowUIAPIAccess:
+    Type: "AWS::IAM::ManagedPolicy"
+    Properties:
+      ManagedPolicyName: AllowUIAPIAccess
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - "execute-api:Invoke"
+              - "execute-api:ManageConnections"
+            Resource: !Sub "arn:${AWS::Partition}:execute-api:us-east-1:${AWS::AccountId}:*"
+
+  AllowUIAPIInvoke:
+    Type: "AWS::IAM::ManagedPolicy"
+    Properties:
+      ManagedPolicyName: AllowUIAPIInvoke
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - "lambda:InvokeFunction"
+            Resource: !Sub "arn:${AWS::Partition}:lambda:us-east-1:${AWS::AccountId}:function:cdf-assetlibrary-stage-LambdaFunction*"
+  AllowApiDeploymentAccess:
+    Type: "AWS::IAM::ManagedPolicy"
+    Properties:
+      ManagedPolicyName: AllowApiDeploymentAccess
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - "codepipeline:PutJobFailureResult"
+              - "codepipeline:PutJobSuccessResult"
+            Resource: "*"
+          - Effect: Allow
+            Action:
+              - "apigateway:*"
+            Resource: !Sub "arn:aws:apigateway:${AWS::Region}::/restapis/${LambdaAPIGateway}/*"
+  AllowUIParameterStoreAccess:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      ManagedPolicyName: AllowUIParameterStoreAccess
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'ssm:GetParameter'
+            Resource: !Sub 'arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:parameter/SW-API-*'
+
+  DeleteCDFEntitiesAPIRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: DeleteCDFEntitiesAPI
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - !Ref "AllowUIAPIAccess"
+        - !Ref "AllowUIAPIInvoke"
+      Policies:
+        - PolicyName: DeleteCDFPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "s3:GetObject"
+                  - "s3:ListBucket"
+                  - "s3:DeleteObject"
+                Resource:
+                  "*"
+                  # - !Sub ${CDFCertStore.Arn}/*
+                  # - !GetAtt CDFCertStore.Arn
+              - Effect: Allow
+                Action:
+                  - "execute-api:Invoke"
+                  - "execute-api:ManageConnections"
+                Resource: !Sub "arn:${AWS::Partition}:execute-api:us-east-1:${AWS::AccountId}:cdf-assetlibrary-stage/*/*/*"
+              - Effect: Allow
+                Action:
+                  - "iot:*"
+                Resource: "*"
+  
+  APIDeploymentRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: APIDeploymentRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - !Ref "AllowApiDeploymentAccess"
+
+  CreateCDFEntitiesBatchAPIRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: CreateCDFEntitiesBatchAPI
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - !Ref "AllowUIAPIAccess"
+        - !Ref "AllowUIAPIInvoke"
+      Policies:
+        - PolicyName: QueueJobCreateInfrastructure
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "sqs:*"
+                Resource: !Sub "arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:*"
+              - Effect: Allow
+                Action:
+                  - "sns:*"
+                Resource: !Sub "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:*"
+              - Effect: Allow
+                Action:
+                  - "cloudwatch:*"
+                Resource: !Sub "arn:aws:cloudwatch:${AWS::Region}:${AWS::AccountId}:*"
+              - Effect: Allow
+                Action:
+                  - "lambda:UpdateEventSourceMapping"
+                  - "lambda:GetEventSourceMapping"
+                  - "lambda:ListEventSourceMappings"
+                  - "lambda:CreateEventSourceMapping"
+                  - "lambda:DeleteEventSourceMapping"
+                Resource: "*"
+
+  CreateCDFEntitiesAPIRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: CreateCDFEntitiesAPI
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - !Ref "AllowUIAPIAccess"
+        - !Ref "AllowUIAPIInvoke"
+        - !Ref "AllowUIParameterStoreAccess"
+      Policies:
+        - PolicyName: PopulateCDFPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "s3:GetObject"
+                  - "s3:PutObject"
+                  - "s3:ListBucket"
+                Resource: !Sub "arn:${AWS::Partition}:s3:::*/*"
+                #Resource:  !Sub ${CDFCertStore.Arn}/*
+              - Effect: Allow
+                Action:
+                  - "iot:RegisterThing"
+                  - "iot:RegisterCACertificate"
+                  - "iot:CreateThing"
+                  - "iot:GetPolicy"
+                  - "iot:AttachPolicy"
+                  - "iot:AttachThingPrincipal"
+                  - "iot:RegisterCertificateWithoutCA"
+                  - "iot:DescribeThing"
+                  - "iot:GetRegistrationCode"
+                  - "iot:RegisterCertificate"
+                  - "iot:ListPolicies"
+                  - "iot:CreatePolicy"
+                  - "iot:ListThings"
+                  - "iot:ListCACertificates"
+                  - "iot:DescribeCertificate"
+                  - "iot:UpdateCACertificate"
+                  - "iot:AcceptCertificateTransfer"
+                  - "iot:DescribeCACertificate"
+                  - "iot:TransferCertificate"
+                  - "iot:UpdateCertificate"
+                  - "iot:ListCertificates"
+                Resource: "*"
+              - Action:
+                  - "sqs:SendMessage"
+                  - "sqs:ReceiveMessage"
+                  - "sqs:DeleteMessage"
+                  - "sqs:GetQueueAttributes"
+                Effect: Allow
+                Resource: "*"
+
+  UpdateCDFEntitiesAPIRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: UpdateCDFEntitiesAPI
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - !Ref "AllowUIAPIAccess"
+        - !Ref "AllowUIAPIInvoke"
+      Policies:
+        - PolicyName: PopulateCDFPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "s3:GetObject"
+                  - "s3:PutObject"
+                  - "s3:ListBucket"
+                Resource: !Sub "arn:${AWS::Partition}:s3:::*/*"
+                #Resource:  !Sub ${CDFCertStore.Arn}/*
+              - Effect: Allow
+                Action:
+                  - "iot:RegisterThing"
+                  - "iot:RegisterCACertificate"
+                  - "iot:CreateThing"
+                  - "iot:GetPolicy"
+                  - "iot:AttachPolicy"
+                  - "iot:AttachThingPrincipal"
+                  - "iot:RegisterCertificateWithoutCA"
+                  - "iot:DescribeThing"
+                  - "iot:GetRegistrationCode"
+                  - "iot:RegisterCertificate"
+                  - "iot:ListPolicies"
+                  - "iot:CreatePolicy"
+                  - "iot:ListThings"
+                  - "iot:ListCACertificates"
+                  - "iot:DescribeCertificate"
+                  - "iot:UpdateCACertificate"
+                  - "iot:AcceptCertificateTransfer"
+                  - "iot:DescribeCACertificate"
+                  - "iot:TransferCertificate"
+                  - "iot:UpdateCertificate"
+                  - "iot:ListCertificates"
+                Resource: "*"
+        - PolicyName: SQSAccessPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - sqs:SendMessage
+                  - sqs:GetQueueAttributes
+                Resource: !GetAtt DeleteFromCacheQueue.Arn
+
+  GetCDFEntitiesAPIRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: GetCDFEntitiesAPI
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - !Ref "AllowUIAPIAccess"
+        - !Ref "AllowUIAPIInvoke"
+      Policies:
+        - PolicyName: PopulateCDFPolicy # TODO narrow policy to list/read only
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "s3:GetObject"
+                  - "s3:PutObject"
+                  - "s3:ListBucket"
+                Resource: !Sub "arn:${AWS::Partition}:s3:::*/*"
+                #Resource:  !Sub ${CDFCertStore.Arn}/*
+              - Effect: Allow
+                Action:
+                  - "iot:RegisterThing"
+                  - "iot:RegisterCACertificate"
+                  - "iot:CreateThing"
+                  - "iot:GetPolicy"
+                  - "iot:AttachPolicy"
+                  - "iot:AttachThingPrincipal"
+                  - "iot:RegisterCertificateWithoutCA"
+                  - "iot:DescribeThing"
+                  - "iot:GetRegistrationCode"
+                  - "iot:RegisterCertificate"
+                  - "iot:ListPolicies"
+                  - "iot:CreatePolicy"
+                  - "iot:ListThings"
+                  - "iot:ListCACertificates"
+                  - "iot:DescribeCertificate"
+                  - "iot:UpdateCACertificate"
+                  - "iot:AcceptCertificateTransfer"
+                  - "iot:DescribeCACertificate"
+                  - "iot:TransferCertificate"
+                  - "iot:UpdateCertificate"
+                  - "iot:ListCertificates"
+                Resource: "*"
+
+  CreateCDFEntitiesBatchAPI:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      FunctionName: CreateCDFEntitiesBatchAPI
+      Handler: app.lambda_handler
+      Runtime: python3.7
+      CodeUri: ./../../CDFAndIoT/Lambdas/CreateCDFEntitiesBatchAPI/LambdaCode
+      Description: "From a CSV, create specified entities in CDF and their certs in IoT Core though the UI"
+      MemorySize: 128
+      Timeout: 30
+      Role: !GetAtt CreateCDFEntitiesBatchAPIRole.Arn
+      Layers:
+        - !Ref CDFLayer
+      Environment:
+        Variables:
+          LAMBDA_HANDLER_ARN: !GetAtt CreateCDFEntitiesAPI.Arn
+          SNS_REPORT_TOPIC_ARN: !Ref BatchNotificationSns
+          
+  APIDeploymentLambda:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      FunctionName: APIDeployment
+      Handler: ApiDeployment.lambda_handler
+      Runtime: python3.8
+      CodeUri: ./../../CDFAndIoT/Lambdas/ApiDeployment/LambdaCode
+      Description: "Deploy API Gateway"
+      MemorySize: 128
+      Timeout: 5
+      Role: !GetAtt 'APIDeploymentRole.Arn'
+      Layers:
+        - !Ref CDFLayer
+      Environment:
+        Variables:
+          STAGE_NAME: !Sub ${Env}
+          REST_API_ID: !Ref LambdaAPIGateway
+
+  CreateCDFEntitiesAPI:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      FunctionName: CreateCDFEntitiesAPI
+      Handler: CreateCDFEntitiesAPI.lambda_handler
+      Runtime: python3.7
+      CodeUri: ./../../CDFAndIoT/Lambdas/CreateCDFEntitiesAPI/LambdaCode
+      Description: "Create specified entities in CDF and their certs in IoT Core though the UI"
+      MemorySize: 700 # Updating memory size of lambda function for resolving the list_devices timeout.
+      Timeout: 60
+      Role: !GetAtt CreateCDFEntitiesAPIRole.Arn
+      Layers:
+        - !Ref CDFLayer
+      Environment:
+        Variables:
+          CDF_URL: !Ref CDFAPIARN
+          CERT_BKT: !Ref CDFIoTCertificatesS3
+
+  DeleteCDFEntitiesAPI:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      FunctionName: DeleteCDFEntitiesAPI
+      Handler: DeleteCDFEntitiesAPI.lambda_handler
+      Runtime: python3.7
+      CodeUri: ./../../CDFAndIoT/Lambdas/DeleteCDFEntitiesAPI/LambdaCode
+      Description: "Delete specified entities in CDF and their certs in IoT Core though the UI"
+      MemorySize: 128
+      Timeout: 30
+      Role: !GetAtt DeleteCDFEntitiesAPIRole.Arn
+      Layers:
+        - !Ref CDFLayer
+      Environment:
+        Variables:
+          CDF_URL: !Ref CDFAPIARN
+          CERT_BKT: !Ref CDFIoTCertificatesS3
+
+  UpdateCDFEntitiesAPI:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      FunctionName: UpdateCDFEntitiesAPI
+      Handler: UpdateCDFEntitiesAPI.lambda_handler
+      Runtime: python3.7
+      CodeUri: ./../../CDFAndIoT/Lambdas/UpdateCDFEntitiesAPI/LambdaCode
+      Description: "Update specified entities in the asset lib though the UI"
+      MemorySize: 700 # Updating memory size of lambda function for resolving the list_devices timeout.
+      Timeout: 30
+      Role: !GetAtt UpdateCDFEntitiesAPIRole.Arn
+      Layers:
+        - !Ref CDFLayer
+      Environment:
+        Variables:
+          CDF_URL: !Ref CDFAPIARN
+          CERT_BKT: !Ref CDFIoTCertificatesS3
+          DeleteFromCacheQueueURL: !Ref DeleteFromCacheQueue
+
+  GetCDFEntitiesAPI:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      FunctionName: GetCDFEntitiesAPI
+      Handler: GetCDFEntitiesAPI.lambda_handler
+      Runtime: python3.7
+      CodeUri: ./../../CDFAndIoT/Lambdas/GetCDFEntitiesAPI/LambdaCode
+      Description: "Get specified entities in the asset lib though the UI"
+      MemorySize: 128
+      Timeout: 30
+      Role: !GetAtt GetCDFEntitiesAPIRole.Arn
+      Layers:
+        - !Ref CDFLayer
+      Environment:
+        Variables:
+          CDF_URL: !Ref CDFAPIARN
+          CERT_BKT: !Ref CDFIoTCertificatesS3
+
+  APIGatewayCloudWatchLogsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: apigateway.amazonaws.com
+          Action: sts:AssumeRole
+      Policies:
+        - PolicyName: APIGatewayCloudWatchLogsPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              Effect: Allow
+              Action:
+                - logs:CreateLogGroup
+                - logs:CreateLogStream
+                - logs:DescribeLogGroups
+                - logs:DescribeLogStreams
+                - logs:PutLogEvents
+                - logs:GetLogEvents
+                - logs:FilterLogEvents
+              Resource: "*"
+
+  LambdaAPIGateway:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: !Sub ManageCDFEntitiesUI-${Env}
+      FailOnWarnings: true
+      BinaryMediaTypes:
+        # Encoded CSV/Excel files
+        - multipart/form-data
+
+  UserPoolApiAuthorizer:
+    Type: AWS::ApiGateway::Authorizer
+    Properties:
+      AuthorizerResultTtlInSeconds: 300 # (max 3600 = 1hr)
+      IdentitySource: method.request.header.Authorization
+      # Any call to the api must include the 'Authorization' header which includes token.
+      Name: Cognito
+      ProviderARNs:
+        - !GetAtt UserPool.Arn
+      RestApiId: !Ref LambdaAPIGateway
+      Type: COGNITO_USER_POOLS
+
+  ManageEntitiesResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !GetAtt "LambdaAPIGateway.RootResourceId"
+      PathPart: cdf
+      RestApiId: !Ref LambdaAPIGateway
+
+  ManageEntitiesBatchResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !GetAtt "LambdaAPIGateway.RootResourceId"
+      PathPart: cdf-batch
+      RestApiId: !Ref LambdaAPIGateway
+
+  CreateEntitiesBatchRequest:
+    DependsOn: CreateBatchLambdaPermission
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: COGNITO_USER_POOLS
+      AuthorizerId: !Ref UserPoolApiAuthorizer
+      HttpMethod: POST
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateCDFEntitiesBatchAPI.Arn}/invocations
+      ResourceId: !Ref ManageEntitiesBatchResource
+      RestApiId: !Ref LambdaAPIGateway
+      MethodResponses:
+        - ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+          StatusCode: "200"
+        - StatusCode: "400"
+
+  CreateEntitiesBatchOptionsRequest:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: OPTIONS
+      RestApiId: !Ref LambdaAPIGateway
+      ResourceId: !Ref ManageEntitiesBatchResource
+      Integration:
+        Type: MOCK
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,Accept,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'PUT,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            ResponseTemplates:
+              application/json: ""
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: '{"statusCode": 200}'
+      MethodResponses:
+        - ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+          StatusCode: "200"
+          ResponseModels:
+            application/json: "Empty"
+
+  CreateEntitiesRequest:
+    DependsOn: CreateLambdaPermission
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: COGNITO_USER_POOLS
+      AuthorizerId: !Ref UserPoolApiAuthorizer
+      HttpMethod: POST
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateCDFEntitiesAPI.Arn}/invocations
+      ResourceId: !Ref ManageEntitiesResource
+      RestApiId: !Ref LambdaAPIGateway
+      MethodResponses:
+        - ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+          StatusCode: "200"
+        - StatusCode: "400"
+
+  DeleteEntitiesRequest:
+    DependsOn: DeleteLambdaPermission
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: COGNITO_USER_POOLS
+      AuthorizerId: !Ref UserPoolApiAuthorizer
+      HttpMethod: DELETE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DeleteCDFEntitiesAPI.Arn}/invocations
+      ResourceId: !Ref ManageEntitiesResource
+      RestApiId: !Ref LambdaAPIGateway
+      MethodResponses:
+        - ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+          StatusCode: "200"
+        - StatusCode: "400"
+
+  UpdateEntitiesRequest:
+    DependsOn: UpdateLambdaPermission
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: COGNITO_USER_POOLS
+      AuthorizerId: !Ref UserPoolApiAuthorizer
+      HttpMethod: PUT
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${UpdateCDFEntitiesAPI.Arn}/invocations
+      ResourceId: !Ref ManageEntitiesResource
+      RestApiId: !Ref LambdaAPIGateway
+      MethodResponses:
+        - ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+          StatusCode: "200"
+        - StatusCode: "400"
+
+  GetEntitiesRequest:
+    DependsOn: GetLambdaPermission
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: COGNITO_USER_POOLS
+      AuthorizerId: !Ref UserPoolApiAuthorizer
+      HttpMethod: GET
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetCDFEntitiesAPI.Arn}/invocations
+      ResourceId: !Ref ManageEntitiesResource
+      RestApiId: !Ref LambdaAPIGateway
+      MethodResponses:
+        - ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+          StatusCode: "200"
+        - StatusCode: "400"
+
+  OptionsMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: OPTIONS
+      RestApiId: !Ref LambdaAPIGateway
+      ResourceId: !Ref ManageEntitiesResource
+      Integration:
+        Type: MOCK
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,POST,DELETE,PUT,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            ResponseTemplates:
+              application/json: ""
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: '{"statusCode": 200}'
+      MethodResponses:
+        - ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: false
+            method.response.header.Access-Control-Allow-Methods: false
+            method.response.header.Access-Control-Allow-Origin: false
+          StatusCode: "200"
+          ResponseModels:
+            application/json: "Empty"
+
+  APIDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn:
+      - CreateEntitiesBatchRequest
+      - CreateEntitiesBatchOptionsRequest
+      - CreateEntitiesRequest
+      - DeleteEntitiesRequest
+      - UpdateEntitiesRequest
+      - GetEntitiesRequest
+      - OptionsMethod
+    Properties:
+      RestApiId: !Ref LambdaAPIGateway
+      StageName: !Sub ${Env}
+
+  ################ UI Frontend Components ###################
+
+  ManageCDFEntitiesUI:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub manage-cdf-entities-ui-${Env}
+      WebsiteConfiguration:
+        ErrorDocument: index.html
+        IndexDocument: index.html
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: FALSE
+        BlockPublicPolicy: FALSE
+        IgnorePublicAcls: FALSE
+        RestrictPublicBuckets: FALSE
+
+  ManageCDFEntitiesUIPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket:
+        Ref: ManageCDFEntitiesUI
+      PolicyDocument:
+        Statement:
+          - Effect: "Allow"
+            Action: "s3:GetObject"
+            Resource: !Sub ${ManageCDFEntitiesUI.Arn}/*
+            Principal: "*"
+
+  CloudfrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Aliases:
+          - !Ref UIDomain
+        DefaultCacheBehavior:
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
+          TargetOriginId: !Sub ${ManageCDFEntitiesUI}-checkid
+          ViewerProtocolPolicy: redirect-to-https
+        Enabled: TRUE
+        HttpVersion: http2
+        Origins:
+          # Note: Requires dynamic reference. s3 website endpoint (WebsiteURL) format varies by region.
+          - DomainName:
+              !Select [1, !Split ["//", !GetAtt ManageCDFEntitiesUI.WebsiteURL]]
+            Id: !Sub ${ManageCDFEntitiesUI}-checkid
+            CustomOriginConfig:
+              OriginProtocolPolicy: http-only
+        ViewerCertificate:
+          AcmCertificateArn: !Ref CertARN
+          # Note: CloudFront only supports ACM certificates in the US East (N. Virginia) Region (us-east-1).
+          MinimumProtocolVersion: TLSv1.2_2019
+          SslSupportMethod: sni-only
+        CustomErrorResponses:
+          - ErrorCode: 404
+            ErrorCachingMinTTL: 2
+            ResponseCode: 200
+            ResponsePagePath: "/index.html"
+
+  R53RecordSet:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      AliasTarget:
+        DNSName: !GetAtt CloudfrontDistribution.DomainName
+        # Constant value if the target is a cloudfront distributions
+        HostedZoneId: Z2FDTNDATAQYW2
+      HostedZoneName: !Ref HostedZoneName
+      Name: !Ref UIDomain
+      Type: A
+
+  ################ Cognito Components ###################
+
+  CognitoUserPoolMfaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Description: Allows Cognito User Pool to publish SNS topic to trigger SMS event
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - cognito-idp.amazonaws.com
+            Action:
+              - "sts:AssumeRole"
+            Condition:
+              StringEquals:
+                "sts:ExternalId": !Ref AWS::AccountId
+      Policies:
+        - PolicyName: CognitoUserPooolSmsMfa
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "sns:publish"
+                Resource: "*"
+
+  UserPool:
+    Type: AWS::Cognito::UserPool
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties:
+      AccountRecoverySetting:
+        RecoveryMechanisms:
+          - Name: verified_email
+            Priority: 1
+      AdminCreateUserConfig:
+        AllowAdminCreateUserOnly: true
+      AliasAttributes:
+        - preferred_username
+        - email
+      AutoVerifiedAttributes:
+        - email
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: true
+          RequireUppercase: true
+          TemporaryPasswordValidityDays: 8
+      # Schema objects cannot be deleted once user pool has been created and added only if 'custom' attribute
+      Schema:
+        - Name: email
+          Required: true
+        - Name: name
+          Required: false
+          Mutable: true
+        - Name: admin
+          AttributeDataType: Boolean
+          Mutable: true
+        - Name: region
+          AttributeDataType: String
+          Mutable: true
+        - Name: agency
+          AttributeDataType: String
+          Mutable: true
+        - Name: agencyGUID
+          AttributeDataType: String
+          Mutable: true
+      UsernameConfiguration:
+        CaseSensitive: true
+      UserPoolName: !Sub UIUserPool-${Env}
+      MfaConfiguration: OPTIONAL
+      EnabledMfas:
+        - SMS_MFA
+      SmsConfiguration:
+        ExternalId: !Ref AWS::AccountId
+        SnsCallerArn: !GetAtt CognitoUserPoolMfaRole.Arn
+
+  # With this user pool configuration:
+  # New users must be created by an admin w aws account. Admin enters an email address and a temp password.
+  # Cognito automatically sends a message to the user's email address with email address as username and temp password.
+  # Users are forced to change their temp password during initial sign in.
+  # The password policy is set to the default.
+
+  UserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties:
+      UserPoolId: !Ref UserPool
+      Domain: !Ref CognitoDomain
+
+  # With this domain configuration, if CertificateArn is not provided, this name will become a
+  # subdomain of the default domain auth.<region>.amazoncognito.com.
+  # Stack deployment will fail if the prefix is not unique!
+
+  UserPoolScpClient:
+    Type: "AWS::Cognito::UserPoolClient"
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties:
+      ClientName: UserPoolScpClient
+      GenerateSecret: false
+      UserPoolId: !Ref UserPool
+      AllowedOAuthFlowsUserPoolClient: true
+      PreventUserExistenceErrors: ENABLED
+      AllowedOAuthFlows:
+        - code
+      AllowedOAuthScopes:
+        - openid
+        - aws.cognito.signin.user.admin
+      SupportedIdentityProviders:
+        - COGNITO
+      CallbackURLs:
+        - !Ref CallbackURL
+      LogoutURLs:
+        - !Ref LogoutURL
+      TokenValidityUnits:
+        AccessToken: "minutes"
+        IdToken: "minutes"
+        RefreshToken: "hours"
+      AccessTokenValidity: 15
+      IdTokenValidity: 15
+      RefreshTokenValidity: 8
+
+  ################ Delete Dynamo Cache Components ###################
+
+  DeleteFromCacheQueue:
+    Type: AWS::SQS::Queue
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties:
+      FifoQueue: true
+      ContentBasedDeduplication: true
+
+  AllowDynamoDBAccessDelete:
+    Type: "AWS::IAM::ManagedPolicy"
+    Properties:
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - "dynamodb:GetItem"
+              - "dynamodb:DeleteItem"
+            Resource: !Sub "arn:${AWS::Partition}:dynamodb:us-east-1:${AWS::AccountId}:table/CachingTable"
+
+  DeleteFromCacheRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - !Ref "AllowDynamoDBAccessDelete"
+      Policies:
+        - PolicyName: SQSAccessPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - sqs:ReceiveMessage
+                  - sqs:DeleteMessage
+                  - sqs:GetQueueAttributes
+                Resource: !GetAtt DeleteFromCacheQueue.Arn
+
+  CDFLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      CompatibleRuntimes:
+        - python3.7
+        - python3.8
+      ContentUri: ./../../CDFAndIoT/Lambdas/LambdaLayers/CDFLambdaLayer/CDFLambdaLayer.zip
+      Description: "Layer containing CDF library and dependencies"
+      LayerName: !Sub CDFLayer-${CoreName}
+      RetentionPolicy: Delete
+
+  DeleteFromCache:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      FunctionName: DeleteFromCache
+      Handler: DeleteFromCache.lambda_handler
+      Runtime: python3.8
+      CodeUri: ./../../CDFAndIoT/Lambdas/DeleteFromCache/LambdaCode
+      Description: "Invalidate the cache item for a device when its properties in CDF change"
+      MemorySize: 128
+      Timeout: 30
+      Role: !GetAtt "DeleteFromCacheRole.Arn"
+      Layers:
+        - !Ref CDFLayer
+
+  LambdaFunctionEventSourceMapping:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      BatchSize: 10
+      Enabled: true
+      EventSourceArn: !GetAtt DeleteFromCacheQueue.Arn
+      FunctionName: !Ref DeleteFromCache
+
+Outputs:
+  Env:
+    Description: "Environment in which the deployment is happening. Allowed values: develop, test, production, or pilot"
+    Value: !Sub ${Env}
+  AWSRegion:
+    Description: "Region in which the deployment is happening"
+    Value: !Sub ${AWS::Region}
+  UIAPIARN:
+    Description: "UI API endpoint created in the stack and required by UI frontend"
+    Value: !Sub https://${LambdaAPIGateway}.execute-api.us-east-1.amazonaws.com/${Env}
+  CDFAPIARN:
+    Description: "CDF Asset Library API endpoint required by the UI"
+    Value: !Sub ${CDFAPIARN}
+  CognitoUserPoolID:
+    Description: ID of the Cognito user pool
+    Value: !Ref UserPool
+  CognitoUserPoolClientID:
+    Description: ID of the Cognito user pool client
+    Value: !Ref UserPoolScpClient
+  CognitoUserPoolDomain:
+    Description: Cognito user pool app integration domain
+    Value: !Ref UserPoolDomain
+  CallbackURL:
+    Description: Cognito callback URL for the UI
+    Value: !Ref CallbackURL
+  LogoutURL:
+    Description: Cognito logout URL for the UI
+    Value: !Ref LogoutURL
+  UIDomain:
+    Description: URL to access the UI
+    Value: !Ref UIDomain
+  DeleteFromCacheQueueURL:
+    Description: URL to access DeleteFromCacheQueue SQS queue
+    Value: !Ref DeleteFromCacheQueue

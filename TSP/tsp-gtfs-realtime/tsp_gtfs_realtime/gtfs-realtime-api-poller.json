@@ -1,0 +1,11 @@
+{
+  "location": "Union City, CA, US",
+  "terms_of_service": "https://uctransit.info/",
+  "max_polling_rate": null,
+  "developer_resources": "https://uctransit.info/",
+  "additional_api": false,
+  "vehicle_positions_url": "http://uctransit.info/gtfs-rt/vehiclepositions",
+  "trip_updates_url": "http://uctransit.info/gtfs-rt/tripupdates",
+  "alerts_url": "http://uctransit.info/gtfs-rt/alerts",
+  "vehicle_id_field": "label"
+}

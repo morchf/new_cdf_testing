@@ -1,0 +1,3 @@
+DROP MATERIALIZED VIEW mv_signal_delay CASCADE;
+DROP MATERIALIZED VIEW mv_intersections CASCADE;
+DROP MATERIALIZED VIEW mv_intersection_dates CASCADE;

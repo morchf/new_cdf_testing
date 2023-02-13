@@ -1,0 +1,84 @@
+{
+    "globalMacVps": [
+        {
+            "macCode": 224754296422630,
+            "primaryKey": 11111,
+            "VPS": "V764HKMS0230"
+        },
+        {
+            "customerName": "DALLAS",
+            "deviceStatus": "ACTIVE",
+            "GTTmac": "CC:69:B0:00:00:BF",
+            "markToDelete": "NO",
+            "primaryKey": 224754296422591,
+            "serverName": "DALLAS1",
+            "VPS": "V764DAMS0191",
+            "vpsAvailability": "AVAILABLE"
+        },
+        {
+            "customerName": "DALLAS",
+            "deviceStatus": "ACTIVE",
+            "GTTmac": "CC:69:B0:00:00:C0",
+            "markToDelete": "NO",
+            "primaryKey": 224754296422592,
+            "serverName": "DALLAS1",
+            "VPS": "V764DAMS0192",
+            "vpsAvailability": "AVAILABLE"
+        },
+        {
+            "customerName": "DALLAS",
+            "deviceStatus": "ACTIVE",
+            "GTTmac": "CC:69:B0:00:00:C3",
+            "markToDelete": "NO",
+            "primaryKey": 224754296422595,
+            "serverName": "DALLAS1",
+            "VPS": "V764DAMS0195",
+            "vpsAvailability": "AVAILABLE"
+        },
+        {
+            "customerName": "Woodbury",
+            "deviceStatus": "ACTIVE",
+            "dockerFinished": "0001-01-01T00:00:00Z",
+            "dockerImage": "083011521439.dkr.ecr.us-east-1.amazonaws.com/smartcity",
+            "dockerInstanceID": "i-005d5111965601b24",
+            "dockerIP": "172.31.80.6",
+            "dockerPort": 2007,
+            "dockerStart": "2020-09-10T17:01:41.11937892Z",
+            "dockerStatus": "running",
+            "GTTmac": "CC:69:B0:00:00:D7",
+            "lastCheck": "09-10-2020T17:01:41.149097",
+            "markToDelete": "NO",
+            "primaryKey": 224754296422615,
+            "serverName": "Woodbury1",
+            "VPS": "V764DAMS0215",
+            "vpsAvailability": "AVAILABLE"
+        }
+    ],
+    "codeBuildDeploy": [
+        {
+            "customerName": "DALLAS",
+            "dockerImage": "083011521439.dkr.ecr.us-east-1.amazonaws.com/smartcity",
+            "ImageId": "ami-0878e35d09c75f0a1",
+            "lastInvokeVpscreate": "10/09/2020 16:40:00",
+            "serverProperties": {
+                "securityGroup": [
+                    "sg-0151c7e0192a43c82"
+                ],
+                "subnetID": "subnet-3ae59214"
+            },
+            "serverRegion": "us-east-1"
+        },
+        {
+            "baseUrl": "https://2f0vm9ok84.execute-api.us-east-1.amazonaws.com/Contractor",
+            "customerName": "GTT",
+            "IamName": "ROOT-GTT-INSTANCE-ROLE",
+            "S3BACKUPFOLDER": "efsdatabackup-gtt",
+            "S3Location": [
+                "us-east-1##gtt-deploy-vps-us-east-1-1764f962e",
+                "us-east-2##gtt-deploy-vps-us-east-2-20067edfd",
+                "us-west-1##gtt-deploy-vps-us-west-1-974f9b348",
+                "us-west-2##gtt-deploy-vps-us-west-2-98319defd"
+            ]
+        }
+    ]
+}

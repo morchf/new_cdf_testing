@@ -1,0 +1,38 @@
+{
+  "aws": {
+    "accountId": "157731826412",
+    "dynamoDb": {
+      "table": ""
+    },
+    "greengrass": {
+      "bulkdeployments": {
+        "roleArn": ""
+      }
+    },
+    "iot": {
+      "endpoint": "aofuby49j6efy-ats.iot.us-west-2.amazonaws.com"
+    },
+    "s3": {
+      "artifacts": {
+        "bucket": "cdf-157731826412-us-west-2",
+        "prefix": "greengrass/certificates/"
+      },
+      "bulkdeployments": {
+        "bucket": "cdf-157731826412-us-west-2",
+        "prefix": "greengrass/bulkdeployments/"
+      }
+    },
+    "sqs": {
+      "deviceAssociations": "https://sqs.us-west-2.amazonaws.com/157731826412/cdf-greengrass-provisioning-development-DeviceAssociationQueue-18C1CJGYJWPE1",
+      "deployments": "https://sqs.us-west-2.amazonaws.com/157731826412/cdf-greengrass-provisioning-development-DeploymentsQueue-3OL5KJ6I8W4V",
+      "bulkDeploymentsStatus": "only_used_by_the_sqs_lambda_proxy",
+      "deploymentStatus": "only_used_by_the_sqs_lambda_proxy"
+    }
+  },
+  "cors": {
+    "origin": "*"
+  },
+  "provisioning": {
+    "apifunctionname": ""
+  }
+}

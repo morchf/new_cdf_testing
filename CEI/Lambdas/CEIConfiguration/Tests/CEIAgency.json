@@ -1,0 +1,27 @@
+{
+  "attributes": {
+    "city": "CEITesting",
+    "state": "None",
+    "timezone": "Central",
+    "agencyCode": 111,
+    "agencyGUID": "null",
+    "agencyID": "23",
+    "caCertId": "null",
+    "priority": "High",
+    "CEISiteIDGuid"  : "copsburg",
+    "CEIAgencyName" : "CEI_TestAgency",
+    "CEIEVPTimeoutSecs"  : 1800,
+    "CEIEVPConditional" : "(((('EN' == determine['attributes']['CEIUnitStatus'])) and (('1' == determine['attributes']['CEIIncidentPriority']) or ('2' == determine['attributes']['CEIIncidentPriority']))))",
+    "CEIUnitTypeConfig"  : "",
+    "CEIUnitIDConfig"  : "",
+    "CEIIncidentTypeConfig"  : "",
+    "CEIIncidentStatusConfig"  : "",
+    "CEIIncidentPriorityConfig"  : "",
+    "CEIUnitStatusConfig"  : ""
+  },
+  "category": "group",
+  "templateId": "ceiagency",
+  "parentPath": "/CEI_TestRegion",
+  "name": "CEI_TestAgency",
+  "groupPath": "/CEI_TestRegion/CEI_TestAgency"
+}
